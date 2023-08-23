@@ -29,7 +29,7 @@ export default function Navbar() {
       </div>
       <ul className="hidden md:flex">
         <CustomeLink
-          to="/gallery"
+          to="/gallary"
           className="hover:bg-gray-300  active:bg-gray-900 p-4"
         >
           Gallery
@@ -59,7 +59,7 @@ export default function Navbar() {
         </Link>
         <ul className="uppercase p-4">
           <CustomeLink
-            to="/gallery"
+            to="/gallary"
             className="hover:bg-gray-300  active:bg-gray-900 border-b border-gray-600"
           >
             Gallery
