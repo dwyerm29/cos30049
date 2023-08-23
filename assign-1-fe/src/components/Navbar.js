@@ -30,7 +30,7 @@ export default function Navbar() {
       <ul className="hidden md:flex">
         <CustomeLink
           to="/gallery"
-          className="hover:bg-gray-300  active:bg-gray-900 p-4 border-b border-gray-600"
+          className="hover:bg-gray-300  active:bg-gray-900 p-4"
         >
           Gallery
         </CustomeLink>
