@@ -1,10 +1,10 @@
-import React from 'react';
+import React from "react";
 import Navbar from "./components/Navbar";
 import About from "./pages/About";
-import Gallery from "./pages/Gallery";
 import Home from "./pages/Home";
 import { Route, Routes } from "react-router-dom";
-import { Container } from '@mui/material';
+import { Container } from "@mui/material";
+import SearchResults from "./pages/SearchResults";
 
 function App() {
   return (
@@ -13,8 +13,8 @@ function App() {
       <Container>
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/gallery" element={<Gallery />} />
           <Route path="/about" element={<About />} />
+          <Route path="/searchresults" element={<SearchResults />} />
         </Routes>
       </Container>
     </>
