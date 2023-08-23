@@ -6,15 +6,15 @@ import Typography from "@mui/material/Typography";
 import ButtonBase from "@mui/material/ButtonBase";
 import Card from "@mui/material/Card";
 const Img = styled("img")({
-  margin: "auto",
+       margin: "auto",
   display: "block",
   maxWidth: "100%",
   maxHeight: "100%",
 });
-export default function GallaryCard() {
+export default function GalleryCard() {
   return (
     <Card
-      sx={{
+              sx={{
         p: 0,
         margin: "auto",
         maxWidth: 500,
