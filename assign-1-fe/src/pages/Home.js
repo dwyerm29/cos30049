@@ -1,3 +1,6 @@
+import React from "react";
+import HomeGrid from "../components/HomeGrid";
+
 export default function Home() {
-  return <h1>Home</h1>;
+  return <HomeGrid />;
 }

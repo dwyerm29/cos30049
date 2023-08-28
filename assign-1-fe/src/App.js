@@ -4,6 +4,7 @@ import About from "./pages/About";
 import Home from "./pages/Home";
 import SearchResults from "./pages/SearchResults";
 import Login from "./pages/Login";
+import Cart from "./pages/Cart";
 import { Route, Routes } from "react-router-dom";
 import { Container } from "@mui/material";
 
@@ -17,6 +18,7 @@ function App() {
           <Route path="/about" element={<About />} />
           <Route path="/searchresults" element={<SearchResults />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/cart" element={<Cart />} />
         </Routes>
       </Container>
     </>
