@@ -34,7 +34,7 @@ export default function Navbar() {
       </div>
 
       {/* Handles Search Bar */}
-      <div className="relative flex w-full md:w-auto mb-4 md:mb-0 md:mr-4">
+      <div className="relative flex grow w-80% md:w-auto ml-4 mr-4">
         <Input
           type="search"
           label="Type here..."
@@ -82,7 +82,9 @@ export default function Navbar() {
 
       <div
         onClick={handleNav}
-        className={`block md:hidden p-4 ${nav ? "fixed top-0 right-0" : ""}`}
+        className={`fixed top-0 right-0 md:hidden p-2 ${
+          nav ? "fixed top-0 right-0" : ""
+        }`}
       >
         {nav ? <AiOutlineClose size={20} /> : <AiOutlineMenu size={20} />}
       </div>

@@ -7,11 +7,14 @@ import Login from "./pages/Login";
 import Cart from "./pages/Cart";
 import { Route, Routes } from "react-router-dom";
 import { Container } from "@mui/material";
+import Account from "./pages/Account";
+import Register from "./pages/Register";
 
 function App() {
   return (
     <>
       <Navbar />
+
       <Container>
         <Routes>
           <Route path="/" element={<Home />} />
@@ -19,6 +22,8 @@ function App() {
           <Route path="/searchresults" element={<SearchResults />} />
           <Route path="/login" element={<Login />} />
           <Route path="/cart" element={<Cart />} />
+          <Route path="/account" element={<Account />} />
+          <Route path="/register" element={<Register />} />
         </Routes>
       </Container>
     </>
