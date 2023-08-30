@@ -50,10 +50,10 @@ export default function Navbar() {
       {/* Handles NavBar */}
       <ul className="hidden md:flex gap-5">
         <CustomeLink
-          to="/searchresults"
+          to="/featureditems"
           className="hover:bg-gray-300  active:bg-gray-900 "
         >
-          Search Results
+          Featured Items
         </CustomeLink>
         <CustomeLink
           to="/about"
