@@ -92,7 +92,7 @@ export default function Navbar() {
       <div
         className={
           nav
-            ? "fixed left-0 top-0 w-[60%] h-full border-r border-r-gray-900 bg-gray-900 ease-in-out duration-500 "
+            ? "fixed z-10 left-0 top-0 w-[60%] h-full border-r border-r-gray-900 bg-gray-900 ease-in-out duration-500 "
             : "fixed left-[-100%]"
         }
       >
@@ -132,6 +132,15 @@ export default function Navbar() {
             className="hover:bg-gray-300  active:bg-gray-900 border-b"
           >
             Login
+          </CustomeLink>
+          <CustomeLink
+            to="/cart"
+            onClick={handleNav}
+            onBlur={hide}
+            OnFocus={show}
+            className="hover:bg-gray-300  active:bg-gray-900 border-b"
+          >
+            Cart
           </CustomeLink>
         </ul>
       </div>
