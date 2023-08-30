@@ -4,7 +4,7 @@ export default function HomeGrid() {
   return (
     <div className="w-full h-screen">
       <img
-        className="top-25 left-0 w-full h-screen object-cover"
+        className="top-24 left-0 w-full h-screen object-cover"
         src={homebg}
         alt=""
       />
