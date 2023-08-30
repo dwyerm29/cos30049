@@ -1,3 +1,9 @@
+import { Container } from "@mui/material";
+
 export default function About() {
-  return <h1>About</h1>;
+  return (
+    <Container>
+      <h1>About</h1>
+    </Container>
+  );
 }

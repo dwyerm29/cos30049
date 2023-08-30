@@ -16,18 +16,16 @@ function App() {
     <>
       <Navbar />
 
-      <Container>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/searchresults" element={<SearchResults />} />
-          <Route path="/featureditems" element={<FeaturedItems />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/cart" element={<Cart />} />
-          <Route path="/account" element={<Account />} />
-          <Route path="/register" element={<Register />} />
-        </Routes>
-      </Container>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/searchresults" element={<SearchResults />} />
+        <Route path="/featureditems" element={<FeaturedItems />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/cart" element={<Cart />} />
+        <Route path="/account" element={<Account />} />
+        <Route path="/register" element={<Register />} />
+      </Routes>
     </>
   );
 }

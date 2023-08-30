@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import logo from "../images/gwlogo.jpeg";
-import { Link, useMatch, useResolvedPath } from "react-router-dom";
+import { Link, useMatch, useResolvedPath, useNavigate } from "react-router-dom";
 import { Input, Button } from "@material-tailwind/react";
 import {
   AiOutlineClose,
@@ -24,6 +24,11 @@ export default function Navbar() {
   const handleNav = () => {
     setNav(!nav);
   };
+
+  let navigate = useNavigate();
+  const searchResults = () => {
+    navigate("searchResults");
+  };
   return (
     <div className="flex flex-col md:flex-row justify-between items-center h-24 max-width[1240px] m-auto px-4 text-white bg-gray-900">
       <div className="flex items-center md:items-start md:flex-col">
@@ -43,7 +48,11 @@ export default function Navbar() {
             className: "min-w-[140px]",
           }}
         />
-        <Button size="sm" className="!absolute right-1 top-1 rounded">
+        <Button
+          size="sm"
+          onClick={searchResults}
+          className="!absolute right-1 top-1 rounded"
+        >
           Search
         </Button>
       </div>
