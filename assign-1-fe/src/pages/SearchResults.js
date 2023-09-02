@@ -23,23 +23,16 @@ const MenuProps = {
   },
 };
 
-const categoryFilters = [
-  "All",
-  "Art",
-  "Gaming",
-  "PFPs",
-  "Photography",
+const categoryFilters = ["All", "Art", "Gaming", "PFPs", "Photography"];
 
-];
-
-export default function SearchResults() {
+export const SearchResults = () => {
   const [sortType, setSort] = React.useState("");
 
   const handleSortChange = (event) => {
     setSort(event.target.value);
   };
 
-  const [filterVal, setFilter] = React.useState('');
+  const [filterVal, setFilter] = React.useState("");
   const handleFilterChange = (event) => {
     const {
       target: { value },
@@ -55,7 +48,7 @@ export default function SearchResults() {
       <Container>
         <div className="flex flex-col md:flex-row justify-between items-center max-width[1240px] m-auto pt-4 ">
           <Grid container justifyContent="flex-end">
-          <Box sx={{ minWidth: 200, mx: 2 }}>
+            <Box sx={{ minWidth: 200, mx: 2 }}>
               <FormControl fullWidth>
                 <InputLabel id="filter-categories">Category</InputLabel>
                 <Select
@@ -94,11 +87,10 @@ export default function SearchResults() {
                 </Select>
               </FormControl>
             </Box>
-            
           </Grid>
         </div>
         <GalleryGrid />
       </Container>
     </div>
   );
-}
+};

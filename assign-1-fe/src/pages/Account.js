@@ -1,3 +1,3 @@
-export default function Account() {
+export const Account = () => {
   return <h1>Account</h1>;
-}
+};

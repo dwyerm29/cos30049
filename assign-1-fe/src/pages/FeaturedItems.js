@@ -1,10 +1,10 @@
 import GalleryGrid from "../components/GalleryGrid";
 import { Container } from "@mui/material";
 
-export default function FeaturedItems() {
+export const FeaturedItems = () => {
   return (
     <Container>
       <GalleryGrid />
     </Container>
   );
-}
+};
