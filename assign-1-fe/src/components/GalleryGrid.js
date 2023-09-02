@@ -15,6 +15,7 @@ export default function GalleryGrid() {
             fullRes="3407x5111"
             fileFormat="JPEG"
             ID="123129"
+            linkTo="/itemdetails"
           />
         </Grid>
         <Grid item xs={12} sm={6} md={3}>
@@ -24,8 +25,9 @@ export default function GalleryGrid() {
             currentPrice="0.5 ETH"
             fullRes="2304 x 3456"
             fileFormat="JPEG"
-            ID="123129"
-          />{" "}
+            ID="123130"
+            linkTo="/itemdetails"
+          />
         </Grid>
         <Grid item xs={12} sm={6} md={3}>
           <GalleryCard
@@ -34,8 +36,9 @@ export default function GalleryGrid() {
             currentPrice="0.4 ETH"
             fullRes="3840x5760"
             fileFormat="JPEG"
-            ID="123129"
-          />{" "}
+            ID="123131"
+            linkTo="/itemdetails"
+          />
         </Grid>
         <Grid item xs={12} sm={6} md={3}>
           <GalleryCard
@@ -44,8 +47,9 @@ export default function GalleryGrid() {
             currentPrice="0.4 ETH"
             fullRes="4480x6720"
             fileFormat="JPEG"
-            ID="123129"
-          />{" "}
+            ID="123132"
+            linkTo="/itemdetails"
+          />
         </Grid>
         <Grid item xs={12} sm={6} md={3}>
           <GalleryCard
@@ -54,8 +58,9 @@ export default function GalleryGrid() {
             currentPrice="0.4 ETH"
             fullRes="4000x3000"
             fileFormat="JPEG"
-            ID="123129"
-          />{" "}
+            ID="123133"
+            linkTo="/itemdetails"
+          />
         </Grid>
         <Grid item xs={12} sm={6} md={3}>
           <GalleryCard
@@ -64,8 +69,9 @@ export default function GalleryGrid() {
             currentPrice="0.4 ETH"
             fullRes="3456x4608"
             fileFormat="JPEG"
-            ID="123129"
-          />{" "}
+            ID="123134"
+            linkTo="/itemdetails"
+          />
         </Grid>
         <Grid item xs={12} sm={6} md={3}>
           <GalleryCard
@@ -74,8 +80,9 @@ export default function GalleryGrid() {
             currentPrice="0.4 ETH"
             fullRes="2848x4272"
             fileFormat="JPEG"
-            ID="123129"
-          />{" "}
+            ID="123135"
+            linkTo="/itemdetails"
+          />
         </Grid>
         <Grid item xs={12} sm={6} md={3}>
           <GalleryCard
@@ -84,8 +91,9 @@ export default function GalleryGrid() {
             currentPrice="0.4 ETH"
             fullRes="3024x4032"
             fileFormat="JPEG"
-            ID="123129"
-          />{" "}
+            ID="123136"
+            linkTo="/itemdetails"
+          />
         </Grid>
       </Grid>
     </Box>

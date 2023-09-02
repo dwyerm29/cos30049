@@ -6,6 +6,7 @@ import { FeaturedItems } from "../../pages/FeaturedItems";
 import { SearchResults } from "../../pages/SearchResults";
 import { Cart } from "../../pages/Cart";
 import { Register } from "../../pages/Register";
+import { ItemDetails } from "../../pages/ItemDetails";
 
 export const navigation = [
   {
@@ -25,6 +26,13 @@ export const navigation = [
     path: "/searchresults",
     name: "Search",
     element: <SearchResults />,
+    isMenu: true,
+    isPrivate: false,
+  },
+  {
+    path: "/itemdetails",
+    name: "ItemDetails",
+    element: <ItemDetails />,
     isMenu: true,
     isPrivate: false,
   },
