@@ -3,6 +3,8 @@ import { styled } from "@mui/material/styles";
 import Typography from "@mui/material/Typography";
 import AddShoppingCart from "@mui/icons-material/AddShoppingCart";
 
+import { Link } from "react-router-dom";
+
 const Img = styled("img")({
   margin: "auto",
   display: "block",
@@ -66,10 +68,20 @@ export function ItemDetails() {
               <Typography variant="h6" component="div">
                 Price: {currentPrice}
               </Typography>
-              <Button variant="contained" endIcon={<AddShoppingCart />}>
+              <Button
+                variant="contained"
+                endIcon={<AddShoppingCart />}
+                component={Link}
+                to="/cart"
+              >
                 Add to Cart
               </Button>
-              <Button variant="contained" sx={{ mx: 2 }}>
+              <Button
+                variant="contained"
+                sx={{ mx: 2 }}
+                component={Link}
+                to="/checkout"
+              >
                 Buy it now
               </Button>
             </Box>
