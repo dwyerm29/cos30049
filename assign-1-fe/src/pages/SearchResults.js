@@ -1,16 +1,19 @@
 import * as React from "react";
 
-import { Container } from "@mui/material";
+import {
+  Container,
+  Box,
+  InputLabel,
+  MenuItem,
+  FormControl,
+  Select,
+  Grid,
+  OutlinedInput,
+  Checkbox,
+  ListItemText,
+} from "@mui/material";
 import GalleryGrid from "../components/GalleryGrid";
-import Box from "@mui/material/Box";
-import InputLabel from "@mui/material/InputLabel";
-import MenuItem from "@mui/material/MenuItem";
-import FormControl from "@mui/material/FormControl";
-import Select from "@mui/material/Select";
-import Grid from "@mui/material/Grid";
-import OutlinedInput from "@mui/material/OutlinedInput";
-import ListItemText from "@mui/material/ListItemText";
-import Checkbox from "@mui/material/Checkbox";
+
 import { Input, Button } from "@material-tailwind/react";
 import { useNavigate } from "react-router-dom";
 

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import logo from "../images/gwlogo.jpeg";
-import { Link, useMatch, useResolvedPath } from "react-router-dom";
+import { Link, useMatch, useResolvedPath, useNavigate } from "react-router-dom";
 import {
   AiOutlineClose,
   AiOutlineMenu,
@@ -10,6 +10,9 @@ import {
 import { Route, Routes } from "react-router-dom";
 import { AuthData } from "../auth/AuthWrap";
 import { navigation } from "./structure/navigation";
+import { Input, Button } from "@material-tailwind/react";
+import { Box } from "@mui/material";
+
 export const ToRoutes = () => {
   const { user } = AuthData();
 
@@ -33,11 +36,11 @@ export const Menu = () => {
 
   const MenuItem = ({ n }) => {
     return (
-      <div className="hidden md:flex gap-5">
-        <Link to={n.path} className="hover:bg-gray-300  active:bg-gray-900">
+      <Link to={n.path}>
+        <Button className="hidden md:flex hover:bg-gray-300  bg-gray-900 px-3">
           {n.name}
-        </Link>
-      </div>
+        </Button>
+      </Link>
     );
   };
 
@@ -67,21 +70,39 @@ export const Menu = () => {
     setNav(!nav);
   };
 
+  let navigate = useNavigate();
+
+  const searchResults = () => {
+    navigate("/searchResults");
+  };
+
   return (
     <div className="flex flex-col md:flex-row justify-between items-center h-24 max-width[1240px] m-auto px-4 text-white bg-gray-900">
       <div className="flex items-center md:items-start md:flex-col">
-        <Link to="/" className="flex text-3xl font-bold w-auto">
+        <Link
+          to="/"
+          className="flex text-3xl font-bold w-auto mr-8"
+          sx={{ ml: 2 }}
+        >
           <img src={logo} alt="" className="h-9 w-auto mr-2" />
           <span className="">GlowWave</span>
         </Link>
       </div>
-
+      {/* Handles Search Bar */}
+      <Box className="hidden md:flex relative flex grow  ">
+        <Input type="search" label="Type here..." />
+        <Button
+          size="sm"
+          onClick={searchResults}
+          className="!absolute right-1 top-1 rounded"
+        >
+          Search
+        </Button>
+      </Box>
       {navigation.map((n, i) => {
-        if (!n.isPrivate && n.isMenu) {
+        if ((!n.isPrivate || user.isAuthenticated) && n.isMenu) {
           return <MenuItem key={i} n={n} />;
-        } else if (user.isAuthenticated && n.isMenu) {
-          return <MenuItem key={i} n={n} />;
-        } else return false;
+        }
       })}
 
       {/* Handles smaller screen */}
@@ -103,11 +124,9 @@ export const Menu = () => {
         }
       >
         {navigation.map((n, i) => {
-          if (!n.isPrivate && n.isMenu) {
+          if ((!n.isPrivate || user.isAuthenticated) && n.isMenu) {
             return <SmallMenuItem key={i} n={n} />;
-          } else if (user.isAuthenticated && n.isMenu) {
-            return <SmallMenuItem key={i} n={n} />;
-          } else return false;
+          }
         })}
       </div>
       <div className="hidden md:flex gap-5">
