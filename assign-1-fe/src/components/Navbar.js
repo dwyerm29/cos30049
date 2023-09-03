@@ -80,7 +80,7 @@ export const Menu = () => {
       <div className="flex items-center md:items-start md:flex-col">
         <Link
           to="/"
-          className="flex text-3xl font-bold w-auto mr-8"
+          className="flex text-3xl font-bold w-auto mr-2"
           sx={{ ml: 2 }}
         >
           <img src={logo} alt="" className="h-9 w-auto mr-2" />
@@ -88,7 +88,7 @@ export const Menu = () => {
         </Link>
       </div>
       {/* Search Bar */}
-      <Box className="hidden md:flex relative grow  ">
+      <Box className="hidden md:flex relative grow " sx={{ mx: 1 }}>
         <Input type="search" label="Type here..." />
         <Button
           size="sm"
