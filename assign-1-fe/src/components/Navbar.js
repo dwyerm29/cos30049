@@ -37,7 +37,7 @@ export const Menu = () => {
   const MenuItem = ({ n }) => {
     return (
       <Link to={n.path}>
-        <Button className="hidden md:flex hover:bg-gray-300  bg-gray-900 px-3">
+        <Button className="hidden md:flex hover:bg-gray-300  bg-gray-900 px-2">
           {n.name}
         </Button>
       </Link>
