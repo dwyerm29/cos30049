@@ -88,7 +88,7 @@ export const Menu = () => {
         </Link>
       </div>
       {/* Search Bar */}
-      <Box className="hidden md:flex relative flex grow  ">
+      <Box className="hidden md:flex relative grow  ">
         <Input type="search" label="Type here..." />
         <Button
           size="sm"
