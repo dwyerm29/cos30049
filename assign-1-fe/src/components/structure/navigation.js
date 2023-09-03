@@ -70,6 +70,6 @@ export const navigation = [
     name: "Account",
     element: <Account />,
     isMenu: true,
-    isPrivate: true,
+    isPrivate: false,
   },
 ];

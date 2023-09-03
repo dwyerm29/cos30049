@@ -1,9 +1,6 @@
-import { Container } from "@mui/material";
-import Box from "@mui/material/Box";
-import Grid from "@mui/material/Grid";
+import { Container, Box, Grid, Button, Paper } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import Typography from "@mui/material/Typography";
-import Button from "@mui/material/Button";
 import AddShoppingCart from "@mui/icons-material/AddShoppingCart";
 
 const Img = styled("img")({
@@ -28,9 +25,9 @@ const ID = "123129";
 export function ItemDetails() {
   return (
     <Container>
-      <Box sx={{ mt: 4 }}>
-        <Grid container spacing={2}>
-          <Grid item xs={12} sm={6}>
+      <Paper sx={{ mt: 2, borderRadius: 2 }}>
+        <Grid container spacing={0}>
+          <Grid item xs={12} sm={6} sx={{ pt: 0 }}>
             <Img
               alt="img text"
               src={imageSRC}
@@ -43,7 +40,7 @@ export function ItemDetails() {
               //className=" rounded"
             />
           </Grid>
-          <Grid item xs={12} sm={6}>
+          <Grid item xs={12} sm={6} sx={{ px: 2 }}>
             <Box>
               <Typography variant="h3">{itemName}</Typography>
               <Typography variant="p">By {author}</Typography> <br /> <br />
@@ -78,7 +75,7 @@ export function ItemDetails() {
             </Box>
           </Grid>
         </Grid>
-      </Box>
+      </Paper>
     </Container>
   );
 }
