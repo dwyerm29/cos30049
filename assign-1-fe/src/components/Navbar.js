@@ -52,7 +52,6 @@ export const Menu = () => {
           onClick={handleNav}
           onBlur={hide}
           OnFocus={show}
-          className="hover:bg-gray-300  active:bg-gray-900 border-b border-gray-600 list-none"
         >
           {n.name}
         </CustomLink>
@@ -88,7 +87,7 @@ export const Menu = () => {
           <span className="">GlowWave</span>
         </Link>
       </div>
-      {/* Handles Search Bar */}
+      {/* Search Bar */}
       <Box className="hidden md:flex relative flex grow  ">
         <Input type="search" label="Type here..." />
         <Button
@@ -105,30 +104,6 @@ export const Menu = () => {
         }
       })}
 
-      {/* Handles smaller screen */}
-
-      <div
-        onClick={handleNav}
-        className={`fixed top-0 right-0 md:hidden p-2 z-10 ${
-          nav ? "fixed top-0 right-0 z-10" : ""
-        }`}
-      >
-        {nav ? <AiOutlineClose size={20} /> : <AiOutlineMenu size={20} />}
-      </div>
-
-      <div
-        className={
-          nav
-            ? "fixed z-10 left-0 top-0 w-[60%] h-full border-r border-r-gray-900 bg-gray-900 ease-in-out duration-500 "
-            : "fixed left-[-100%]"
-        }
-      >
-        {navigation.map((n, i) => {
-          if ((!n.isPrivate || user.isAuthenticated) && n.isMenu) {
-            return <SmallMenuItem key={i} n={n} />;
-          }
-        })}
-      </div>
       <div className="hidden md:flex gap-5">
         {user.isAuthenticated ? (
           <div className="hidden md:flex gap-5">
@@ -148,39 +123,72 @@ export const Menu = () => {
           </div>
         )}
       </div>
-      <div className="flex justify-between items-center p-4 md:hidden">
-        {user.isAuthenticated ? (
-          <div className="uppercase p-4">
-            <CustomLink to="/login" onClick={logout}>
-              Log out
-            </CustomLink>
-          </div>
-        ) : (
-          <div className="uppercase p-4">
-            <CustomLink
-              to="/login"
-              className="hover:bg-gray-300 active:bg-gray-900 inline-flex gap-1 list-none"
-            >
-              <AiOutlineUser size={20} />
-              <span>Login</span>
-            </CustomLink>
-          </div>
-        )}
-      </div>
-      {nav ? (
-        <Link
-          to="/cart"
-          className="absolute top-8 right-2 z-20 hover:bg-gray-300 active:bg-gray-900"
-        >
+
+      <div className="hidden md:flex gap-5">
+        <Link to="/cart" className="hover:bg-gray-300 active:bg-gray-900">
           <AiOutlineShoppingCart size={20} />
         </Link>
-      ) : (
-        <div className="hidden md:flex gap-5">
-          <Link to="/cart" className="hover:bg-gray-300 active:bg-gray-900">
-            <AiOutlineShoppingCart size={20} />
-          </Link>
+      </div>
+
+      {/* Handles smaller screen */}
+
+      <div
+        onClick={handleNav}
+        className={`fixed top-0 right-0 md:hidden p-2 z-10 ${
+          nav ? "fixed top-0 right-0 z-10" : ""
+        }`}
+      >
+        {nav ? <AiOutlineClose size={20} /> : <AiOutlineMenu size={20} />}
+      </div>
+
+      <div
+        className={
+          nav
+            ? "fixed z-10 left-0 top-0 w-[60%] h-full border-r border-r-gray-900 bg-gray-900 ease-in-out duration-500 "
+            : "fixed left-[-100%]"
+        }
+      >
+        {/* Search Bar */}
+        <Box className=" relative flex grow  " sx={{ m: 1 }}>
+          <Input type="search" label="Type here..." />
+          <Button
+            size="sm"
+            onClick={(searchResults, handleNav)}
+            className="!absolute right-1 top-1 rounded"
+          >
+            Search
+          </Button>
+        </Box>
+
+        {navigation.map((n, i) => {
+          if ((!n.isPrivate || user.isAuthenticated) && n.isMenu) {
+            return <SmallMenuItem key={i} n={n} />;
+          }
+        })}
+        {/* Login Button */}
+        <div className="flex justify-between items-center p-4 md:hidden">
+          {user.isAuthenticated ? (
+            <div className="uppercase ">
+              <CustomLink to="/login" onClick={logout}>
+                Log out
+              </CustomLink>
+            </div>
+          ) : (
+            <div className="uppercase ">
+              <CustomLink to="/login" onClick={handleNav}>
+                <AiOutlineUser size={20} />
+                <span>Login</span>
+              </CustomLink>
+            </div>
+          )}
         </div>
-      )}
+        <div className="uppercase flex justify-between items-center p-4 md:hidden">
+          <CustomLink to="/cart">
+            <AiOutlineShoppingCart size={20} />
+            <span>Cart</span>
+          </CustomLink>
+        </div>
+      </div>
     </div>
   );
 };
@@ -191,7 +199,11 @@ function CustomLink({ to, children, ...props }) {
   return (
     <ul>
       <li className={isActive === to ? "active list-none" : ""}>
-        <Link to={to} {...props}>
+        <Link
+          to={to}
+          {...props}
+          className="hover:bg-gray-300  active:bg-gray-900 border-b border-gray-600 text-decoration:none inline-flex gap-1 list-none"
+        >
           {children}
         </Link>
       </li>

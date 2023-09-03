@@ -14,9 +14,6 @@ import {
 } from "@mui/material";
 import GalleryGrid from "../components/GalleryGrid";
 
-import { Input, Button } from "@material-tailwind/react";
-import { useNavigate } from "react-router-dom";
-
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
 const MenuProps = {
@@ -48,32 +45,9 @@ export const SearchResults = () => {
     );
   };
 
-  let navigate = useNavigate();
-  const searchResults = () => {
-    navigate("/searchResults");
-  };
-
   return (
     <div>
       <Container>
-        {/* Handles Search Bar */}
-        <div className="relative flex grow mt-4">
-          <Input
-            type="search"
-            label="Type here..."
-            className="pr-20"
-            containerProps={{
-              className: "min-w-[140px]",
-            }}
-          />
-          <Button
-            size="sm"
-            onClick={searchResults}
-            className="!absolute right-1 top-1 rounded"
-          >
-            Search
-          </Button>
-        </div>
         <div className="flex flex-col md:flex-row justify-between items-center max-width[1240px] m-auto pt-4 ">
           <Grid container justifyContent="flex-end">
             <Box sx={{ minWidth: 200, mx: 2 }}>
