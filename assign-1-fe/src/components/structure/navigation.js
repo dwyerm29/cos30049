@@ -86,6 +86,6 @@ export const navigation = [
     name: "Account",
     element: <Account />,
     isMenu: true,
-    isPrivate: false,
+    isPrivate: true,
   },
 ];

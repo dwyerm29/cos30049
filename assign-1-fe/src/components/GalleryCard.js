@@ -37,8 +37,6 @@ export default function GalleryCard({
         flexGrow: 1,
         backgroundColor: "#242424",
         href: linkTo,
-        //backgroundColor: (theme) =>
-        //  theme.palette.mode === "dark" ? "#1A2027" : "#fff",
       }}
     >
       <CardActionArea component={Link} to={linkTo}>
