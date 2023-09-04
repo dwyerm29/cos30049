@@ -7,6 +7,8 @@ import { SearchResults } from "../../pages/SearchResults";
 import { Cart } from "../../pages/Cart";
 import { Register } from "../../pages/Register";
 import { ItemDetails } from "../../pages/ItemDetails";
+import { Checkout } from "../../pages/Checkout";
+import { OrderSummary } from "../../pages/OrderSummary";
 
 export const navigation = [
   {
@@ -64,12 +66,26 @@ export const navigation = [
     isMenu: false,
     isPrivate: false,
   },
+  {
+    path: "/checkout",
+    name: "Checkout",
+    element: <Checkout />,
+    isMenu: false,
+    isPrivate: false,
+  },
+  {
+    path: "/ordersummary",
+    name: "OrderSummary",
+    element: <OrderSummary />,
+    isMenu: false,
+    isPrivate: false,
+  },
   //Only shows when is private is true
   {
     path: "/account",
     name: "Account",
     element: <Account />,
     isMenu: true,
-    isPrivate: false,
+    isPrivate: true,
   },
 ];

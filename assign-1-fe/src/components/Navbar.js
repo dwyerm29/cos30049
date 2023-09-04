@@ -106,29 +106,29 @@ export const Menu = () => {
 
       <div className="hidden md:flex gap-5">
         {user.isAuthenticated ? (
-          <div className="hidden md:flex gap-5">
+          <Button className="hidden md:flex hover:bg-gray-300  bg-gray-900 px-2">
             <Link to="/login" onClick={logout}>
               Log out
             </Link>
-          </div>
+          </Button>
         ) : (
-          <div className="hidden md:flex gap-5">
+          <Button className="hidden md:flex hover:bg-gray-300  bg-gray-900 px-2">
             <Link
               to="/login"
-              className="hover:bg-gray-300 active:bg-gray-900 inline-flex gap-1"
+              className="hover:bg-gray-300 active:bg-gray-900 flex gap-1 items-center"
             >
-              <AiOutlineUser size={20} />
-              <span>Login</span>
+              <AiOutlineUser size={20} className="items-baseline" />
+              Login
             </Link>
-          </div>
+          </Button>
         )}
       </div>
 
-      <div className="hidden md:flex gap-5">
-        <Link to="/cart" className="hover:bg-gray-300 active:bg-gray-900">
+      <Button className="hidden md:flex gap-5 hover:bg-gray-300 active:bg-gray-900 px-2">
+        <Link to="/cart">
           <AiOutlineShoppingCart size={20} />
         </Link>
-      </div>
+      </Button>
 
       {/* Handles smaller screen */}
 

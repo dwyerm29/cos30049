@@ -25,26 +25,29 @@ export default function LoginForm() {
   };
   return (
     <div className="flex min-h-full flex-col justify-center px-4 py-10 lg:px-6">
-      <h2 className="text-center text-3xl font-bold mt-20">Login Here</h2>
+      <h2 className="text-center text-3xl font-bold mt-20 text-green-400">
+        Login Here
+      </h2>
 
       <div className="mt-2 sm:mx-auto sm:w-full sm:max-w-sm">
-        <form className="space-y-6 bg-green-400 p-6 rounded-2xl">
+        <form className="space-y-6 bg-gray-700 p-6 rounded-2xl">
           <div>
-            <label className="p-2">Username/Email</label>
+            <label className="py-2 leading-6 text-xl">Username/Email</label>
             <input
               value={formData.username}
               onChange={(e) => setFormData({ username: e.target.value })}
               type="text"
-              className="text-black"
+              className="text-black block w-full py-1 ring-1 focus:ring-2"
+              required
             />
           </div>
           <div>
-            <label className="p-2">Password</label>
+            <label className="py-2 leading-6 text-xl">Password</label>
             <input
               value={formData.password}
               onChange={(e) => setFormData({ password: e.target.value })}
               type="password"
-              className="text-black"
+              className="text-black block w-full py-1 ring-1 focus:ring-2"
             />
           </div>
           <div>
