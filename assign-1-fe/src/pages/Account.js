@@ -68,3 +68,4 @@ export const Account = () => {
       </Box>
     </Container>
   );
+};
