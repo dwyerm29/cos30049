@@ -3,9 +3,6 @@ import { React, useState } from "react";
 import { Link } from "react-router-dom";
 
 export default function RegisterForm() {
-  {
-    /* Form for registration to check that passwords are matching*/
-  }
   const [formInput, setRegInput] = useState({
     firstName: "",
     lastName: "",
@@ -51,6 +48,8 @@ export default function RegisterForm() {
     setFormError(inputError);
   };
   return (
+    /* Form for registration to check that passwords are matching*/
+
     <div className="flex min-h-full flex-col justify-center px-4 py-10 lg:px-6">
       <h2 className="text-center text-3xl font-bold mt-20 text-green-400">
         Register Here
