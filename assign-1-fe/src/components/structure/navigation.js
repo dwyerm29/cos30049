@@ -9,6 +9,7 @@ import { Register } from "../../pages/Register";
 import { ItemDetails } from "../../pages/ItemDetails";
 import { Checkout } from "../../pages/Checkout";
 import { OrderSummary } from "../../pages/OrderSummary";
+import { AxiosTest } from "../../pages/AxiosTest";
 
 export const navigation = [
   {
@@ -87,5 +88,12 @@ export const navigation = [
     element: <Account />,
     isMenu: true,
     isPrivate: true,
+  },
+  {
+    path: "/AxiosTest",
+    name: "AxiosTest",
+    element: <AxiosTest />,
+    isMenu: true,
+    isPrivate: false,
   },
 ];
