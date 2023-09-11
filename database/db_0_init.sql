@@ -7,9 +7,9 @@ DROP TABLE IF EXISTS `Transactions`;
 DROP TABLE IF EXISTS `Assets`;
 DROP TABLE IF EXISTS `LicenseTypes`;
 DROP TABLE IF EXISTS `FileTypes`;
-DROP TABLE IF EXISTS `UserAccounts`;
+DROP TABLE IF EXISTS `Users`;
 
-CREATE TABLE `UserAccounts` (
+CREATE TABLE `Users` (
   `user_id` INT NOT NULL AUTO_INCREMENT,
   `password` VARCHAR(50) NOT NULL,
   `first_name` VARCHAR (50),
@@ -65,10 +65,10 @@ CREATE TABLE `Transactions` (
   `sale_price` DOUBLE,
   `sale_time` DATETIME,
   PRIMARY KEY (`transaction_id`),
-  FOREIGN KEY (`seller_id`) REFERENCES `UserAccounts` (`user_id`),
-  FOREIGN KEY (`buyer_id`) REFERENCES `UserAccounts` (`user_id`),
+  FOREIGN KEY (`seller_id`) REFERENCES `Users` (`user_id`),
+  FOREIGN KEY (`buyer_id`) REFERENCES `Users` (`user_id`),
   FOREIGN KEY (`token_id`) REFERENCES `Assets` (`token_id`),
-  FOREIGN KEY (`buyer_id`) REFERENCES `UserAccounts` (`user_id`)
+  FOREIGN KEY (`buyer_id`) REFERENCES `Users` (`user_id`)
 );
 
 
@@ -81,22 +81,22 @@ CREATE TABLE `AssetsListedForSale` (
   FOREIGN KEY (`token_id`) REFERENCES `Assets` (`token_id`)
 );
 
-INSERT INTO UserAccounts (user_id, password, first_name, last_name, email, wallet_id) VALUES ('1', 'password', 'John', 'Smith', 'john.smith@example.com', '13425123');
-INSERT INTO UserAccounts (user_id, password, first_name, last_name, email) VALUES ('2', 'password', 'Jane', 'Smith', 'jane.smith@example.com');
-INSERT INTO UserAccounts (user_id, password, first_name, last_name, email) VALUES ('3', 'password', 'Maria', 'Eduarda Loura Magalhães', 'maria.magalhaes@example.com');
-INSERT INTO UserAccounts (user_id, password, first_name, email) VALUES ('4', 'password', 'ThisIsEngineering', 'thisisengineering@example.com');
-INSERT INTO UserAccounts (user_id, password, first_name, last_name, email) VALUES ('5', 'password', 'Ryutaro', 'Tsukata', 'Ryutaro.Tsukata@example.com');
-INSERT INTO UserAccounts (user_id, password, first_name, last_name, email) VALUES ('6', 'password', 'Twiggy', 'Jia', 'Twiggy.Jia@example.com');
-INSERT INTO UserAccounts (user_id, password, first_name, last_name, email) VALUES ('7', 'password', 'Alexander', 'Ant', 'Alexander.Ant@example.com');
-INSERT INTO UserAccounts (user_id, password, first_name, last_name, email) VALUES ('8', 'password', 'Anni', 'Roenkae', 'AnniRoenkae@example.com');
-INSERT INTO UserAccounts (user_id, password, first_name, email) VALUES ('9', 'password', 'Dids',  'Dids@example.com');
-INSERT INTO UserAccounts (user_id, password, first_name, last_name, email) VALUES ('10', 'password', 'Damir', 'Mijailovic', 'Damir.Mijailovic@example.com');
-INSERT INTO UserAccounts (user_id, password, first_name, last_name, email) VALUES ('11', 'password', 'Marlene', 'Leppänen', 'Marlene.Leppänen@example.com');
+INSERT INTO Users (user_id, password, first_name, last_name, email, wallet_id) VALUES ('1', 'password', 'John', 'Smith', 'john.smith@example.com', '13425123');
+INSERT INTO Users (user_id, password, first_name, last_name, email) VALUES ('2', 'password', 'Jane', 'Smith', 'jane.smith@example.com');
+INSERT INTO Users (user_id, password, first_name, last_name, email) VALUES ('3', 'password', 'Maria', 'Eduarda Loura Magalhães', 'maria.magalhaes@example.com');
+INSERT INTO Users (user_id, password, first_name, email) VALUES ('4', 'password', 'ThisIsEngineering', 'thisisengineering@example.com');
+INSERT INTO Users (user_id, password, first_name, last_name, email) VALUES ('5', 'password', 'Ryutaro', 'Tsukata', 'Ryutaro.Tsukata@example.com');
+INSERT INTO Users (user_id, password, first_name, last_name, email) VALUES ('6', 'password', 'Twiggy', 'Jia', 'Twiggy.Jia@example.com');
+INSERT INTO Users (user_id, password, first_name, last_name, email) VALUES ('7', 'password', 'Alexander', 'Ant', 'Alexander.Ant@example.com');
+INSERT INTO Users (user_id, password, first_name, last_name, email) VALUES ('8', 'password', 'Anni', 'Roenkae', 'AnniRoenkae@example.com');
+INSERT INTO Users (user_id, password, first_name, email) VALUES ('9', 'password', 'Dids',  'Dids@example.com');
+INSERT INTO Users (user_id, password, first_name, last_name, email) VALUES ('10', 'password', 'Damir', 'Mijailovic', 'Damir.Mijailovic@example.com');
+INSERT INTO Users (user_id, password, first_name, last_name, email) VALUES ('11', 'password', 'Marlene', 'Leppänen', 'Marlene.Leppänen@example.com');
 
-INSERT INTO UserAccounts (user_id, password, first_name, last_name, email) VALUES ('12', 'password', 'Ishara', 'Kasthuriarachchi', 'Ishara.Kasthuriarachchi@example.com');
-INSERT INTO UserAccounts (user_id, password, first_name, email) VALUES ('13', 'password', 'Anthony',  'Anthony@example.com');
-INSERT INTO UserAccounts (user_id, password, first_name, last_name, email) VALUES ('14', 'password', 'Julia', 'Sakelli', 'Julia.Sakelli@example.com');
-INSERT INTO UserAccounts (user_id, password, first_name, email) VALUES ('15', 'password', 'Pixabay', 'Pixabay@example.com');
+INSERT INTO Users (user_id, password, first_name, last_name, email) VALUES ('12', 'password', 'Ishara', 'Kasthuriarachchi', 'Ishara.Kasthuriarachchi@example.com');
+INSERT INTO Users (user_id, password, first_name, email) VALUES ('13', 'password', 'Anthony',  'Anthony@example.com');
+INSERT INTO Users (user_id, password, first_name, last_name, email) VALUES ('14', 'password', 'Julia', 'Sakelli', 'Julia.Sakelli@example.com');
+INSERT INTO Users (user_id, password, first_name, email) VALUES ('15', 'password', 'Pixabay', 'Pixabay@example.com');
 
 INSERT INTO FileTypes ( filetype_id, filetype_name) VALUES ('1', 'JPEG');
 INSERT INTO FileTypes ( filetype_id, filetype_name) VALUES ('2', 'PNG');
