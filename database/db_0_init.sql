@@ -122,68 +122,68 @@ INSERT INTO Assets ( token_id, item_name, item_description, image_url, image_thu
 VALUES ('123130', 'Neon Woman', 'Artistic woman with painted face in UV light',
       'https://images.pexels.com/photos/4856662/pexels-photo-4856662.jpeg',
       'https://images.pexels.com/photos/4856662/pexels-photo-4856662.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-      '2304 x 3456', '1', '1', , '3', '1'
+      '2304 x 3456', '1', '1', '3', '1'
      );
 INSERT INTO Assets ( token_id, item_name, item_description, image_url, image_thumbnail_url, image_resolution, image_filetype_id, license_type_id, original_owner, current_owner) 
 VALUES ('123131', 'Purple Jellyfish', 'A Pair of Purple Jellyfishes Floating Underwater',
       'https://images.pexels.com/photos/8601366/pexels-photo-8601366.jpeg',
       'https://images.pexels.com/photos/8601366/pexels-photo-8601366.jpeg?cs=srgb&dl=pexels-twiggy-jia-8601366.jpg&fm=jpg&w=640&h=960',
-      '3840 x 5760', '1', '1', , '6', '2'
+      '3840 x 5760', '1', '1', '6', '2'
      );
 INSERT INTO Assets ( token_id, item_name, item_description, image_url, image_thumbnail_url, image_resolution, image_filetype_id, license_type_id, original_owner, current_owner) 
 VALUES ('123132', 'Paint Swirl', 'Colorful mix of neon paints swirling on black surface',
       'https://images.pexels.com/photos/4585185/pexels-photo-4585185.jpeg',
       'https://images.pexels.com/photos/4585185/pexels-photo-4585185.jpeg?cs=srgb&dl=pexels-alexander-ant-4585185.jpg&fm=jpg&w=640&h=960',
-      '4480 x 6720', '1', '1', , '7', '2'
+      '4480 x 6720', '1', '1', '7', '2'
      );
 INSERT INTO Assets ( token_id, item_name, item_description, image_url, image_thumbnail_url, image_resolution, image_filetype_id, license_type_id, original_owner, current_owner) 
 VALUES ('123133', 'Pink & Black', 'Pink and Black Illustration',
       'https://images.pexels.com/photos/3109816/pexels-photo-3109816.png',
       'https://images.pexels.com/photos/3109816/pexels-photo-3109816.png?cs=srgb&dl=pexels-anni-roenkae-3109816.jpg&fm=jpg&w=640&h=480',
-      '4000 x 3000', '1', '1', , '8', '2'
+      '4000 x 3000', '1', '1', '8', '2'
      );
 INSERT INTO Assets ( token_id, item_name, item_description, image_url, image_thumbnail_url, image_resolution, image_filetype_id, license_type_id, original_owner, current_owner) 
 VALUES ('123134', 'Abstract Pink', 'Pink and Multicolored Abstract Painting',
       'https://images.pexels.com/photos/2911544/pexels-photo-2911544.jpeg',
       'https://images.pexels.com/photos/2911544/pexels-photo-2911544.jpeg?cs=srgb&dl=pexels-dids-2911544.jpg&fm=jpg&w=640&h=853',
-      '3456 x 4608','1', '1', , '9', '2'
+      '3456 x 4608','1', '1', '9', '2'
      );
 INSERT INTO Assets ( token_id, item_name, item_description, image_url, image_thumbnail_url, image_resolution, image_filetype_id, license_type_id, original_owner, current_owner) 
 VALUES ('123135', 'Bright Abstract', 'Bright painted abstract background with flow effect and spots',
       'https://images.pexels.com/photos/3651579/pexels-photo-3651579.jpeg',
       'https://images.pexels.com/photos/3651579/pexels-photo-3651579.jpeg?cs=srgb&dl=pexels-damir-mijailovic-3651579.jpg&fm=jpg&w=640&h=960',
-      '2848 x 4272','1', '1', , '10', '2'
+      '2848 x 4272','1', '1', '10', '2'
      );
 INSERT INTO Assets ( token_id, item_name, item_description, image_url, image_thumbnail_url, image_resolution, image_filetype_id, license_type_id, original_owner, current_owner) 
 VALUES ('123136', 'Faceless', 'Faceless person standing with glowing neon threads on shoulders',
       'https://images.pexels.com/photos/5621016/pexels-photo-5621016.jpeg',
       'https://images.pexels.com/photos/5621016/pexels-photo-5621016.jpeg?cs=srgb&dl=pexels-marlene-lepp%C3%A4nen-5621016.jpg&fm=jpg&w=640&h=853',
-      '3024 x 4032','1', '1', , '11', '2'
+      '3024 x 4032','1', '1', '11', '2'
      );
 INSERT INTO Assets ( token_id, item_name, item_description, image_url, image_thumbnail_url, image_resolution, image_filetype_id, license_type_id, original_owner, current_owner) 
 VALUES ('124343', 'Cyber Girl', 'Code Projected Over Woman',
       'https://images.pexels.com/photos/3861969/pexels-photo-3861969.jpeg',
       'https://images.pexels.com/photos/3861969/pexels-photo-3861969.jpeg?cs=srgb&dl=pexels-thisisengineering-3861969.jpg&fm=jpg&w=640&h=427',
-      '7330 x 4889','1', '1', , '4', '4'
+      '7330 x 4889','1', '1', '4', '4'
      );
 
 INSERT INTO Assets ( token_id, item_name, item_description, image_url, image_thumbnail_url, image_resolution, image_filetype_id, license_type_id, original_owner, current_owner) 
 VALUES ('2373453', 'Random Ape', 'Monochrome Photography of a Chimpanzee',
       'https://images.pexels.com/photos/605223/pexels-photo-605223.jpeg',
       'https://images.pexels.com/photos/605223/pexels-photo-605223.jpeg?cs=srgb&dl=pexels-ishara-kasthuriarachchi-605223.jpg&fm=jpg&w=640&h=852',
-      '2000 x 2664','1', '1', , '12', '4'
+      '2000 x 2664','1', '1', '12', '4'
      );
 INSERT INTO Assets ( token_id, item_name, item_description, image_url, image_thumbnail_url, image_resolution, image_filetype_id, license_type_id, original_owner, current_owner) 
 VALUES ('2623426', 'Yellow Rose', 'Yellow Rose',
       'https://images.pexels.com/photos/133472/pexels-photo-133472.jpeg',
       'https://images.pexels.com/photos/133472/pexels-photo-133472.jpeg?cs=srgb&dl=pexels-anthony-%F0%9F%93%B7%F0%9F%93%B9%F0%9F%99%82-133472.jpg&fm=jpg&w=640&h=960',
-      '3456 x 5184','1', '1', , '13', '1'
+      '3456 x 5184','1', '1', '13', '1'
      );
 INSERT INTO Assets ( token_id, item_name, item_description, image_url, image_thumbnail_url, image_resolution, image_filetype_id, license_type_id, original_owner, current_owner) 
 VALUES ('3032346', 'Succulent', 'Green Orchid Plant',
       'https://images.pexels.com/photos/1011302/pexels-photo-1011302.jpeg',
       'https://images.pexels.com/photos/1011302/pexels-photo-1011302.jpeg?cs=srgb&dl=pexels-julia-sakelli-1011302.jpg&fm=jpg&w=640&h=966',
-      '2448 x 3696','1', '1', , '14', '1'
+      '2448 x 3696','1', '1', '14', '1'
      );
 INSERT INTO Assets ( token_id, item_name, item_description, image_url, image_thumbnail_url, image_resolution, image_filetype_id, license_type_id, original_owner, current_owner) 
 VALUES ('23734536', 'White Rose', 'White Rose',
@@ -224,8 +224,26 @@ INSERT INTO `Transactions` (`transaction_id`, `token_id`, `seller_id`, `buyer_id
 
 
 INSERT INTO AssetCategoryDescriptions ( category_id, category_name) VALUES ('1', 'photo');
+INSERT INTO AssetCategoryDescriptions ( category_id, category_name) VALUES ('2', 'art');
 
 INSERT INTO AssetCategories ( token_id, category_id) VALUES ('123129', '1');
+INSERT INTO AssetCategories ( token_id, category_id) VALUES ('123130', '1');
+INSERT INTO AssetCategories ( token_id, category_id) VALUES ('123131', '1');
+INSERT INTO AssetCategories ( token_id, category_id) VALUES ('123132', '1');
+INSERT INTO AssetCategories ( token_id, category_id) VALUES ('123133', '1');
+INSERT INTO AssetCategories ( token_id, category_id) VALUES ('123134', '1');
+INSERT INTO AssetCategories ( token_id, category_id) VALUES ('123135', '1');
+INSERT INTO AssetCategories ( token_id, category_id) VALUES ('123136', '1');
+INSERT INTO AssetCategories ( token_id, category_id) VALUES ('124343', '1');
+INSERT INTO AssetCategories ( token_id, category_id) VALUES ('2373453', '1');
+INSERT INTO AssetCategories ( token_id, category_id) VALUES ('2623426', '1');
+INSERT INTO AssetCategories ( token_id, category_id) VALUES ('3032346', '1');
+INSERT INTO AssetCategories ( token_id, category_id) VALUES ('23734536', '1');
+
+INSERT INTO AssetCategories ( token_id, category_id) VALUES ('123135', '2');
+INSERT INTO AssetCategories ( token_id, category_id) VALUES ('123136', '2');
+INSERT INTO AssetCategories ( token_id, category_id) VALUES ('124343', '2');
+INSERT INTO AssetCategories ( token_id, category_id) VALUES ('2373453', '2');
 
 INSERT INTO AssetsListedForSale ( token_id, selling_price, time_listed) VALUES ('123129', '0.3', '2023-08-23 17:36:27.39');
 INSERT INTO AssetsListedForSale ( token_id, selling_price, time_listed) VALUES ('123130', '0.55', '2023-08-25 04:22:34.60');
