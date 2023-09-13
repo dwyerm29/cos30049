@@ -43,3 +43,7 @@ SELECT DISTINCT assets.token_id, item_name, item_description, image_url, image_t
     JOIN licensetypes ON assets.license_type_id=licensetypes.license_type_id
     JOIN assetcategories ON assets.token_id=assetcategories.token_id
     WHERE assetcategories.category_id='1' OR assetcategories.category_id='2'
+
+
+--check whether a user's login is correct. Returns a user if correct, or nothing if not correct
+SELECT user_id, first_name, last_name, email, wallet_id FROM users WHERE email='john.smith@example.com' AND password='password'

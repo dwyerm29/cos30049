@@ -144,6 +144,36 @@ def get_asset_categories():
         return {"error": f"Error: {err}"}
 
 
+class LoginRequest(BaseModel):
+    email: str
+    password: str
+
+
+# check whether a user's username and password are correct. returns a user object if successful, or empty response if unsuccessful
+@app.post("/login/")
+def login(login: LoginRequest):
+    try:
+        connection = mysql.connector.connect(**db_config)
+        cursor = connection.cursor()
+        query = (
+            "SELECT user_id, first_name, last_name, email, wallet_id FROM users WHERE email='"
+            + login.email
+            + "' AND password='"
+            + login.password
+            + "'"
+        )
+        print(query)
+        cursor.execute(query)
+        result = cursor.fetchall()
+        user = [dict(zip(cursor.column_names, row)) for row in result]
+        cursor.close()
+        connection.close()
+        return user
+    except mysql.connector.Error as err:
+        return {"error": f"Error: {err}"}
+
+
+# ! Everything below here is examples from the tutorials that I have left in case we need them. To be deleted later.
 @app.get("/")
 async def funcTest1():
     return "Hello, this is fastAPI data"
