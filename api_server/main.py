@@ -110,6 +110,33 @@ def get_listed_assets():
         return {"error": f"Error: {err}"}
 
 
+# searches through listed assets for a single term
+# ! should be expanded in the future to enable multiple independant terms
+@app.get("/listed_assets/search/{search_term}")
+def get_listed_assets_search(search_term: str):
+    try:
+        connection = mysql.connector.connect(**db_config)
+        cursor = connection.cursor()
+        query = (
+            "SELECT assets.token_id, item_name, item_description, image_url, image_thumbnail_url, image_resolution, selling_price, time_listed, filetype_name, license_name FROM assets JOIN assetslistedforsale ON assets.token_id=assetslistedforsale.token_id JOIN filetypes on assets.image_filetype_id=filetypes.filetype_id JOIN licensetypes on assets.license_type_id=licensetypes.license_type_id WHERE item_name LIKE '%"
+            + search_term
+            + "%' OR item_description LIKE '%"
+            + search_term
+            + "%' OR assets.token_id ='"
+            + search_term
+            + "'"
+        )
+        cursor.execute(query)
+        result = cursor.fetchall()
+        print(result)
+        assets = [dict(zip(cursor.column_names, row)) for row in result]
+        cursor.close()
+        connection.close()
+        return assets
+    except mysql.connector.Error as err:
+        return {"error": f"Error: {err}"}
+
+
 # return a list of transactions that a particular user has been involved in
 @app.get("/user_transactions/")
 def get_user_transactions():
