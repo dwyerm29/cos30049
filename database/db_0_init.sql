@@ -229,8 +229,6 @@ INSERT INTO AssetCategoryDescriptions ( category_id, category_name) VALUES ('2',
 INSERT INTO AssetCategories ( token_id, category_id) VALUES ('123129', '1');
 INSERT INTO AssetCategories ( token_id, category_id) VALUES ('123130', '1');
 INSERT INTO AssetCategories ( token_id, category_id) VALUES ('123131', '1');
-INSERT INTO AssetCategories ( token_id, category_id) VALUES ('123132', '1');
-INSERT INTO AssetCategories ( token_id, category_id) VALUES ('123133', '1');
 INSERT INTO AssetCategories ( token_id, category_id) VALUES ('123134', '1');
 INSERT INTO AssetCategories ( token_id, category_id) VALUES ('123135', '1');
 INSERT INTO AssetCategories ( token_id, category_id) VALUES ('123136', '1');
@@ -240,6 +238,9 @@ INSERT INTO AssetCategories ( token_id, category_id) VALUES ('2623426', '1');
 INSERT INTO AssetCategories ( token_id, category_id) VALUES ('3032346', '1');
 INSERT INTO AssetCategories ( token_id, category_id) VALUES ('23734536', '1');
 
+INSERT INTO AssetCategories ( token_id, category_id) VALUES ('123132', '2');
+INSERT INTO AssetCategories ( token_id, category_id) VALUES ('123133', '2');
+INSERT INTO AssetCategories ( token_id, category_id) VALUES ('123134', '2');
 INSERT INTO AssetCategories ( token_id, category_id) VALUES ('123135', '2');
 INSERT INTO AssetCategories ( token_id, category_id) VALUES ('123136', '2');
 INSERT INTO AssetCategories ( token_id, category_id) VALUES ('124343', '2');
