@@ -13,10 +13,14 @@ import AccountTradingHistoryTable from "../components/AccountTradingHistoryTable
 import AccountListedAssetsTable from "../components/AccountListedAssetsTable";
 import AccountOwnedAssetsTable from "../components/AccountOwnedAssetsTable";
 
+import { useSelector, useDispatch } from "react-redux";
+
 const userFirstName = "John";
 const userLastName = "Smith";
 
 export const Account = () => {
+  const user = useSelector((state) => state.user);
+
   return (
     <Container>
       <Box sx={{ mt: 2, borderRadius: 2 }}>
@@ -34,9 +38,20 @@ export const Account = () => {
                   <CardContent>
                     <Typography variant="h4">Account Overview</Typography>
                     <Typography variant="h6">
-                      Welcome Back, {userFirstName} {userLastName}
+                      Welcome Back, {user.first_name} {user.first_name}
                     </Typography>
-                    <Typography variant="body">Wallet ID: 13425123</Typography>
+                    <Typography variant="body">
+                      User ID: {user.user_id}
+                      <br />
+                    </Typography>
+                    <Typography variant="body">
+                      Wallet ID: {user.wallet_id}
+                      <br />
+                    </Typography>
+                    <Typography variant="body">
+                      Email: {user.email}
+                      <br />
+                    </Typography>
                   </CardContent>
                 </CardActionArea>
               </Card>

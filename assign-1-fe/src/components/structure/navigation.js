@@ -10,6 +10,7 @@ import { ItemDetails } from "../../pages/ItemDetails";
 import { Checkout } from "../../pages/Checkout";
 import { OrderSummary } from "../../pages/OrderSummary";
 import { AxiosTest } from "../../pages/AxiosTest";
+import { CounterGrid } from "../../features/counter/CounterGrid";
 
 export const navigation = [
   {
@@ -81,6 +82,20 @@ export const navigation = [
     isMenu: false,
     isPrivate: false,
   },
+  {
+    path: "/AxiosTest",
+    name: "AxiosTest",
+    element: <AxiosTest />,
+    isMenu: false,
+    isPrivate: false,
+  },
+  {
+    path: "/Counter",
+    name: "Counter",
+    element: <CounterGrid />,
+    isMenu: false,
+    isPrivate: false,
+  },
   //Only shows when is private is true
   {
     path: "/account",
@@ -88,12 +103,5 @@ export const navigation = [
     element: <Account />,
     isMenu: true,
     isPrivate: true,
-  },
-  {
-    path: "/AxiosTest",
-    name: "AxiosTest",
-    element: <AxiosTest />,
-    isMenu: true,
-    isPrivate: false,
   },
 ];
