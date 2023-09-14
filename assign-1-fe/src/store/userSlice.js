@@ -10,7 +10,7 @@ export const userSlice = createSlice({
     wallet_id: 0,
   },
   reducers: {
-    setUser: (state, action) => {
+    setStoreUser: (state, action) => {
       state.value += 1;
       state.user_id = action.payload.user_id;
       state.first_name = action.payload.first_name;
@@ -22,6 +22,6 @@ export const userSlice = createSlice({
 });
 
 // Action creators are generated for each case reducer function
-export const { setUser } = userSlice.actions;
+export const { setStoreUser } = userSlice.actions;
 
 export default userSlice.reducer;

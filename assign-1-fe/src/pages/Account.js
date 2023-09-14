@@ -38,7 +38,7 @@ export const Account = () => {
                   <CardContent>
                     <Typography variant="h4">Account Overview</Typography>
                     <Typography variant="h6">
-                      Welcome Back, {user.first_name} {user.first_name}
+                      Welcome Back, {user.first_name} {user.last_name}
                     </Typography>
                     <Typography variant="body">
                       User ID: {user.user_id}
