@@ -138,12 +138,18 @@ def get_listed_assets_search(search_term: str):
 
 
 # return a list of transactions that a particular user has been involved in
-@app.get("/user_transactions/")
-def get_user_transactions():
+@app.get("/user_transactions/{user_id}")
+def get_user_transactions(user_id: int):
     try:
         connection = mysql.connector.connect(**db_config)
         cursor = connection.cursor()
-        query = "SELECT * FROM transactions WHERE seller_id = '1' OR buyer_id = '1'"
+        query = (
+            "SELECT * FROM transactions WHERE seller_id = '"
+            + str(user_id)
+            + "' OR buyer_id = '"
+            + str(user_id)
+            + "'"
+        )
         cursor.execute(query)
         result = cursor.fetchall()
         assets = [dict(zip(cursor.column_names, row)) for row in result]
