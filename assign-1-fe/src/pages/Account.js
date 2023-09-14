@@ -13,10 +13,7 @@ import AccountTradingHistoryTable from "../components/AccountTradingHistoryTable
 import AccountListedAssetsTable from "../components/AccountListedAssetsTable";
 import AccountOwnedAssetsTable from "../components/AccountOwnedAssetsTable";
 
-import { useSelector, useDispatch } from "react-redux";
-
-const userFirstName = "John";
-const userLastName = "Smith";
+import { useSelector } from "react-redux";
 
 export const Account = () => {
   const user = useSelector((state) => state.user);

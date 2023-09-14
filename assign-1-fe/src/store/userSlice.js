@@ -8,20 +8,30 @@ export const userSlice = createSlice({
     last_name: "",
     email: "",
     wallet_id: 0,
+    isAuthenticated: false,
   },
   reducers: {
-    setStoreUser: (state, action) => {
+    setUser: (state, action) => {
       state.value += 1;
       state.user_id = action.payload.user_id;
       state.first_name = action.payload.first_name;
       state.last_name = action.payload.last_name;
       state.email = action.payload.email;
       state.wallet_id = action.payload.wallet_id;
+      state.isAuthenticated = action.payload.isAuthenticated;
+    },
+    clearUser: (state) => {
+      state.user_id = 0;
+      state.first_name = "";
+      state.last_name = "";
+      state.email = "";
+      state.wallet_id = 0;
+      state.isAuthenticated = false;
     },
   },
 });
 
 // Action creators are generated for each case reducer function
-export const { setStoreUser } = userSlice.actions;
+export const { setUser, clearUser } = userSlice.actions;
 
 export default userSlice.reducer;

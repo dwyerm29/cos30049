@@ -106,10 +106,11 @@ export const Menu = () => {
 
       <div className="hidden md:flex gap-5">
         {user.isAuthenticated ? (
-          <Button className="hidden md:flex hover:bg-gray-300  bg-gray-900 px-2">
-            <Link to="/login" onClick={logout}>
-              Log out
-            </Link>
+          <Button
+            className="hidden md:flex hover:bg-gray-300  bg-gray-900 px-2"
+            onClick={logout}
+          >
+            Log out
           </Button>
         ) : (
           <Button className="hidden md:flex hover:bg-gray-300  bg-gray-900 px-2">
@@ -169,7 +170,7 @@ export const Menu = () => {
         <div className="flex justify-between items-center p-4 md:hidden">
           {user.isAuthenticated ? (
             <div className="uppercase ">
-              <CustomLink to="/login" onClick={logout}>
+              <CustomLink to="/" onClick={(logout, handleNav)}>
                 Log out
               </CustomLink>
             </div>
@@ -183,7 +184,7 @@ export const Menu = () => {
           )}
         </div>
         <div className="uppercase flex justify-between items-center p-4 md:hidden">
-          <CustomLink to="/cart">
+          <CustomLink to="/cart" onClick={handleNav}>
             <AiOutlineShoppingCart size={20} />
             <span>Cart</span>
           </CustomLink>
