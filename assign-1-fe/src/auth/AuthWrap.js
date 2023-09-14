@@ -15,7 +15,9 @@ export function AuthWrapper() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  if (localStorage.getItem("user").length > 0) {
+  console.log(localStorage.getItem("user"));
+
+  if (localStorage.getItem("user") != null) {
     dispatch(setUser(JSON.parse(localStorage.getItem("user"))));
   }
   const user = useSelector((state) => state.user);
@@ -33,21 +35,13 @@ export function AuthWrapper() {
             localStorage.setItem(
               "user",
               JSON.stringify({
-                user_id: response.data[0].user_id,
-                first_name: response.data[0].first_name,
-                last_name: response.data[0].last_name,
-                email: response.data[0].email,
-                wallet_id: response.data[0].wallet_id,
+                ...response.data[0],
                 isAuthenticated: true,
               })
             );
             dispatch(
               setUser({
-                user_id: response.data[0].user_id,
-                first_name: response.data[0].first_name,
-                last_name: response.data[0].last_name,
-                email: response.data[0].email,
-                wallet_id: response.data[0].wallet_id,
+                ...response.data[0],
                 isAuthenticated: true,
               })
             );
@@ -64,7 +58,7 @@ export function AuthWrapper() {
 
   const logout = () => {
     dispatch(clearUser());
-    localStorage.setItem("user", "");
+    localStorage.removeItem("user");
     navigate("/");
   };
 
