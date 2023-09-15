@@ -16,7 +16,7 @@ export default function AccountTradingHistoryTable({ user_id }) {
 
   useEffect(() => {
     axios
-      .get(`http://127.0.0.1:8000/user_transactions/${user_id}`)
+      .get(`http://127.0.0.1:8000/user/${user_id}/transactions/`)
       .then((response) => {
         var tempTransactions = [];
         if (response.data.length > 0) {

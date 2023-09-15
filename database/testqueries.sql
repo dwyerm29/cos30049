@@ -54,6 +54,26 @@ FROM
     JOIN filetypes ON assets.image_filetype_id = filetypes.filetype_id
     JOIN licensetypes ON assets.license_type_id = licensetypes.license_type_id;
 
+
+-- get a list of a user's assets listed for sale along with other info
+SELECT
+    assets.token_id,
+    item_name,
+    item_description,
+    image_url,
+    image_thumbnail_url,
+    image_resolution,
+    selling_price,
+    time_listed,
+    filetype_name,
+    license_name
+FROM
+    assets
+    JOIN assetslistedforsale ON assets.token_id = assetslistedforsale.token_id
+    JOIN filetypes ON assets.image_filetype_id = filetypes.filetype_id
+    JOIN licensetypes ON assets.license_type_id = licensetypes.license_type_id
+WHERE assets.current_owner='1';
+
 -- get information for a single asset, along with details like selling price if it exists
 SELECT
     assets.token_id,

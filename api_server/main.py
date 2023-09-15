@@ -138,7 +138,7 @@ def get_listed_assets_search(search_term: str):
 
 
 # return a list of transactions that a particular user has been involved in
-@app.get("/user_transactions/{user_id}")
+@app.get("/user/{user_id}/transactions")
 def get_user_transactions(user_id: int):
     try:
         connection = mysql.connector.connect(**db_config)
@@ -147,6 +147,27 @@ def get_user_transactions(user_id: int):
             "SELECT transaction_id, transactions.token_id, seller_id, buyer_id, sale_price, sale_time, item_name, item_description, image_url, image_thumbnail_url, image_resolution, filetype_name, license_name FROM transactions JOIN assets ON transactions.token_id=assets.token_id JOIN filetypes ON assets.image_filetype_id=filetypes.filetype_id JOIN licensetypes ON assets.license_type_id=licensetypes.license_type_id WHERE seller_id='"
             + str(user_id)
             + "' OR buyer_id = '"
+            + str(user_id)
+            + "'"
+        )
+        cursor.execute(query)
+        result = cursor.fetchall()
+        assets = [dict(zip(cursor.column_names, row)) for row in result]
+        cursor.close()
+        connection.close()
+        return assets
+    except mysql.connector.Error as err:
+        return {"error": f"Error: {err}"}
+
+
+# return a list of assets that a particular user has for sale
+@app.get("/user/{user_id}/listed_assets")
+def get_user_transactions(user_id: int):
+    try:
+        connection = mysql.connector.connect(**db_config)
+        cursor = connection.cursor()
+        query = (
+            "SELECT assets.token_id, item_name, item_description, image_url, image_thumbnail_url, image_resolution, selling_price, time_listed, filetype_name, license_name FROM assets JOIN assetslistedforsale ON assets.token_id = assetslistedforsale.token_id JOIN filetypes ON assets.image_filetype_id = filetypes.filetype_id JOIN licensetypes ON assets.license_type_id = licensetypes.license_type_id WHERE assets.current_owner='"
             + str(user_id)
             + "'"
         )
