@@ -227,6 +227,7 @@ INSERT INTO `Transactions` (`transaction_id`, `token_id`, `seller_id`, `buyer_id
 
 INSERT INTO AssetCategoryDescriptions ( category_id, category_name) VALUES ('1', 'photo');
 INSERT INTO AssetCategoryDescriptions ( category_id, category_name) VALUES ('2', 'art');
+INSERT INTO AssetCategoryDescriptions ( category_id, category_name) VALUES ('3', 'featured');
 
 INSERT INTO AssetCategories ( token_id, category_id) VALUES ('123129', '1');
 INSERT INTO AssetCategories ( token_id, category_id) VALUES ('123130', '1');
@@ -247,6 +248,17 @@ INSERT INTO AssetCategories ( token_id, category_id) VALUES ('123135', '2');
 INSERT INTO AssetCategories ( token_id, category_id) VALUES ('123136', '2');
 INSERT INTO AssetCategories ( token_id, category_id) VALUES ('124343', '2');
 INSERT INTO AssetCategories ( token_id, category_id) VALUES ('2373453', '2');
+
+INSERT INTO AssetCategories ( token_id, category_id) VALUES ('123132', '3');
+INSERT INTO AssetCategories ( token_id, category_id) VALUES ('123133', '3');
+INSERT INTO AssetCategories ( token_id, category_id) VALUES ('123134', '3');
+INSERT INTO AssetCategories ( token_id, category_id) VALUES ('123135', '3');
+INSERT INTO AssetCategories ( token_id, category_id) VALUES ('123136', '3');
+INSERT INTO AssetCategories ( token_id, category_id) VALUES ('124343', '3');
+INSERT INTO AssetCategories ( token_id, category_id) VALUES ('2373453', '3');
+INSERT INTO AssetCategories ( token_id, category_id) VALUES ('3032346', '3');
+
+
 
 INSERT INTO AssetsListedForSale ( token_id, selling_price, time_listed) VALUES ('123129', '0.3', '2023-08-23 17:36:27.39');
 INSERT INTO AssetsListedForSale ( token_id, selling_price, time_listed) VALUES ('123130', '0.55', '2023-08-25 04:22:34.60');

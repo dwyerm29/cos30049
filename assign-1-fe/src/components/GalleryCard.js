@@ -11,8 +11,6 @@ import {
 
 import { Link } from "react-router-dom";
 
-import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
-
 const Img = styled("img")({
   margin: "auto",
   display: "block",
@@ -20,6 +18,7 @@ const Img = styled("img")({
   maxHeight: "100%",
 });
 export default function GalleryCard({
+  itemName,
   imageSRC,
   currentPrice,
   fullRes,
@@ -59,9 +58,10 @@ export default function GalleryCard({
               <Grid item xs container direction="column" spacing={2}>
                 <Grid item xs>
                   <Typography gutterBottom variant="subtitle1">
-                    {licenseType} license
+                    {itemName}
                   </Typography>
                   <Typography variant="body2" gutterBottom>
+                    {licenseType} license <br />
                     Full resolution
                     <br />
                     {fullRes} • {fileFormat}
@@ -73,7 +73,7 @@ export default function GalleryCard({
               </Grid>
               <Grid item>
                 <Typography variant="subtitle1" component="div">
-                  {currentPrice}
+                  {currentPrice} ETH
                 </Typography>
               </Grid>
             </Grid>

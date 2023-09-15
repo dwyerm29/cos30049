@@ -167,13 +167,35 @@ SELECT DISTINCT
     license_name
 FROM
     assets
-    LEFT JOIN assetslistedforsale ON assets.token_id = assetslistedforsale.token_id
+    JOIN assetslistedforsale ON assets.token_id = assetslistedforsale.token_id
     JOIN filetypes ON assets.image_filetype_id = filetypes.filetype_id
     JOIN licensetypes ON assets.license_type_id = licensetypes.license_type_id
     JOIN assetcategories ON assets.token_id = assetcategories.token_id
 WHERE
     assetcategories.category_id = '1'
     OR assetcategories.category_id = '2';
+
+--get a list of featured assets that are listed for sale
+SELECT
+    assets.token_id,
+    item_name,
+    item_description,
+    image_url,
+    image_thumbnail_url,
+    image_resolution,
+    selling_price,
+    time_listed,
+    filetype_name,
+    license_name
+FROM
+    assets
+    JOIN assetslistedforsale ON assets.token_id = assetslistedforsale.token_id
+    JOIN filetypes ON assets.image_filetype_id = filetypes.filetype_id
+    JOIN licensetypes ON assets.license_type_id = licensetypes.license_type_id
+    JOIN assetcategories ON assets.token_id = assetcategories.token_id
+    JOIN AssetCategoryDescriptions ON assetcategories.category_id=AssetCategoryDescriptions.category_id
+WHERE
+    AssetCategoryDescriptions.category_name = 'featured';
 
 --check whether a user's login is correct. Returns a user if correct, or nothing if not correct
 SELECT

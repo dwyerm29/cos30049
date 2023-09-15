@@ -110,6 +110,24 @@ def get_listed_assets():
         return {"error": f"Error: {err}"}
 
 
+# get a list of all featured assets listed for sale along with other info
+@app.get("/featured_assets/")
+def get_listed_assets():
+    try:
+        connection = mysql.connector.connect(**db_config)
+        cursor = connection.cursor()
+        query = "SELECT assets.token_id, item_name, item_description, image_url, image_thumbnail_url, image_resolution, selling_price, time_listed, filetype_name, license_name FROM assets JOIN assetslistedforsale ON assets.token_id = assetslistedforsale.token_id JOIN filetypes ON assets.image_filetype_id = filetypes.filetype_id JOIN licensetypes ON assets.license_type_id = licensetypes.license_type_id JOIN assetcategories ON assets.token_id = assetcategories.token_id JOIN AssetCategoryDescriptions ON assetcategories.category_id=AssetCategoryDescriptions.category_id WHERE AssetCategoryDescriptions.category_name = 'featured'"
+        cursor.execute(query)
+        result = cursor.fetchall()
+        print(result)
+        assets = [dict(zip(cursor.column_names, row)) for row in result]
+        cursor.close()
+        connection.close()
+        return assets
+    except mysql.connector.Error as err:
+        return {"error": f"Error: {err}"}
+
+
 # searches through listed assets for a single term
 # ! should be expanded in the future to enable multiple independant terms
 @app.get("/listed_assets/search/{search_term}")
