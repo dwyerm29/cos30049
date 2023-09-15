@@ -42,6 +42,7 @@ CREATE TABLE `Assets` (
   `license_type_id` INT NOT NULL,
   `original_owner` INT NOT NULL,
   `current_owner` INT NOT NULL,
+  `sale_price` DOUBLE,
   PRIMARY KEY (`token_id`)
 );
 
@@ -112,53 +113,53 @@ INSERT INTO LicenseTypes ( license_type_id, license_name) VALUES ('2', 'Standard
 
 
 
-INSERT INTO Assets ( token_id, item_name, item_description, image_url, image_thumbnail_url, image_resolution, image_filetype_id, license_type_id, original_owner, current_owner) 
+INSERT INTO Assets ( token_id, item_name, item_description, image_url, image_thumbnail_url, image_resolution, image_filetype_id, license_type_id, original_owner, current_owner, sale_price) 
 VALUES ('123129', 'Moon Jellyfish', 'Moon Jellyfish Floating In Water',
       'https://images.pexels.com/photos/5472598/pexels-photo-5472598.jpeg',
       'https://images.pexels.com/photos/5472598/pexels-photo-5472598.jpeg?cs=srgb&dl=pexels-ryutaro-tsukata-5472598.jpg&fm=jpg&w=640&h=960',
-      '3407 x 5111','1','1', '5', '2'
+      '3407 x 5111','1','1', '5', '2', '0.31'
      );
-INSERT INTO Assets ( token_id, item_name, item_description, image_url, image_thumbnail_url, image_resolution, image_filetype_id, license_type_id, original_owner, current_owner) 
+INSERT INTO Assets ( token_id, item_name, item_description, image_url, image_thumbnail_url, image_resolution, image_filetype_id, license_type_id, original_owner, current_owner, sale_price) 
 VALUES ('123130', 'Neon Woman', 'Artistic woman with painted face in UV light',
       'https://images.pexels.com/photos/4856662/pexels-photo-4856662.jpeg',
       'https://images.pexels.com/photos/4856662/pexels-photo-4856662.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1',
-      '2304 x 3456', '1', '1', '3', '1'
+      '2304 x 3456', '1', '1', '3', '1', '0.4'
      );
-INSERT INTO Assets ( token_id, item_name, item_description, image_url, image_thumbnail_url, image_resolution, image_filetype_id, license_type_id, original_owner, current_owner) 
+INSERT INTO Assets ( token_id, item_name, item_description, image_url, image_thumbnail_url, image_resolution, image_filetype_id, license_type_id, original_owner, current_owner, sale_price) 
 VALUES ('123131', 'Purple Jellyfish', 'A Pair of Purple Jellyfishes Floating Underwater',
       'https://images.pexels.com/photos/8601366/pexels-photo-8601366.jpeg',
       'https://images.pexels.com/photos/8601366/pexels-photo-8601366.jpeg?cs=srgb&dl=pexels-twiggy-jia-8601366.jpg&fm=jpg&w=640&h=960',
-      '3840 x 5760', '1', '1', '6', '2'
+      '3840 x 5760', '1', '1', '6', '2', '0.64'
      );
-INSERT INTO Assets ( token_id, item_name, item_description, image_url, image_thumbnail_url, image_resolution, image_filetype_id, license_type_id, original_owner, current_owner) 
+INSERT INTO Assets ( token_id, item_name, item_description, image_url, image_thumbnail_url, image_resolution, image_filetype_id, license_type_id, original_owner, current_owner, sale_price) 
 VALUES ('123132', 'Paint Swirl', 'Colorful mix of neon paints swirling on black surface',
       'https://images.pexels.com/photos/4585185/pexels-photo-4585185.jpeg',
       'https://images.pexels.com/photos/4585185/pexels-photo-4585185.jpeg?cs=srgb&dl=pexels-alexander-ant-4585185.jpg&fm=jpg&w=640&h=960',
-      '4480 x 6720', '1', '1', '7', '2'
+      '4480 x 6720', '1', '1', '7', '2', '0.22'
      );
-INSERT INTO Assets ( token_id, item_name, item_description, image_url, image_thumbnail_url, image_resolution, image_filetype_id, license_type_id, original_owner, current_owner) 
+INSERT INTO Assets ( token_id, item_name, item_description, image_url, image_thumbnail_url, image_resolution, image_filetype_id, license_type_id, original_owner, current_owner, sale_price) 
 VALUES ('123133', 'Pink & Black', 'Pink and Black Illustration',
       'https://images.pexels.com/photos/3109816/pexels-photo-3109816.png',
       'https://images.pexels.com/photos/3109816/pexels-photo-3109816.png?cs=srgb&dl=pexels-anni-roenkae-3109816.jpg&fm=jpg&w=640&h=480',
-      '4000 x 3000', '1', '1', '8', '2'
+      '4000 x 3000', '1', '1', '8', '2', '0.67'
      );
-INSERT INTO Assets ( token_id, item_name, item_description, image_url, image_thumbnail_url, image_resolution, image_filetype_id, license_type_id, original_owner, current_owner) 
+INSERT INTO Assets ( token_id, item_name, item_description, image_url, image_thumbnail_url, image_resolution, image_filetype_id, license_type_id, original_owner, current_owner, sale_price) 
 VALUES ('123134', 'Abstract Pink', 'Pink and Multicolored Abstract Painting',
       'https://images.pexels.com/photos/2911544/pexels-photo-2911544.jpeg',
       'https://images.pexels.com/photos/2911544/pexels-photo-2911544.jpeg?cs=srgb&dl=pexels-dids-2911544.jpg&fm=jpg&w=640&h=853',
-      '3456 x 4608','1', '1', '9', '2'
+      '3456 x 4608','1', '1', '9', '2', '0.94'
      );
-INSERT INTO Assets ( token_id, item_name, item_description, image_url, image_thumbnail_url, image_resolution, image_filetype_id, license_type_id, original_owner, current_owner) 
+INSERT INTO Assets ( token_id, item_name, item_description, image_url, image_thumbnail_url, image_resolution, image_filetype_id, license_type_id, original_owner, current_owner, sale_price) 
 VALUES ('123135', 'Bright Abstract', 'Bright painted abstract background with flow effect and spots',
       'https://images.pexels.com/photos/3651579/pexels-photo-3651579.jpeg',
       'https://images.pexels.com/photos/3651579/pexels-photo-3651579.jpeg?cs=srgb&dl=pexels-damir-mijailovic-3651579.jpg&fm=jpg&w=640&h=960',
-      '2848 x 4272','1', '1', '10', '2'
+      '2848 x 4272','1', '1', '10', '2', '0.15'
      );
-INSERT INTO Assets ( token_id, item_name, item_description, image_url, image_thumbnail_url, image_resolution, image_filetype_id, license_type_id, original_owner, current_owner) 
+INSERT INTO Assets ( token_id, item_name, item_description, image_url, image_thumbnail_url, image_resolution, image_filetype_id, license_type_id, original_owner, current_owner, sale_price) 
 VALUES ('123136', 'Faceless', 'Faceless person standing with glowing neon threads on shoulders',
       'https://images.pexels.com/photos/5621016/pexels-photo-5621016.jpeg',
       'https://images.pexels.com/photos/5621016/pexels-photo-5621016.jpeg?cs=srgb&dl=pexels-marlene-lepp%C3%A4nen-5621016.jpg&fm=jpg&w=640&h=853',
-      '3024 x 4032','1', '1', '11', '2'
+      '3024 x 4032','1', '1', '11', '2', '0.55'
      );
 INSERT INTO Assets ( token_id, item_name, item_description, image_url, image_thumbnail_url, image_resolution, image_filetype_id, license_type_id, original_owner, current_owner) 
 VALUES ('124343', 'Cyber Girl', 'Code Projected Over Woman',
@@ -167,29 +168,29 @@ VALUES ('124343', 'Cyber Girl', 'Code Projected Over Woman',
       '7330 x 4889','1', '1', '4', '4'
      );
 
-INSERT INTO Assets ( token_id, item_name, item_description, image_url, image_thumbnail_url, image_resolution, image_filetype_id, license_type_id, original_owner, current_owner) 
+INSERT INTO Assets ( token_id, item_name, item_description, image_url, image_thumbnail_url, image_resolution, image_filetype_id, license_type_id, original_owner, current_owner, sale_price) 
 VALUES ('2373453', 'Random Ape', 'Monochrome Photography of a Chimpanzee',
       'https://images.pexels.com/photos/605223/pexels-photo-605223.jpeg',
       'https://images.pexels.com/photos/605223/pexels-photo-605223.jpeg?cs=srgb&dl=pexels-ishara-kasthuriarachchi-605223.jpg&fm=jpg&w=640&h=852',
-      '2000 x 2664','1', '1', '12', '4'
+      '2000 x 2664','1', '1', '12', '4', '0.43'
      );
-INSERT INTO Assets ( token_id, item_name, item_description, image_url, image_thumbnail_url, image_resolution, image_filetype_id, license_type_id, original_owner, current_owner) 
+INSERT INTO Assets ( token_id, item_name, item_description, image_url, image_thumbnail_url, image_resolution, image_filetype_id, license_type_id, original_owner, current_owner, sale_price) 
 VALUES ('2623426', 'Yellow Rose', 'Yellow Rose',
       'https://images.pexels.com/photos/133472/pexels-photo-133472.jpeg',
       'https://images.pexels.com/photos/133472/pexels-photo-133472.jpeg?cs=srgb&dl=pexels-anthony-%F0%9F%93%B7%F0%9F%93%B9%F0%9F%99%82-133472.jpg&fm=jpg&w=640&h=960',
-      '3456 x 5184','1', '1', '13', '1'
+      '3456 x 5184','1', '1', '13', '1', '0.34'
      );
-INSERT INTO Assets ( token_id, item_name, item_description, image_url, image_thumbnail_url, image_resolution, image_filetype_id, license_type_id, original_owner, current_owner) 
+INSERT INTO Assets ( token_id, item_name, item_description, image_url, image_thumbnail_url, image_resolution, image_filetype_id, license_type_id, original_owner, current_owner, sale_price) 
 VALUES ('3032346', 'Succulent', 'Green Orchid Plant',
       'https://images.pexels.com/photos/1011302/pexels-photo-1011302.jpeg',
       'https://images.pexels.com/photos/1011302/pexels-photo-1011302.jpeg?cs=srgb&dl=pexels-julia-sakelli-1011302.jpg&fm=jpg&w=640&h=966',
-      '2448 x 3696','1', '1', '14', '1'
+      '2448 x 3696','1', '1', '14', '1', '0.25'
      );
-INSERT INTO Assets ( token_id, item_name, item_description, image_url, image_thumbnail_url, image_resolution, image_filetype_id, license_type_id, original_owner, current_owner) 
+INSERT INTO Assets ( token_id, item_name, item_description, image_url, image_thumbnail_url, image_resolution, image_filetype_id, license_type_id, original_owner, current_owner, sale_price) 
 VALUES ('23734536', 'White Rose', 'White Rose',
       'https://images.pexels.com/photos/160916/flower-rose-colorful-petals-160916.jpeg',
       'https://images.pexels.com/photos/160916/flower-rose-colorful-petals-160916.jpeg?cs=srgb&dl=pexels-pixabay-160916.jpg&fm=jpg&w=640&h=432',
-      '8704 x 5872','1', '1', '15', '4'
+      '8704 x 5872','1', '1', '15', '4', '0.64'
      );
 
 
