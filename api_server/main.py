@@ -144,7 +144,7 @@ def get_user_transactions(user_id: int):
         connection = mysql.connector.connect(**db_config)
         cursor = connection.cursor()
         query = (
-            "SELECT * FROM transactions WHERE seller_id = '"
+            "SELECT transaction_id, transactions.token_id, seller_id, buyer_id, sale_price, sale_time, item_name, item_description, image_url, image_thumbnail_url, image_resolution, filetype_name, license_name FROM transactions JOIN assets ON transactions.token_id=assets.token_id JOIN filetypes ON assets.image_filetype_id=filetypes.filetype_id JOIN licensetypes ON assets.license_type_id=licensetypes.license_type_id WHERE seller_id='"
             + str(user_id)
             + "' OR buyer_id = '"
             + str(user_id)
