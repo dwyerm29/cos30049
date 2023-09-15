@@ -1,6 +1,5 @@
 import { Container, Box, Grid, Button, Paper } from "@mui/material";
-import { styled } from "@mui/material/styles";
-import Typography from "@mui/material/Typography";
+import { styled, Typography } from "@mui/material";
 import AddShoppingCart from "@mui/icons-material/AddShoppingCart";
 
 import { Link } from "react-router-dom";
