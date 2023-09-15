@@ -5,6 +5,7 @@ import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
+import Paper from "@mui/material/Paper";
 
 import axios from "axios";
 
@@ -40,7 +41,7 @@ export default function AccountTradingHistoryTable({ user_id }) {
   }, []);
 
   return (
-    <TableContainer>
+    <TableContainer component={Paper}>
       <Table stickyHeader aria-label="table" sx={{ mt: 1 }}>
         <TableHead>
           <TableRow sx={{ fontWeight: "bold" }}>

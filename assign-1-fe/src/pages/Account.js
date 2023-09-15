@@ -63,17 +63,13 @@ export const Account = () => {
           <Grid item xs={12} md={6}>
             <Paper sx={{ p: 1 }}>
               <Typography variant="h4">Currently Owned Assets</Typography>
-              <Typography variant="body">
-                <AccountOwnedAssetsTable />
-              </Typography>
+              <AccountOwnedAssetsTable />
             </Paper>
           </Grid>
           <Grid item xs={12} md={6}>
             <Paper sx={{ p: 1 }}>
               <Typography variant="h4">Assets Listed for Sale</Typography>
-              <Typography variant="body">
-                <AccountListedAssetsTable />
-              </Typography>
+              <AccountListedAssetsTable />
             </Paper>
           </Grid>
         </Grid>

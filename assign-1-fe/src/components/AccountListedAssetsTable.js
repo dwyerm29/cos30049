@@ -18,7 +18,7 @@ const rows = [
 
 export default function AccountListedAssetsTable() {
   return (
-    <TableContainer>
+    <TableContainer component={Paper}>
       <Table stickyHeader aria-label="table" sx={{ mt: 1 }}>
         <TableHead>
           <TableRow sx={{ fontWeight: "bold" }}>
