@@ -13,7 +13,6 @@ export const FeaturedItems = () => {
       .get(`http://127.0.0.1:8000/featured_assets/`)
       .then((response) => {
         setFeaturedItems(response.data);
-        console.log(response.data);
       })
       .catch((error) => {
         console.error("error here: ", error);

@@ -34,7 +34,7 @@ export const navigation = [
     isPrivate: false,
   },
   {
-    path: "/itemdetails",
+    path: "/itemdetails/:item_id",
     name: "ItemDetails",
     element: <ItemDetails />,
     isMenu: false,

@@ -25,8 +25,8 @@ export default function GalleryCard({
   fileFormat,
   ID,
   licenseType,
-  linkTo,
 }) {
+  const linkTo = `/itemdetails/${ID}`;
   return (
     <Card
       sx={{
@@ -35,7 +35,6 @@ export default function GalleryCard({
         maxWidth: 500,
         flexGrow: 1,
         backgroundColor: "#242424",
-        href: linkTo,
       }}
     >
       <CardActionArea component={Link} to={linkTo}>

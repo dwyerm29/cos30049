@@ -7,7 +7,7 @@ export default function GalleryGrid({ items }) {
     <Box sx={{ flexGrow: 1, pt: 2 }}>
       <Grid container spacing={2}>
         {items.map((item) => (
-          <Grid item xs={12} sm={6} md={3}>
+          <Grid item xs={12} sm={6} md={3} key={item.token_id}>
             <GalleryCard
               imageSRC={item.image_thumbnail_url}
               itemName={item.item_name}
@@ -16,7 +16,6 @@ export default function GalleryGrid({ items }) {
               fullRes={item.image_resolution}
               fileFormat={item.filetype_name}
               ID={item.token_id}
-              linkTo="/itemdetails"
             />
           </Grid>
         ))}
