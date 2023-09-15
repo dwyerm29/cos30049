@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, { useState, useEffect } from "react";
 import {
   Table,
   TableBody,
@@ -9,17 +9,21 @@ import {
   Paper,
 } from "@mui/material";
 
-function createData(name, id, dateTime, price) {
-  return { name, id, dateTime, price };
-}
+import axios from "axios";
 
-const rows = [
-  createData("Neon Woman", 1593245, "2023-08-26 05:16:31", 0.4),
-  createData("Beanie Baby #33", 2623426, "2023-08-20 07:32:47", 0.6),
-  createData("Digital Football Card", 3032346, "2023-08-05 15:32:45", 0.43),
-];
+export default function AccountOwnedAssetsTable({ user_id }) {
+  const [ownedAssets, setOwnedAssets] = useState([]);
 
-export default function AccountOwnedAssetsTable() {
+  useEffect(() => {
+    axios
+      .get(`http://127.0.0.1:8000/user/${user_id}/owned_assets/`)
+      .then((response) => {
+        setOwnedAssets(response.data);
+      })
+      .catch((error) => {
+        console.error("error here: ", error);
+      });
+  }, []);
   return (
     <TableContainer component={Paper}>
       <Table stickyHeader aria-label="table" sx={{ mt: 1 }}>
@@ -34,17 +38,17 @@ export default function AccountOwnedAssetsTable() {
           </TableRow>
         </TableHead>
         <TableBody>
-          {rows.map((row) => (
+          {ownedAssets.map((asset) => (
             <TableRow
-              key={row.name}
+              key={asset.token_id}
               sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
             >
               <TableCell component="th" scope="row">
-                {row.name}
+                {asset.item_name}
               </TableCell>
-              <TableCell>{row.id}</TableCell>
-              <TableCell>{row.dateTime}</TableCell>
-              <TableCell>{row.price} ETH</TableCell>
+              <TableCell>{asset.token_id}</TableCell>
+              <TableCell>{asset.transaction_datetime}</TableCell>
+              <TableCell>{asset.sale_price} ETH</TableCell>
             </TableRow>
           ))}
         </TableBody>

@@ -1,4 +1,5 @@
--- get a list of all assets for sale along with their current owner (DOES NOT WORK)
+-- ! DOES NOT WORK
+-- get a list of all assets for sale along with their current owner
 SELECT
     *
 FROM
@@ -53,6 +54,24 @@ FROM
     JOIN assetslistedforsale ON assets.token_id = assetslistedforsale.token_id
     JOIN filetypes ON assets.image_filetype_id = filetypes.filetype_id
     JOIN licensetypes ON assets.license_type_id = licensetypes.license_type_id;
+
+-- get a list of all assets owned by a user along with other info
+SELECT
+    assets.token_id,
+    item_name,
+    item_description,
+    image_url,
+    image_thumbnail_url,
+    image_resolution,
+    filetype_name,
+    license_name, 
+    sale_price,
+    transaction_datetime
+FROM
+    assets
+    JOIN filetypes ON assets.image_filetype_id = filetypes.filetype_id
+    JOIN licensetypes ON assets.license_type_id = licensetypes.license_type_id
+WHERE assets.current_owner='1';
 
 
 -- get a list of a user's assets listed for sale along with other info
@@ -110,7 +129,7 @@ SELECT
     transactions.token_id,
     seller_id,
     buyer_id,
-    sale_price,
+    assets.sale_price,
     sale_time,
     item_name,
     item_description,
