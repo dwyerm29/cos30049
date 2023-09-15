@@ -47,7 +47,7 @@ def get_users():
         return {"error": f"Error: {err}"}
 
 
-# get a list of all assets. Optionally you may provide a list of categories to the query to match the assets using the following format: http://localhost:8000/assets/?category=1&category=2
+""" # get a list of all assets. Optionally you may provide a list of categories to the query to match the assets using the following format: http://localhost:8000/assets/?category=1&category=2
 @app.get("/assets/")
 async def read_items(category: Annotated[list[int] | None, Query()] = None):
     try:
@@ -69,7 +69,7 @@ async def read_items(category: Annotated[list[int] | None, Query()] = None):
         connection.close()
         return assets
     except mysql.connector.Error as err:
-        return {"error": f"Error: {err}"}
+        return {"error": f"Error: {err}"} """
 
 
 # get information for a single asset, along with details like selling price if it exists
@@ -116,7 +116,7 @@ def get_listed_assets():
     try:
         connection = mysql.connector.connect(**db_config)
         cursor = connection.cursor()
-        query = "SELECT assets.token_id, item_name, item_description, image_url, image_thumbnail_url, image_resolution, selling_price, time_listed, filetype_name, license_name FROM assets JOIN assetslistedforsale ON assets.token_id = assetslistedforsale.token_id JOIN filetypes ON assets.image_filetype_id = filetypes.filetype_id JOIN licensetypes ON assets.license_type_id = licensetypes.license_type_id JOIN assetcategories ON assets.token_id = assetcategories.token_id JOIN AssetCategoryDescriptions ON assetcategories.category_id=AssetCategoryDescriptions.category_id WHERE AssetCategoryDescriptions.category_name = 'featured'"
+        query = "SELECT assets.token_id, item_name, item_description, image_url, image_thumbnail_url, image_resolution, selling_price, time_listed, filetype_name, license_name FROM assets JOIN assetslistedforsale ON assets.token_id = assetslistedforsale.token_id JOIN filetypes ON assets.image_filetype_id = filetypes.filetype_id JOIN licensetypes ON assets.license_type_id = licensetypes.license_type_id JOIN assetcategories ON assets.token_id = assetcategories.token_id JOIN AssetCategoryDescriptions ON assetcategories.category_id=AssetCategoryDescriptions.category_id WHERE AssetCategoryDescriptions.category_name = 'Featured'"
         cursor.execute(query)
         result = cursor.fetchall()
         print(result)
@@ -128,7 +128,7 @@ def get_listed_assets():
         return {"error": f"Error: {err}"}
 
 
-# searches through listed assets for a single term
+""" # searches through listed assets for a single term
 # ! should be expanded in the future to enable multiple independant terms
 @app.get("/listed_assets/search/{search_term}")
 def get_listed_assets_search(search_term: str):
@@ -147,6 +147,55 @@ def get_listed_assets_search(search_term: str):
         cursor.execute(query)
         result = cursor.fetchall()
         print(result)
+        assets = [dict(zip(cursor.column_names, row)) for row in result]
+        cursor.close()
+        connection.close()
+        return assets
+    except mysql.connector.Error as err:
+        return {"error": f"Error: {err}"} """
+
+
+# ! attempt to combine search with category filtering
+# get a list of all assets. Optionally you may provide a list of categories to the query to match the assets using the following format: http://localhost:8000/assets/?category=1&category=2
+@app.get("/assets/search/")
+async def read_items(
+    query: str | None = None, category: Annotated[list[str] | None, Query()] = None
+):
+    try:
+        connection = mysql.connector.connect(**db_config)
+        cursor = connection.cursor()
+        dbQuery = "SELECT DISTINCT assets.token_id, item_name, item_description, image_url, image_thumbnail_url, image_resolution, selling_price, time_listed, filetype_name, license_name FROM assets JOIN assetslistedforsale ON assets.token_id=assetslistedforsale.token_id JOIN filetypes ON assets.image_filetype_id=filetypes.filetype_id JOIN licensetypes ON assets.license_type_id=licensetypes.license_type_id JOIN assetcategories ON assets.token_id=assetcategories.token_id JOIN AssetCategoryDescriptions ON assetcategories.category_id=AssetCategoryDescriptions.category_id"
+        if category != None:
+            if len(category) > 0:
+                dbQuery += (
+                    " WHERE AssetCategoryDescriptions.category_name='"
+                    + category[0]
+                    + "'"
+                )
+            if len(category) > 1:
+                for i in range(1, len(category)):
+                    dbQuery += (
+                        " OR AssetCategoryDescriptions.category_name='"
+                        + category[i]
+                        + "'"
+                    )
+        if query:
+            if category:
+                dbQuery += " AND"
+            else:
+                dbQuery += " WHERE"
+            dbQuery += (
+                " item_name LIKE '%"
+                + query
+                + "%' OR item_description LIKE '%"
+                + query
+                + "%' OR assets.token_id ='"
+                + query
+                + "'"
+            )
+        print(dbQuery)
+        cursor.execute(dbQuery)
+        result = cursor.fetchall()
         assets = [dict(zip(cursor.column_names, row)) for row in result]
         cursor.close()
         connection.close()

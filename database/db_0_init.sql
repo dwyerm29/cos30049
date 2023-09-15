@@ -225,9 +225,9 @@ INSERT INTO `Transactions` (`transaction_id`, `token_id`, `seller_id`, `buyer_id
 INSERT INTO `Transactions` (`transaction_id`, `token_id`, `seller_id`, `buyer_id`, `sale_price`, `sale_time`) VALUES ('27', '2373453', '1', '4', '0.43',  '2023-08-23 09:43:20.00');
 
 
-INSERT INTO AssetCategoryDescriptions ( category_id, category_name) VALUES ('1', 'photo');
-INSERT INTO AssetCategoryDescriptions ( category_id, category_name) VALUES ('2', 'art');
-INSERT INTO AssetCategoryDescriptions ( category_id, category_name) VALUES ('3', 'featured');
+INSERT INTO AssetCategoryDescriptions ( category_id, category_name) VALUES ('1', 'Photo');
+INSERT INTO AssetCategoryDescriptions ( category_id, category_name) VALUES ('2', 'Art');
+INSERT INTO AssetCategoryDescriptions ( category_id, category_name) VALUES ('3', 'Featured');
 
 INSERT INTO AssetCategories ( token_id, category_id) VALUES ('123129', '1');
 INSERT INTO AssetCategories ( token_id, category_id) VALUES ('123130', '1');

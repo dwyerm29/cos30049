@@ -204,7 +204,7 @@ FROM
     JOIN assetcategories ON assets.token_id = assetcategories.token_id
     JOIN AssetCategoryDescriptions ON assetcategories.category_id=AssetCategoryDescriptions.category_id
 WHERE
-    AssetCategoryDescriptions.category_name = 'featured';
+    AssetCategoryDescriptions.category_name = 'Featured';
 
 --check whether a user's login is correct. Returns a user if correct, or nothing if not correct
 SELECT

@@ -28,18 +28,15 @@ const MenuProps = {
   },
 };
 
-const categoryFilters = ["All", "Art", "Gaming", "PFPs", "Photography"];
-
 export const SearchResults = () => {
   const [sortType, setSort] = useState(0);
 
   const [searchResults, setSearchResults] = useState([]);
 
+  const [categoryFilters, setCategoryFilters] = useState([]);
+
   const handleSortChange = (event) => {
     setSort(event.target.value);
-
-    console.log(event.target.value);
-
     switch (event.target.value) {
       case 0:
         setSearchResults(
@@ -106,6 +103,7 @@ export const SearchResults = () => {
   };
 
   const [filterVal, setFilter] = useState("");
+
   const handleFilterChange = (event) => {
     const {
       target: { value },
@@ -119,8 +117,14 @@ export const SearchResults = () => {
   const searchQuery = search.match(/query=(.*)/)?.[1];
 
   useEffect(() => {
+    var categoryQuery = "";
+    for (const cat of filterVal) {
+      categoryQuery += `&category=${cat}`;
+    }
     axios
-      .get(`http://127.0.0.1:8000/listed_assets/search/${searchQuery}`)
+      .get(
+        `http://127.0.0.1:8000/assets/search/?query=${searchQuery}${categoryQuery}`
+      )
       .then((response) => {
         setSearchResults(
           response.data.sort((a, b) => {
@@ -135,6 +139,22 @@ export const SearchResults = () => {
             return 0;
           })
         );
+      })
+      .catch((error) => {
+        console.error("error here: ", error);
+      });
+  }, [searchQuery, filterVal]);
+
+  useEffect(() => {
+    axios
+      .get(`http://127.0.0.1:8000/asset_categories`)
+      .then((response) => {
+        var categories = [];
+        response.data.map((category) => {
+          categories.push(category.category_name);
+        });
+        setCategoryFilters(categories);
+        setFilter(categories);
       })
       .catch((error) => {
         console.error("error here: ", error);
@@ -159,10 +179,10 @@ export const SearchResults = () => {
                   renderValue={(selected) => selected.join(", ")}
                   MenuProps={MenuProps}
                 >
-                  {categoryFilters.map((name) => (
-                    <MenuItem key={name} value={name}>
-                      <Checkbox checked={filterVal.indexOf(name) > -1} />
-                      <ListItemText primary={name} />
+                  {categoryFilters.map((filterName) => (
+                    <MenuItem key={filterName} value={filterName}>
+                      <Checkbox checked={filterVal.indexOf(filterName) > -1} />
+                      <ListItemText primary={filterName} />
                     </MenuItem>
                   ))}
                 </Select>
