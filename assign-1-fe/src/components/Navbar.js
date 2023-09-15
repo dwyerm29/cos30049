@@ -51,7 +51,7 @@ export const Menu = () => {
           to={n.path}
           onClick={handleNav}
           onBlur={hide}
-          OnFocus={show}
+          onFocus={show}
         >
           {n.name}
         </CustomLink>
