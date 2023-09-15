@@ -27,7 +27,7 @@ export const navigation = [
     isPrivate: false,
   },
   {
-    path: "/searchresults",
+    path: "/searchresults/",
     name: "Search",
     element: <SearchResults />,
     isMenu: false,

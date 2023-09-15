@@ -30,6 +30,8 @@ export const ToRoutes = () => {
 };
 export const Menu = () => {
   const [nav, setNav] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+
   const hide = () => setNav(false);
   const show = () => setNav(true);
   const { user, logout } = AuthData();
@@ -70,15 +72,21 @@ export const Menu = () => {
   };
 
   const logOut = () => {
-    handleNav();
+    setNav(false);
     logout();
   };
 
   let navigate = useNavigate();
 
   const searchResults = () => {
-    handleNav();
-    navigate("/searchresults");
+    setNav(false);
+    navigate(`/searchresults?query=${searchQuery}`);
+  };
+
+  const searchHandleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      searchResults();
+    }
   };
 
   return (
@@ -95,7 +103,13 @@ export const Menu = () => {
       </div>
       {/* Search Bar */}
       <Box className="hidden md:flex relative grow " sx={{ mx: 1 }}>
-        <Input type="search" label="Type here..." />
+        <Input
+          type="search"
+          label="Type here..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          onKeyDown={searchHandleKeyDown}
+        />
         <Button
           size="sm"
           onClick={searchResults}
@@ -157,7 +171,13 @@ export const Menu = () => {
       >
         {/* Search Bar */}
         <Box className=" relative flex grow  " sx={{ m: 1 }}>
-          <Input type="search" label="Type here..." />
+          <Input
+            type="search"
+            label="Type here..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            onKeyDown={searchHandleKeyDown}
+          />
           <Button
             size="sm"
             onClick={searchResults}
