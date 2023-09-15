@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, { useState, useEffect } from "react";
 import {
   Table,
   TableBody,
@@ -9,39 +9,44 @@ import {
   Paper,
 } from "@mui/material";
 
-function createData(name, id, dateTime, price) {
-  return { name, id, dateTime, price };
-}
+import axios from "axios";
 
-const rows = [
-  createData("Neon Woman", 1593245, "2023-08-26 15:01:46", 0.55),
-  createData("Beanie Baby #33", 2623426, "2023-08-16 00:56:09", 0.8),
-];
+export default function AccountListedAssetsTable({ user_id }) {
+  const [listedAssets, setListedAssets] = useState([]);
 
-export default function AccountListedAssetsTable() {
+  useEffect(() => {
+    axios
+      .get(`http://127.0.0.1:8000/user/${user_id}/listed_assets/`)
+      .then((response) => {
+        setListedAssets(response.data);
+      })
+      .catch((error) => {
+        console.error("error here: ", error);
+      });
+  }, []);
   return (
     <TableContainer component={Paper}>
       <Table stickyHeader aria-label="table" sx={{ mt: 1 }}>
         <TableHead>
           <TableRow sx={{ fontWeight: "bold" }}>
             <TableCell sx={{ fontWeight: "bold" }}>Item Name</TableCell>
-            <TableCell sx={{ fontWeight: "bold" }}>Item ID</TableCell>
+            <TableCell sx={{ fontWeight: "bold" }}>Token ID</TableCell>
             <TableCell sx={{ fontWeight: "bold" }}>Date/Time Listed</TableCell>
             <TableCell sx={{ fontWeight: "bold" }}>Price</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
-          {rows.map((row) => (
+          {listedAssets.map((asset) => (
             <TableRow
-              key={row.name}
+              key={asset.token_id}
               sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
             >
               <TableCell component="th" scope="row">
-                {row.name}
+                {asset.item_name}
               </TableCell>
-              <TableCell>{row.id}</TableCell>
-              <TableCell>{row.dateTime}</TableCell>
-              <TableCell>{row.price} ETH</TableCell>
+              <TableCell>{asset.token_id}</TableCell>
+              <TableCell>{asset.time_listed}</TableCell>
+              <TableCell>{asset.selling_price} ETH</TableCell>
             </TableRow>
           ))}
         </TableBody>

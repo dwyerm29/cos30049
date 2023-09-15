@@ -69,7 +69,7 @@ export const Account = () => {
           <Grid item xs={12} md={6}>
             <Paper sx={{ p: 1 }}>
               <Typography variant="h4">Assets Listed for Sale</Typography>
-              <AccountListedAssetsTable />
+              <AccountListedAssetsTable user_id={user.user_id} />
             </Paper>
           </Grid>
         </Grid>
