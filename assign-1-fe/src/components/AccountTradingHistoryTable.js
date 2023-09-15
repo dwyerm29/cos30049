@@ -1,64 +1,75 @@
-import * as React from "react";
+import React, { useState, useEffect } from "react";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
-import Paper from "@mui/material/Paper";
 
-function createData(name, id, dateTime, transactionType, price) {
-  return { name, id, dateTime, transactionType, price };
-}
+import axios from "axios";
 
-const rows = [
-  createData("Neon Woman", 1593245, "2023-08-26 05:16:31", "Purchase", 0.4),
-  createData("Random Ape", 2373453, "2023-08-23 09:43:20", "Sale", 0.43),
-  createData(
-    "Beanie Baby #33",
-    2623426,
-    "2023-08-20 07:32:47",
-    "Purchase",
-    0.6
-  ),
-  createData(
-    "Digital Football Card",
-    3032346,
-    "2023-08-05 15:32:45",
-    "Purchase",
-    0.43
-  ),
-  createData("Random Ape", 2373453, "2023-07-11 20:12:53", "Purchase", 0.43),
-];
+export default function AccountTradingHistoryTable({ user_id }) {
+  const [transactions, setTransactions] = useState([]);
 
-export default function AccountTradingHistoryTable() {
+  useEffect(() => {
+    axios
+      .get(`http://127.0.0.1:8000/user_transactions/${user_id}`)
+      .then((response) => {
+        var tempTransactions = [];
+        if (response.data.length > 0) {
+          response.data.map((transaction) => {
+            var transactionType = "";
+            if (transaction.buyer_id === transaction.seller_id)
+              transactionType = "Creation";
+            else if (user_id === transaction.buyer_id)
+              transactionType = "Purchase";
+            else if (user_id === transaction.seller_id)
+              transactionType = "Sale";
+
+            tempTransactions.push({
+              ...transaction,
+              transaction_type: transactionType,
+            });
+          });
+        }
+        setTransactions(tempTransactions);
+      })
+      .catch((error) => {
+        console.error("error here: ", error);
+      });
+  }, []);
+
   return (
     <TableContainer>
       <Table stickyHeader aria-label="table" sx={{ mt: 1 }}>
         <TableHead>
           <TableRow sx={{ fontWeight: "bold" }}>
-            <TableCell sx={{ fontWeight: "bold" }}>Item Name</TableCell>
-            <TableCell sx={{ fontWeight: "bold" }}>Item ID</TableCell>
+            <TableCell sx={{ fontWeight: "bold" }}>Transaction ID</TableCell>
+            <TableCell sx={{ fontWeight: "bold" }}>Token ID</TableCell>
             <TableCell sx={{ fontWeight: "bold" }}>
               Transaction Date/Time
             </TableCell>
+            <TableCell sx={{ fontWeight: "bold" }}>Seller ID</TableCell>
+            <TableCell sx={{ fontWeight: "bold" }}>Buyer ID</TableCell>
             <TableCell sx={{ fontWeight: "bold" }}>Transaction Type</TableCell>
-            <TableCell sx={{ fontWeight: "bold" }}>Price</TableCell>
+            <TableCell sx={{ fontWeight: "bold" }}>Sale Price</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
-          {rows.map((row) => (
+          {transactions.map((transaction) => (
             <TableRow
-              key={row.name}
+              key={transaction.transaction_id}
               sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
             >
               <TableCell component="th" scope="row">
-                {row.name}
+                {transaction.transaction_id}
               </TableCell>
-              <TableCell>{row.id}</TableCell>
-              <TableCell>{row.dateTime}</TableCell>
-              <TableCell>{row.transactionType}</TableCell>
-              <TableCell>{row.price} ETH</TableCell>
+              <TableCell>{transaction.token_id}</TableCell>
+              <TableCell>{transaction.sale_time}</TableCell>
+              <TableCell>{transaction.seller_id}</TableCell>
+              <TableCell>{transaction.buyer_id}</TableCell>
+              <TableCell>{transaction.transaction_type}</TableCell>
+              <TableCell>{transaction.sale_price} ETH</TableCell>
             </TableRow>
           ))}
         </TableBody>
