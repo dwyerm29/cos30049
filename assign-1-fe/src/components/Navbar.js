@@ -69,10 +69,16 @@ export const Menu = () => {
     setNav(!nav);
   };
 
+  const logOut = () => {
+    handleNav();
+    logout();
+  };
+
   let navigate = useNavigate();
 
   const searchResults = () => {
-    navigate("/searchResults");
+    handleNav();
+    navigate("/searchresults");
   };
 
   return (
@@ -108,7 +114,7 @@ export const Menu = () => {
         {user.isAuthenticated ? (
           <Button
             className="hidden md:flex hover:bg-gray-300  bg-gray-900 px-2"
-            onClick={logout}
+            onClick={logOut}
           >
             Log out
           </Button>
@@ -154,7 +160,7 @@ export const Menu = () => {
           <Input type="search" label="Type here..." />
           <Button
             size="sm"
-            onClick={(searchResults, handleNav)}
+            onClick={searchResults}
             className="!absolute right-1 top-1 rounded"
           >
             Search
@@ -170,7 +176,7 @@ export const Menu = () => {
         <div className="flex justify-between items-center p-4 md:hidden">
           {user.isAuthenticated ? (
             <div className="uppercase ">
-              <CustomLink to="/" onClick={(logout, handleNav)}>
+              <CustomLink to="/" onClick={logOut}>
                 Log out
               </CustomLink>
             </div>
