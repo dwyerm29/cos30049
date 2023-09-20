@@ -101,7 +101,6 @@ def get_listed_assets():
         query = "SELECT Assets.token_id, item_name, item_description, image_url, image_thumbnail_url, image_resolution, selling_price, time_listed, filetype_name, license_name FROM Assets JOIN AssetsListedForSale ON Assets.token_id=AssetsListedForSale.token_id JOIN FileTypes on Assets.image_filetype_id=FileTypes.filetype_id JOIN LicenseTypes on Assets.license_type_id=LicenseTypes.license_type_id"
         cursor.execute(query)
         result = cursor.fetchall()
-        print(result)
         Assets = [dict(zip(cursor.column_names, row)) for row in result]
         cursor.close()
         connection.close()
@@ -119,7 +118,6 @@ def get_listed_assets():
         query = "SELECT Assets.token_id, item_name, item_description, image_url, image_thumbnail_url, image_resolution, selling_price, time_listed, filetype_name, license_name FROM Assets JOIN AssetsListedForSale ON Assets.token_id = AssetsListedForSale.token_id JOIN FileTypes ON Assets.image_filetype_id = FileTypes.filetype_id JOIN LicenseTypes ON Assets.license_type_id = LicenseTypes.license_type_id JOIN AssetCategories ON Assets.token_id = AssetCategories.token_id JOIN AssetCategoryDescriptions ON AssetCategories.category_id=AssetCategoryDescriptions.category_id WHERE AssetCategoryDescriptions.category_name = 'Featured'"
         cursor.execute(query)
         result = cursor.fetchall()
-        print(result)
         Assets = [dict(zip(cursor.column_names, row)) for row in result]
         cursor.close()
         connection.close()
@@ -146,7 +144,6 @@ def get_listed_assets_search(search_term: str):
         )
         cursor.execute(query)
         result = cursor.fetchall()
-        print(result)
         Assets = [dict(zip(cursor.column_names, row)) for row in result]
         cursor.close()
         connection.close()
@@ -193,7 +190,6 @@ async def read_items(
                 + query
                 + "'"
             )
-        print(dbQuery)
         cursor.execute(dbQuery)
         result = cursor.fetchall()
         Assets = [dict(zip(cursor.column_names, row)) for row in result]
@@ -304,7 +300,6 @@ def login(login: LoginRequest):
             + login.password
             + "'"
         )
-        print(query)
         cursor.execute(query)
         result = cursor.fetchall()
         user = [dict(zip(cursor.column_names, row)) for row in result]
