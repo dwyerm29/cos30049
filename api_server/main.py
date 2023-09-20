@@ -1,7 +1,7 @@
 from fastapi import FastAPI, Query
 from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
-from typing import Annotated
+from typing import Annotated, Union
 
 # CHECK README IF YOU GET AN ERROR HERE
 from db_config import db_config
@@ -159,7 +159,7 @@ def get_listed_assets_search(search_term: str):
 # get a list of all assets. Optionally you may provide a list of categories to the query to match the assets using the following format: http://localhost:8000/assets/?category=1&category=2
 @app.get("/assets/search/")
 async def read_items(
-    query: str | None = None, category: Annotated[list[str] | None, Query()] = None
+    query: Union[str, None] = None, category: Annotated[Union[list[str], None], Query()] = None
 ):
     try:
         connection = mysql.connector.connect(**db_config)
