@@ -154,7 +154,6 @@ export const SearchResults = () => {
           categories.push(category.category_name);
         });
         setCategoryFilters(categories);
-        setFilter(categories);
       })
       .catch((error) => {
         console.error("error here: ", error);
@@ -168,7 +167,7 @@ export const SearchResults = () => {
           <Grid container justifyContent="flex-end">
             <Box sx={{ minWidth: 200, mx: 2 }}>
               <FormControl fullWidth>
-                <InputLabel id="filter-categories">Category</InputLabel>
+                <InputLabel id="filter-categories">Categories</InputLabel>
                 <Select
                   labelId="filter-categories"
                   id="filter-categories"
