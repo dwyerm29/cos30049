@@ -73,7 +73,7 @@ async def read_items(category: Annotated[list[int] | None, Query()] = None):
 
 
 # get information for a single asset, along with details like selling price if it exists
-@app.get("/asset/{token_id}")
+@app.get("/asset/{token_id}/")
 def get_assets(token_id: int):
     try:
         connection = mysql.connector.connect(**db_config)
@@ -201,7 +201,7 @@ async def read_items(
 
 
 # return a list of Transactions that a particular user has been involved in
-@app.get("/user/{user_id}/Transactions")
+@app.get("/user/{user_id}/Transactions/")
 def get_user_Transactions(user_id: int):
     try:
         connection = mysql.connector.connect(**db_config)
@@ -224,7 +224,7 @@ def get_user_Transactions(user_id: int):
 
 
 # return a list of Assets that a particular user has for sale
-@app.get("/user/{user_id}/listed_assets")
+@app.get("/user/{user_id}/listed_assets/")
 def get_user_Transactions(user_id: int):
     try:
         connection = mysql.connector.connect(**db_config)
@@ -245,7 +245,7 @@ def get_user_Transactions(user_id: int):
 
 
 # return a list of Assets that a specified user currently owns
-@app.get("/user/{user_id}/owned_assets")
+@app.get("/user/{user_id}/owned_assets/")
 def get_user_Transactions(user_id: int):
     try:
         connection = mysql.connector.connect(**db_config)
