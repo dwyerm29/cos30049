@@ -67,7 +67,7 @@ export function ItemDetails() {
               </Typography>
               <br />
               <Typography variant="p">
-                Seller: {itemDetails.current_owner_first_name}{" "}
+                Current Owner: {itemDetails.current_owner_first_name}{" "}
                 {itemDetails.current_owner_last_name}
               </Typography>{" "}
               <br />
