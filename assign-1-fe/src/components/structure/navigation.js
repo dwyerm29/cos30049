@@ -11,6 +11,7 @@ import { Checkout } from "../../pages/Checkout";
 import { OrderSummary } from "../../pages/OrderSummary";
 import { AxiosTest } from "../../pages/AxiosTest";
 import { CounterGrid } from "../../features/counter/CounterGrid";
+import { UploadNFT } from "../../pages/UploadNFT.js";
 
 export const navigation = [
   {
@@ -103,5 +104,12 @@ export const navigation = [
     element: <Account />,
     isMenu: true,
     isPrivate: true,
+  },
+  {
+    path: "/uploadNFT",
+    name: "UploadNFT",
+    element: <UploadNFT />,
+    isMenu: false,
+    isPrivate: false,
   },
 ];

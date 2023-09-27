@@ -31,6 +31,23 @@ export const Account = () => {
                   flexGrow: 1,
                 }}
               >
+                <CardActionArea component={Link} to="/uploadNFT">
+                  <CardContent>
+                    <Typography variant="h4">Edit Settings</Typography>
+                  </CardContent>
+                </CardActionArea>
+              </Card>
+            </Paper>
+          </Grid>
+          <Grid item xs={12}>
+            <Paper sx={{ p: 0 }}>
+              <Card
+                sx={{
+                  p: 0,
+                  margin: "auto",
+                  flexGrow: 1,
+                }}
+              >
                 <CardActionArea component={Link} to="/account">
                   <CardContent>
                     <Typography variant="h4">Account Overview</Typography>
