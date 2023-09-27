@@ -75,8 +75,6 @@ CREATE TABLE `Transactions` (
   FOREIGN KEY (`buyer_id`) REFERENCES `Users` (`user_id`)
 );
 
-
-
 CREATE TABLE `AssetsListedForSale` (
   `token_id` INT NOT NULL,
   `selling_price` DOUBLE NOT NULL,
@@ -96,11 +94,16 @@ INSERT INTO Users (user_id, password, first_name, last_name, email) VALUES ('8',
 INSERT INTO Users (user_id, password, first_name, email) VALUES ('9', 'password', 'Dids',  'Dids@example.com');
 INSERT INTO Users (user_id, password, first_name, last_name, email) VALUES ('10', 'password', 'Damir', 'Mijailovic', 'Damir.Mijailovic@example.com');
 INSERT INTO Users (user_id, password, first_name, last_name, email) VALUES ('11', 'password', 'Marlene', 'Leppänen', 'Marlene.Leppänen@example.com');
-
 INSERT INTO Users (user_id, password, first_name, last_name, email) VALUES ('12', 'password', 'Ishara', 'Kasthuriarachchi', 'Ishara.Kasthuriarachchi@example.com');
 INSERT INTO Users (user_id, password, first_name, email) VALUES ('13', 'password', 'Anthony',  'Anthony@example.com');
 INSERT INTO Users (user_id, password, first_name, last_name, email) VALUES ('14', 'password', 'Julia', 'Sakelli', 'Julia.Sakelli@example.com');
 INSERT INTO Users (user_id, password, first_name, email) VALUES ('15', 'password', 'Pixabay', 'Pixabay@example.com');
+INSERT INTO Users (user_id, password, first_name, email) VALUES ('16', 'password', 'Ken', 'RealRoyalKen@example.com');
+INSERT INTO Users (user_id, password, first_name, email) VALUES ('17', 'password', 'Cash', 'Ca$hMoney@example.com');
+INSERT INTO Users (user_id, password, first_name, email) VALUES ('18', 'password', 'Hannah', 'HanHanBay@example.com');
+INSERT INTO Users (user_id, password, first_name, email) VALUES ('19', 'password', 'Jody', 'JJJ@example.com');
+INSERT INTO Users (user_id, password, first_name, email) VALUES ('20', 'password', 'Henri', 'HienzRi@example.com');
+
 
 INSERT INTO FileTypes ( filetype_id, filetype_name) VALUES ('1', 'JPEG');
 INSERT INTO FileTypes ( filetype_id, filetype_name) VALUES ('2', 'PNG');
@@ -108,10 +111,6 @@ INSERT INTO FileTypes ( filetype_id, filetype_name) VALUES ('2', 'PNG');
 
 INSERT INTO LicenseTypes ( license_type_id, license_name) VALUES ('1', 'Standard');
 INSERT INTO LicenseTypes ( license_type_id, license_name) VALUES ('2', 'Standard');
-
-
-
-
 
 
 INSERT INTO Assets ( token_id, item_name, item_description, image_url, image_thumbnail_url, image_resolution, image_filetype_id, license_type_id, original_owner, current_owner, sale_price, transaction_datetime) 
