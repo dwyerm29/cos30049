@@ -10,6 +10,7 @@ import {
 } from "@mui/material";
 
 import axios from "axios";
+import { Link } from "react-router-dom";
 
 export default function AccountOwnedAssetsTable({ user_id }) {
   const [ownedAssets, setOwnedAssets] = useState([]);
@@ -46,7 +47,14 @@ export default function AccountOwnedAssetsTable({ user_id }) {
               <TableCell component="th" scope="row">
                 {asset.item_name}
               </TableCell>
-              <TableCell>{asset.token_id}</TableCell>
+              <TableCell>
+                <Link
+                  to="/OwnedItem"
+                  className="hover:bg-gray-300 active:bg-gray-900 flex gap-1 items-center"
+                >
+                  {asset.token_id}
+                </Link>
+              </TableCell>
               <TableCell>{asset.transaction_datetime}</TableCell>
               <TableCell>{asset.sale_price} ETH</TableCell>
             </TableRow>
