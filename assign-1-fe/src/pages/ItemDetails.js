@@ -10,7 +10,8 @@ import {
 import AddShoppingCart from "@mui/icons-material/AddShoppingCart";
 import { useParams } from "react-router-dom";
 import React, { useState, useEffect } from "react";
-
+import { useDispatch } from "react-redux";
+import { addToCart } from "../store/cartSlice";
 import axios from "axios";
 
 import { Link } from "react-router-dom";
@@ -23,6 +24,7 @@ const Img = styled("img")({
 });
 
 export function ItemDetails() {
+  const dispatch = useDispatch();
   const { item_id } = useParams();
 
   const [itemDetails, setItemDetails] = useState({});
@@ -95,8 +97,7 @@ export function ItemDetails() {
                   <Button
                     variant="contained"
                     endIcon={<AddShoppingCart />}
-                    component={Link}
-                    to="/cart"
+                    onClick={() => dispatch(addToCart({ itemDetails }))}
                   >
                     Add to Cart
                   </Button>

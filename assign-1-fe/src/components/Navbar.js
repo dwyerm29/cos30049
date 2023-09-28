@@ -12,6 +12,7 @@ import { AuthData } from "../auth/AuthWrap";
 import { navigation } from "./structure/navigation";
 import { Input, Button } from "@material-tailwind/react";
 import { Box } from "@mui/material";
+import { useSelector } from "react-redux";
 
 export const ToRoutes = () => {
   const { user } = AuthData();
@@ -29,6 +30,7 @@ export const ToRoutes = () => {
   );
 };
 export const Menu = () => {
+  const cartItems = useSelector((state) => state.cart.cart);
   const [nav, setNav] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -144,9 +146,10 @@ export const Menu = () => {
           </Button>
         )}
       </div>
-
+      {/* cart Items count added in for validity currently */}
       <Button className="hidden md:flex gap-5 hover:bg-gray-300 active:bg-gray-900 px-2">
         <Link to="/cart">
+          {cartItems.length}
           <AiOutlineShoppingCart size={20} />
         </Link>
       </Button>

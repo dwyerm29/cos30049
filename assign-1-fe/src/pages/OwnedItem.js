@@ -86,7 +86,7 @@ export function OwnedItem() {
               </Typography>
               <br />
               <br />
-              {/*Conditionally render the item which is owned so it will equal to the user id
+              {/* This will conditionally render the to see whether the item is listed for sale or not, if it is the user can edit listing via button or list it for sale
                 {ownedByUser ? : {itemDetails.selling_price != null && (
                   <div>
                     <Typography variant="h6" component="div">
