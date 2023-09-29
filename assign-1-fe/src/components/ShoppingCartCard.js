@@ -2,8 +2,8 @@ import * as React from "react";
 import { Grid, Typography, ButtonBase, Card, styled } from "@mui/material";
 import { Link } from "react-router-dom";
 import DeleteForeverIcon from "@mui/icons-material/DeleteForever";
-import { useSelector } from "react-redux";
-
+import { useDispatch, useSelector } from "react-redux";
+import { removeFromCart } from "../store/cartSlice";
 const Img = styled("img")({
   margin: "auto",
   display: "block",
@@ -12,6 +12,7 @@ const Img = styled("img")({
 });
 export default function ShoppingCartCard() {
   const cartItems = useSelector((state) => state.cart.cart);
+  const dispatch = useDispatch();
   return (
     <Card sx={{ my: 1, backgroundColor: "#242424" }}>
       {cartItems.map((item) => (
@@ -50,6 +51,7 @@ export default function ShoppingCartCard() {
               sx={{
                 "&:hover": { backgroundColor: "red", borderRadius: 1 },
               }}
+              onClick={() => dispatch(removeFromCart({ id: item.token_id }))}
             />
           </Grid>
         </Grid>
