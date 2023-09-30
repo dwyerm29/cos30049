@@ -107,7 +107,7 @@ export const navigation = [
     isPrivate: true,
   },
   {
-    path: "/uploadNFT",
+    path: "/uploadnft",
     name: "UploadNFT",
     element: <UploadNFT />,
     isMenu: false,

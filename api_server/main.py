@@ -222,10 +222,42 @@ def get_asset_categories():
         query = "SELECT * FROM AssetCategoryDescriptions"
         cursor.execute(query)
         result = cursor.fetchall()
-        Assets = [dict(zip(cursor.column_names, row)) for row in result]
+        AssetCategories = [dict(zip(cursor.column_names, row)) for row in result]
         cursor.close()
         connection.close()
-        return Assets
+        return AssetCategories
+    except mysql.connector.Error as err:
+        return {"error": f"Error: {err}"}
+    
+# get a list of all asset filetypes along with their descriptions
+@app.get("/asset_filetypes/")
+def get_asset_filetypes():
+    try:
+        connection = mysql.connector.connect(**db_config)
+        cursor = connection.cursor()
+        query = "SELECT * FROM filetypes"
+        cursor.execute(query)
+        result = cursor.fetchall()
+        FileTypes = [dict(zip(cursor.column_names, row)) for row in result]
+        cursor.close()
+        connection.close()
+        return FileTypes
+    except mysql.connector.Error as err:
+        return {"error": f"Error: {err}"}
+    
+ # get a list of all asset filetypes along with their descriptions
+@app.get("/asset_licensetypes/")
+def get_asset_licensetypes():
+    try:
+        connection = mysql.connector.connect(**db_config)
+        cursor = connection.cursor()
+        query = "SELECT * FROM licensetypes"
+        cursor.execute(query)
+        result = cursor.fetchall()
+        LicenseTypes = [dict(zip(cursor.column_names, row)) for row in result]
+        cursor.close()
+        connection.close()
+        return LicenseTypes
     except mysql.connector.Error as err:
         return {"error": f"Error: {err}"}
 
@@ -256,6 +288,80 @@ def login(login: LoginRequest):
         return user
     except mysql.connector.Error as err:
         return {"error": f"Error: {err}"}
+    
+class CreateAssetRequest(BaseModel):
+    name: str
+    description: str
+    imageURL: str
+    imageThumbnailURL: str
+    imageResolution: str
+    licenseTypeID: int
+    imageFileTypeID: int
+    ownerID: int
+    categoryIDs: set[int]
+
+# check whether a user's username and password are correct. returns a user object if successful, or empty response if unsuccessful
+@app.post("/postnewasset/")
+def postNewAsset(newAsset: CreateAssetRequest):
+    try:
+        print(newAsset)
+        connection = mysql.connector.connect(**db_config)
+        cursor = connection.cursor()
+        addAssetQuery = (
+            "INSERT INTO Assets (item_name, item_description, image_url, image_thumbnail_url, image_resolution, image_filetype_id, license_type_id, original_owner, current_owner, sale_price, transaction_datetime) VALUES ('"
+            + newAsset.name
+            + "', '"
+            + newAsset.description
+            + "', '"
+            + newAsset.imageURL
+            + "', '"
+            + newAsset.imageThumbnailURL
+            + "', '"
+            + newAsset.imageResolution
+            + "', '"
+            + str(newAsset.imageFileTypeID)
+            + "', '"
+            + str(newAsset.licenseTypeID)
+            + "', '"
+            + str(newAsset.ownerID)
+            + "', '"
+            + str(newAsset.ownerID)
+            + "', '0', NOW())"
+        )
+        print(addAssetQuery)
+        cursor.execute(addAssetQuery)
+        assetID = cursor.lastrowid
+        print(assetID)
+
+        addTransactionQuery = (
+            "INSERT INTO `Transactions` (`token_id`, `seller_id`, `buyer_id`, `sale_price`, `sale_time`) VALUES ('"
+            + str(assetID)
+            + "', '"
+            + str(newAsset.ownerID)
+            + "', '"
+            + str(newAsset.ownerID)
+            + "', '0', NOW())")
+        print(addTransactionQuery)
+        cursor.execute(addTransactionQuery)
+
+        for categoryID in newAsset.categoryIDs:
+            addAssetCategoryQuery = (
+                "INSERT INTO AssetCategories ( token_id, category_id) VALUES ('"
+                + str(assetID)
+                + "', '"
+                + str(categoryID)
+                + "')"
+            )
+            cursor.execute(addAssetCategoryQuery)
+            print(addAssetCategoryQuery)
+
+        cursor.close()
+        connection.commit()
+        connection.close()
+        return assetID
+    except mysql.connector.Error as err:
+        return {"error": f"Error: {err}"}
+
 
 
 # ! Everything below here is examples from the tutorials that I have left in case we need them. To be deleted later.
