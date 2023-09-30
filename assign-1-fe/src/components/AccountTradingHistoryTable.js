@@ -7,7 +7,9 @@ import {
   TableHead,
   TableRow,
   Paper,
+  Typography,
 } from "@mui/material";
+import { Link } from "react-router-dom";
 
 import axios from "axios";
 
@@ -67,7 +69,16 @@ export default function AccountTradingHistoryTable({ user_id }) {
               <TableCell component="th" scope="row">
                 {transaction.transaction_id}
               </TableCell>
-              <TableCell>{transaction.token_id}</TableCell>
+              <TableCell>
+                <Typography
+                  variant="body2"
+                  color="#55dd5c"
+                  component={Link}
+                  to={`/itemdetails/${transaction.token_id}`}
+                >
+                  {transaction.token_id}
+                </Typography>
+              </TableCell>
               <TableCell>{transaction.sale_time}</TableCell>
               <TableCell>{transaction.seller_id}</TableCell>
               <TableCell>{transaction.buyer_id}</TableCell>

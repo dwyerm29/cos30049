@@ -7,7 +7,10 @@ import {
   TableHead,
   TableRow,
   Paper,
+  Typography,
 } from "@mui/material";
+
+import { Link } from "react-router-dom";
 
 import axios from "axios";
 
@@ -44,7 +47,17 @@ export default function AccountListedAssetsTable({ user_id }) {
               <TableCell component="th" scope="row">
                 {asset.item_name}
               </TableCell>
-              <TableCell>{asset.token_id}</TableCell>
+              <TableCell>
+                {" "}
+                <Typography
+                  variant="body2"
+                  color="#55dd5c"
+                  component={Link}
+                  to={`/itemdetails/${asset.token_id}`}
+                >
+                  {asset.token_id}
+                </Typography>
+              </TableCell>
               <TableCell>{asset.time_listed}</TableCell>
               <TableCell>{asset.selling_price} ETH</TableCell>
             </TableRow>
