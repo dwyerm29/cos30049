@@ -14,6 +14,8 @@ import { Link } from "react-router-dom";
 
 import axios from "axios";
 
+import moment from "moment";
+
 export default function AccountListedAssetsTable({ user_id }) {
   const [listedAssets, setListedAssets] = useState([]);
 
@@ -58,7 +60,9 @@ export default function AccountListedAssetsTable({ user_id }) {
                   {asset.token_id}
                 </Typography>
               </TableCell>
-              <TableCell>{asset.time_listed}</TableCell>
+              <TableCell>
+                {moment(asset.time_listed).format("LL LTS")}
+              </TableCell>
               <TableCell>{asset.selling_price} ETH</TableCell>
             </TableRow>
           ))}
