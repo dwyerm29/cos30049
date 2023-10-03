@@ -7,9 +7,11 @@ import {
   TableHead,
   TableRow,
   Paper,
+  Typography,
 } from "@mui/material";
 
 import axios from "axios";
+import moment from "moment";
 import { Link } from "react-router-dom";
 
 export default function AccountOwnedAssetsTable({ user_id }) {
@@ -48,14 +50,18 @@ export default function AccountOwnedAssetsTable({ user_id }) {
                 {asset.item_name}
               </TableCell>
               <TableCell>
-                <Link
-                  to="/OwnedItem"
-                  className="hover:bg-gray-300 active:bg-gray-900 flex gap-1 items-center"
+                <Typography
+                  variant="body2"
+                  color="#55dd5c"
+                  component={Link}
+                  to={`/itemdetails/${asset.token_id}`}
                 >
                   {asset.token_id}
-                </Link>
+                </Typography>
               </TableCell>
-              <TableCell>{asset.transaction_datetime}</TableCell>
+              <TableCell>
+                {moment(asset.transaction_datetime).format("LL LTS")}
+              </TableCell>
               <TableCell>{asset.sale_price} ETH</TableCell>
             </TableRow>
           ))}

@@ -7,9 +7,12 @@ import {
   TableHead,
   TableRow,
   Paper,
+  Typography,
 } from "@mui/material";
+import { Link } from "react-router-dom";
 
 import axios from "axios";
+import moment from "moment";
 
 export default function AccountTradingHistoryTable({ user_id }) {
   const [transactions, setTransactions] = useState([]);
@@ -67,8 +70,19 @@ export default function AccountTradingHistoryTable({ user_id }) {
               <TableCell component="th" scope="row">
                 {transaction.transaction_id}
               </TableCell>
-              <TableCell>{transaction.token_id}</TableCell>
-              <TableCell>{transaction.sale_time}</TableCell>
+              <TableCell>
+                <Typography
+                  variant="body2"
+                  color="#55dd5c"
+                  component={Link}
+                  to={`/itemdetails/${transaction.token_id}`}
+                >
+                  {transaction.token_id}
+                </Typography>
+              </TableCell>
+              <TableCell>
+                {moment(transaction.sale_time).format("LL LTS")}
+              </TableCell>
               <TableCell>{transaction.seller_id}</TableCell>
               <TableCell>{transaction.buyer_id}</TableCell>
               <TableCell>{transaction.transaction_type}</TableCell>

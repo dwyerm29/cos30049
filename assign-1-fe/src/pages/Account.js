@@ -22,7 +22,7 @@ export const Account = () => {
     <Container>
       <Box sx={{ mt: 2, borderRadius: 2 }}>
         <Grid container spacing={2}>
-          <Grid item xs={12}>
+          <Grid item xs={12} md={6}>
             <Paper sx={{ p: 0 }}>
               <Card
                 sx={{
@@ -31,9 +31,9 @@ export const Account = () => {
                   flexGrow: 1,
                 }}
               >
-                <CardActionArea component={Link} to="/uploadNFT">
+                <CardActionArea component={Link} to="/uploadnft">
                   <CardContent>
-                    <Typography variant="h4">Edit Settings</Typography>
+                    <Typography variant="h4">Upload Item</Typography>
                   </CardContent>
                 </CardActionArea>
               </Card>

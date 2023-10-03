@@ -47,31 +47,6 @@ def get_users():
         return {"error": f"Error: {err}"}
 
 
-""" # get a list of all Assets. Optionally you may provide a list of categories to the query to match the Assets using the following format: http://localhost:8000/Assets/?category=1&category=2
-@app.get("/Assets/")
-async def read_items(category: Annotated[list[int] | None, Query()] = None):
-    try:
-        connection = mysql.connector.connect(**db_config)
-        cursor = connection.cursor()
-        query = "SELECT DISTINCT Assets.token_id, item_name, item_description, image_url, image_thumbnail_url, image_resolution, selling_price, time_listed, filetype_name, license_name FROM Assets LEFT JOIN AssetsListedForSale ON Assets.token_id=AssetsListedForSale.token_id JOIN FileTypes ON Assets.image_filetype_id=FileTypes.filetype_id JOIN LicenseTypes ON Assets.license_type_id=LicenseTypes.license_type_id JOIN AssetCategories ON Assets.token_id=AssetCategories.token_id"
-        if category != None:
-            if len(category) > 0:
-                query += " WHERE AssetCategories.category_id='" + str(category[0]) + "'"
-            if len(category) > 1:
-                for i in range(1, len(category)):
-                    query += (
-                        " OR AssetCategories.category_id='" + str(category[i]) + "'"
-                    )
-        cursor.execute(query)
-        result = cursor.fetchall()
-        Assets = [dict(zip(cursor.column_names, row)) for row in result]
-        cursor.close()
-        connection.close()
-        return Assets
-    except mysql.connector.Error as err:
-        return {"error": f"Error: {err}"} """
-
-
 # get information for a single asset, along with details like selling price if it exists
 @app.get("/asset/{token_id}/")
 def get_assets(token_id: int):
@@ -125,33 +100,6 @@ def get_listed_assets():
     except mysql.connector.Error as err:
         return {"error": f"Error: {err}"}
 
-
-""" # searches through listed Assets for a single term
-# ! should be expanded in the future to enable multiple independant terms
-@app.get("/listed_assets/search/{search_term}")
-def get_listed_assets_search(search_term: str):
-    try:
-        connection = mysql.connector.connect(**db_config)
-        cursor = connection.cursor()
-        query = (
-            "SELECT Assets.token_id, item_name, item_description, image_url, image_thumbnail_url, image_resolution, selling_price, time_listed, filetype_name, license_name FROM Assets JOIN AssetsListedForSale ON Assets.token_id=AssetsListedForSale.token_id JOIN FileTypes on Assets.image_filetype_id=FileTypes.filetype_id JOIN LicenseTypes on Assets.license_type_id=LicenseTypes.license_type_id WHERE item_name LIKE '%"
-            + search_term
-            + "%' OR item_description LIKE '%"
-            + search_term
-            + "%' OR Assets.token_id ='"
-            + search_term
-            + "'"
-        )
-        cursor.execute(query)
-        result = cursor.fetchall()
-        Assets = [dict(zip(cursor.column_names, row)) for row in result]
-        cursor.close()
-        connection.close()
-        return Assets
-    except mysql.connector.Error as err:
-        return {"error": f"Error: {err}"} """
-
-
 # ! attempt to combine search with category filtering
 # get a list of all Assets. Optionally you may provide a list of categories to the query to match the Assets using the following format: http://localhost:8000/Assets/?category=1&category=2
 @app.get("/assets/search/")
@@ -201,8 +149,8 @@ async def read_items(
 
 
 # return a list of Transactions that a particular user has been involved in
-@app.get("/user/{user_id}/Transactions/")
-def get_user_Transactions(user_id: int):
+@app.get("/user/{user_id}/transactions/")
+def get_user_transactions(user_id: int):
     try:
         connection = mysql.connector.connect(**db_config)
         cursor = connection.cursor()
@@ -225,7 +173,7 @@ def get_user_Transactions(user_id: int):
 
 # return a list of Assets that a particular user has for sale
 @app.get("/user/{user_id}/listed_assets/")
-def get_user_Transactions(user_id: int):
+def get_listed_assets(user_id: int):
     try:
         connection = mysql.connector.connect(**db_config)
         cursor = connection.cursor()
@@ -274,10 +222,42 @@ def get_asset_categories():
         query = "SELECT * FROM AssetCategoryDescriptions"
         cursor.execute(query)
         result = cursor.fetchall()
-        Assets = [dict(zip(cursor.column_names, row)) for row in result]
+        AssetCategories = [dict(zip(cursor.column_names, row)) for row in result]
         cursor.close()
         connection.close()
-        return Assets
+        return AssetCategories
+    except mysql.connector.Error as err:
+        return {"error": f"Error: {err}"}
+    
+# get a list of all asset filetypes along with their descriptions
+@app.get("/asset_filetypes/")
+def get_asset_filetypes():
+    try:
+        connection = mysql.connector.connect(**db_config)
+        cursor = connection.cursor()
+        query = "SELECT * FROM filetypes"
+        cursor.execute(query)
+        result = cursor.fetchall()
+        FileTypes = [dict(zip(cursor.column_names, row)) for row in result]
+        cursor.close()
+        connection.close()
+        return FileTypes
+    except mysql.connector.Error as err:
+        return {"error": f"Error: {err}"}
+    
+ # get a list of all asset filetypes along with their descriptions
+@app.get("/asset_licensetypes/")
+def get_asset_licensetypes():
+    try:
+        connection = mysql.connector.connect(**db_config)
+        cursor = connection.cursor()
+        query = "SELECT * FROM licensetypes"
+        cursor.execute(query)
+        result = cursor.fetchall()
+        LicenseTypes = [dict(zip(cursor.column_names, row)) for row in result]
+        cursor.close()
+        connection.close()
+        return LicenseTypes
     except mysql.connector.Error as err:
         return {"error": f"Error: {err}"}
 
@@ -308,6 +288,80 @@ def login(login: LoginRequest):
         return user
     except mysql.connector.Error as err:
         return {"error": f"Error: {err}"}
+    
+class CreateAssetRequest(BaseModel):
+    name: str
+    description: str
+    imageURL: str
+    imageThumbnailURL: str
+    imageResolution: str
+    licenseTypeID: int
+    imageFileTypeID: int
+    ownerID: int
+    categoryIDs: set[int]
+
+# check whether a user's username and password are correct. returns a user object if successful, or empty response if unsuccessful
+@app.post("/postnewasset/")
+def postNewAsset(newAsset: CreateAssetRequest):
+    try:
+        print(newAsset)
+        connection = mysql.connector.connect(**db_config)
+        cursor = connection.cursor()
+        addAssetQuery = (
+            "INSERT INTO Assets (item_name, item_description, image_url, image_thumbnail_url, image_resolution, image_filetype_id, license_type_id, original_owner, current_owner, sale_price, transaction_datetime) VALUES ('"
+            + newAsset.name
+            + "', '"
+            + newAsset.description
+            + "', '"
+            + newAsset.imageURL
+            + "', '"
+            + newAsset.imageThumbnailURL
+            + "', '"
+            + newAsset.imageResolution
+            + "', '"
+            + str(newAsset.imageFileTypeID)
+            + "', '"
+            + str(newAsset.licenseTypeID)
+            + "', '"
+            + str(newAsset.ownerID)
+            + "', '"
+            + str(newAsset.ownerID)
+            + "', '0', NOW())"
+        )
+        print(addAssetQuery)
+        cursor.execute(addAssetQuery)
+        assetID = cursor.lastrowid
+        print(assetID)
+
+        addTransactionQuery = (
+            "INSERT INTO `Transactions` (`token_id`, `seller_id`, `buyer_id`, `sale_price`, `sale_time`) VALUES ('"
+            + str(assetID)
+            + "', '"
+            + str(newAsset.ownerID)
+            + "', '"
+            + str(newAsset.ownerID)
+            + "', '0', NOW())")
+        print(addTransactionQuery)
+        cursor.execute(addTransactionQuery)
+
+        for categoryID in newAsset.categoryIDs:
+            addAssetCategoryQuery = (
+                "INSERT INTO AssetCategories ( token_id, category_id) VALUES ('"
+                + str(assetID)
+                + "', '"
+                + str(categoryID)
+                + "')"
+            )
+            cursor.execute(addAssetCategoryQuery)
+            print(addAssetCategoryQuery)
+
+        cursor.close()
+        connection.commit()
+        connection.close()
+        return assetID
+    except mysql.connector.Error as err:
+        return {"error": f"Error: {err}"}
+
 
 
 # ! Everything below here is examples from the tutorials that I have left in case we need them. To be deleted later.

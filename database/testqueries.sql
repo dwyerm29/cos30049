@@ -218,3 +218,17 @@ FROM
 WHERE
     email = 'john.smith@example.com'
     AND password = 'password';
+
+-- returns a list of all filetype options
+SELECT * FROM filetypes;
+
+-- returns a list of all license type options
+SELECT * from licensetypes;
+
+-- insert a new asset into the table with current time stamp
+INSERT INTO Assets (item_name, item_description, image_url, image_thumbnail_url, image_resolution, image_filetype_id, license_type_id, original_owner, current_owner, sale_price, transaction_datetime) 
+VALUES ('Moon Jellyfish', 'Moon Jellyfish Floating In Water',
+      'https://images.pexels.com/photos/5472598/pexels-photo-5472598.jpeg',
+      'https://images.pexels.com/photos/5472598/pexels-photo-5472598.jpeg?cs=srgb&dl=pexels-ryutaro-tsukata-5472598.jpg&fm=jpg&w=640&h=960',
+      '3407 x 5111','1','1', '5', '5', '0', NOW()
+     );
