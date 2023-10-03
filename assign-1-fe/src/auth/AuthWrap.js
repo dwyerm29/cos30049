@@ -47,7 +47,7 @@ export function AuthWrapper() {
             );
             success("success");
           } else {
-            incorrect("Incorrect password  ");
+            incorrect("Incorrect Password or Email ");
           }
         })
         .catch((error) => {

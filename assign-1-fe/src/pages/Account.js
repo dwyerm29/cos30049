@@ -22,23 +22,6 @@ export const Account = () => {
     <Container>
       <Box sx={{ mt: 2, borderRadius: 2 }}>
         <Grid container spacing={2}>
-          <Grid item xs={12} md={6}>
-            <Paper sx={{ p: 0 }}>
-              <Card
-                sx={{
-                  p: 0,
-                  margin: "auto",
-                  flexGrow: 1,
-                }}
-              >
-                <CardActionArea component={Link} to="/uploadnft">
-                  <CardContent>
-                    <Typography variant="h4">Upload Item</Typography>
-                  </CardContent>
-                </CardActionArea>
-              </Card>
-            </Paper>
-          </Grid>
           <Grid item xs={12}>
             <Paper sx={{ p: 0 }}>
               <Card
@@ -87,6 +70,23 @@ export const Account = () => {
             <Paper sx={{ p: 1 }}>
               <Typography variant="h4">Assets Listed for Sale</Typography>
               <AccountListedAssetsTable user_id={user.user_id} />
+            </Paper>
+          </Grid>
+          <Grid item xs={12} md={6}>
+            <Paper sx={{ p: 0 }}>
+              <Card
+                sx={{
+                  p: 0,
+                  margin: "auto",
+                  flexGrow: 1,
+                }}
+              >
+                <CardActionArea component={Link} to="/uploadnft">
+                  <CardContent>
+                    <Typography variant="h4">Upload Item</Typography>
+                  </CardContent>
+                </CardActionArea>
+              </Card>
             </Paper>
           </Grid>
         </Grid>
