@@ -300,7 +300,7 @@ class CreateAssetRequest(BaseModel):
     ownerID: int
     categoryIDs: set[int]
 
-# check whether a user's username and password are correct. returns a user object if successful, or empty response if unsuccessful
+# Posts a new asset to the Assets table, along with a creation transaction (price: 0, both buyer and seller ID that of the uploader), and associated asset categories/
 @app.post("/postnewasset/")
 def postNewAsset(newAsset: CreateAssetRequest):
     try:
@@ -361,7 +361,34 @@ def postNewAsset(newAsset: CreateAssetRequest):
         return assetID
     except mysql.connector.Error as err:
         return {"error": f"Error: {err}"}
+    
+#Custom type for a new asset listing
+class CreateAssetListingRequest(BaseModel):
+    token_id: str
+    selling_price: str
 
+# Posts a new asset listing, used by owners of an asset that wish to list their asset for sale.
+@app.post("/postassetlisting/")
+def postAssetListing(newListing: CreateAssetListingRequest):
+    try:
+        print(newListing)
+        connection = mysql.connector.connect(**db_config)
+        cursor = connection.cursor()
+        addListingQuery = (
+            "INSERT INTO assetslistedforsale (token_id, selling_price, time_listed) VALUES ('"
+            + newListing.token_id
+            + "', '"
+            + newListing.selling_price
+            + "', NOW())"
+        )
+        print(addListingQuery)
+        cursor.execute(addListingQuery)
+
+        cursor.close()
+        connection.commit()
+        connection.close()
+    except mysql.connector.Error as err:
+        return {"error": f"Error: {err}"}
 
 
 # ! Everything below here is examples from the tutorials that I have left in case we need them. To be deleted later.

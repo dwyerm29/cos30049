@@ -6,6 +6,12 @@ import {
   Paper,
   styled,
   Typography,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  TextField,
 } from "@mui/material";
 import AddShoppingCart from "@mui/icons-material/AddShoppingCart";
 import { useParams } from "react-router-dom";
@@ -32,15 +38,55 @@ export function ItemDetails() {
 
   const currentUser = useSelector((state) => state.user);
 
-  useEffect(() => {
+  //Used to control whether the List Asset dialog box is displayed
+  const [openListAssetDialog, setOpenListAssetDialog] = React.useState(false);
+
+  //Stores the price of the asset set by the user
+  const [listAssetPrice, setListAssetPrice] = React.useState("");
+
+  const handleListAssetPriceChange = (event) => {
+    setListAssetPrice(event.target.value);
+  };
+
+  const handleCancelListAsset = () => {
+    setOpenListAssetDialog(false);
+    setListAssetPrice("");
+  };
+
+  const handleListAsset = (event) => {
+    console.log(listAssetPrice);
+    if (listAssetPrice !== "") {
+      setListAssetPrice("");
+      setOpenListAssetDialog(false);
+      axios
+        .post("http://127.0.0.1:8000/postassetlisting", {
+          token_id: itemDetails.token_id,
+          selling_price: listAssetPrice,
+        })
+        .then((response) => {
+          console.log(response);
+          loadItemDetails();
+        })
+        .catch((error) => {
+          console.error("error: " + error);
+        });
+    }
+  };
+
+  //loads the item's details from the API server. This is called upon page load and after listing an asset for sale, so its broken out into its own function.
+  function loadItemDetails() {
     axios
       .get(`http://127.0.0.1:8000/asset/${item_id}`)
       .then((response) => {
         setItemDetails(response.data[0]);
       })
       .catch((error) => {
-        console.error("error here: ", error);
+        console.error("error: " + error);
       });
+  }
+
+  useEffect(() => {
+    loadItemDetails();
   }, []);
 
   return (
@@ -102,14 +148,14 @@ export function ItemDetails() {
               <Grid
                 item
                 alignSelf={"flex-end"}
-                justifySelf={"flex-end"}
+                justifySelf={"flex-begin"}
                 sx={{ pb: 1 }}
               >
                 {/* Conditionally rendered this if item is for sale and seller is not the logged in user */}
                 {itemDetails.selling_price != null &&
                   itemDetails.current_owner_user_id !== currentUser.user_id && (
                     <div>
-                      <Typography variant="h6" component="div" align="right">
+                      <Typography variant="h6" component="div">
                         Price: {itemDetails.selling_price} ETH
                       </Typography>
                       <Button
@@ -119,23 +165,82 @@ export function ItemDetails() {
                       >
                         Add to Cart
                       </Button>
-                      <Button
-                        variant="contained"
-                        sx={{ ml: 2 }}
-                        component={Link}
-                        to="/checkout"
-                      >
-                        Buy it now
-                      </Button>
+                      {/* Buy it now button is only enabled if a user is currently logged in */}
+                      {currentUser.isAuthenticated && (
+                        <Button
+                          variant="contained"
+                          sx={{ ml: 2 }}
+                          component={Link}
+                          to="/checkout"
+                        >
+                          Buy it now
+                        </Button>
+                      )}
+                      {/* Buy it now button is only enabled if a user is currently logged in */}
+                      {!currentUser.isAuthenticated && (
+                        <Button
+                          variant="contained"
+                          sx={{ ml: 2 }}
+                          component={Link}
+                          to="/checkout"
+                          disabled="true"
+                        >
+                          Buy it now
+                        </Button>
+                      )}
                     </div>
                   )}
-                {/* Conditionally rendered this if item is not for sale and seller is not the logged in user */}
+                {/* Conditionally rendered this if item is not for sale and owner is not the logged in user */}
                 {itemDetails.selling_price == null &&
                   itemDetails.current_owner_user_id !== currentUser.user_id && (
                     <div>
-                      <Typography variant="h6" align="right">
+                      <Typography variant="h6">
                         Note: This Item Is Not For Sale
                       </Typography>
+                    </div>
+                  )}
+                {/* Conditionally rendered option to sell if item is not for sale and ownner is the logged in user */}
+                {itemDetails.selling_price == null &&
+                  itemDetails.current_owner_user_id == currentUser.user_id && (
+                    <div>
+                      <Button
+                        variant="outlined"
+                        onClick={() => {
+                          setOpenListAssetDialog(true);
+                        }}
+                      >
+                        List Asset For Sale
+                      </Button>
+                      <Dialog
+                        open={openListAssetDialog}
+                        //onClose={handleCancelListAsset}
+                      >
+                        <DialogTitle>List Asset for Sale</DialogTitle>
+                        <DialogContent>
+                          <DialogContentText>
+                            This will list your asset for sale. Please the price
+                            you'd like to list it at
+                          </DialogContentText>
+                          <TextField
+                            autoFocus
+                            margin="dense"
+                            onChange={handleListAssetPriceChange}
+                            value={listAssetPrice}
+                            id="name"
+                            label="Listing Price (ETH)"
+                            type="email"
+                            fullWidth
+                            variant="standard"
+                            required
+                          />
+                        </DialogContent>
+                        <DialogActions>
+                          <Button onClick={handleCancelListAsset}>
+                            Cancel
+                          </Button>
+                          <Button onClick={handleListAsset}>List Asset</Button>
+                        </DialogActions>
+                      </Dialog>
                     </div>
                   )}
               </Grid>
