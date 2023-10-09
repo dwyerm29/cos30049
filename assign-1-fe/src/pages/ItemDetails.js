@@ -34,9 +34,14 @@ export function ItemDetails() {
   const dispatch = useDispatch();
   const { item_id } = useParams();
 
+  //used to set whether the add to cart button is disabled when an item is already in the cart
+  const [isInCart, setIsInCart] = useState(false);
+
   const [itemDetails, setItemDetails] = useState({});
 
   const currentUser = useSelector((state) => state.user);
+
+  const cartItems = useSelector((state) => state.cart.cart);
 
   //Used to control whether the List Asset dialog box is displayed
   const [openListAssetDialog, setOpenListAssetDialog] = React.useState(false);
@@ -132,6 +137,11 @@ export function ItemDetails() {
     }
   };
 
+  const handleAddToCart = () => {
+    dispatch(addToCart(itemDetails));
+    setIsInCart(true);
+  };
+
   //loads the item's details from the API server. This is called upon page load and after listing an asset for sale, so its broken out into its own function.
   function loadItemDetails() {
     axios
@@ -146,6 +156,11 @@ export function ItemDetails() {
 
   useEffect(() => {
     loadItemDetails();
+
+    //checks whether the item is already in the cart, and disables the add to cart button if it is
+    for (const item of cartItems) {
+      if (String(item.token_id) === item_id) setIsInCart(true);
+    }
   }, []);
 
   return (
@@ -220,7 +235,8 @@ export function ItemDetails() {
                       <Button
                         variant="contained"
                         endIcon={<AddShoppingCart />}
-                        onClick={() => dispatch(addToCart({ itemDetails }))}
+                        onClick={handleAddToCart}
+                        disabled={isInCart}
                       >
                         Add to Cart
                       </Button>

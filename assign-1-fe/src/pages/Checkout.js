@@ -20,6 +20,8 @@ import {
 import ShoppingCartCheckoutIcon from "@mui/icons-material/ShoppingCartCheckout";
 import { Link } from "react-router-dom";
 
+import { useSelector } from "react-redux";
+
 const checkoutItems = [
   {
     itemName: "Neon Woman",
@@ -40,6 +42,8 @@ const checkoutItems = [
 ];
 
 export const Checkout = () => {
+  const cartItems = useSelector((state) => state.cart.cart);
+
   const [paymentMethod, setPaymentMethod] = React.useState("");
 
   const handlePaymentMethodChange = (event) => {
@@ -68,18 +72,21 @@ export const Checkout = () => {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {checkoutItems.map((row) => (
+                  {cartItems.map((row) => (
                     <TableRow
-                      key={row.itemID}
+                      key={row.token_id}
                       sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                     >
                       <TableCell component="th" scope="row">
-                        {row.itemID}
+                        {row.token_id}
                       </TableCell>
-                      <TableCell>{row.itemName}</TableCell>
-                      <TableCell>{row.sellerName}</TableCell>
-                      <TableCell>{row.licenseType}</TableCell>
-                      <TableCell>{row.price} ETH</TableCell>
+                      <TableCell>{row.item_name}</TableCell>
+                      <TableCell>
+                        {row.current_owner_first_name}{" "}
+                        {row.current_owner_last_name}
+                      </TableCell>
+                      <TableCell>{row.license_name}</TableCell>
+                      <TableCell>{row.selling_price} ETH</TableCell>
                     </TableRow>
                   ))}
                   <TableRow sx={{ fontWeight: "bold" }}>

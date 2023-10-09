@@ -5,6 +5,11 @@ import { AuthWrapper } from "./auth/AuthWrap";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 
+import { useDispatch } from "react-redux";
+
+import { setUser } from "./store/userSlice.js";
+import { setCart } from "./store/cartSlice";
+
 const darkTheme = createTheme({
   palette: {
     mode: "dark",
@@ -12,6 +17,16 @@ const darkTheme = createTheme({
 });
 
 function App() {
+  const dispatch = useDispatch();
+
+  if (localStorage.getItem("user") != null) {
+    dispatch(setUser(JSON.parse(localStorage.getItem("user"))));
+  }
+
+  if (localStorage.getItem("cart") > 2) {
+    dispatch(setCart(JSON.parse(localStorage.getItem("cart"))));
+  }
+
   return (
     <div className="App">
       <ThemeProvider theme={darkTheme}>

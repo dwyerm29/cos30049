@@ -15,11 +15,9 @@ export function AuthWrapper() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  console.log(localStorage.getItem("user"));
-
-  if (localStorage.getItem("user") != null) {
+  /*   if (localStorage.getItem("user") != null) {
     dispatch(setUser(JSON.parse(localStorage.getItem("user"))));
-  }
+  } */
   const user = useSelector((state) => state.user);
 
   const login = (username, password) => {
