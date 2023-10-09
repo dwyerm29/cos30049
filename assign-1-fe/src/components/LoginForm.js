@@ -52,7 +52,7 @@ export default function LoginForm() {
           </div>
           <div>
             <p>
-              Dont have an account?{" "}
+              Dont have an account?
               <Link to="/register" className="underline">
                 Register Here
               </Link>

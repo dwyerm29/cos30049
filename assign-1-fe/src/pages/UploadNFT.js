@@ -113,7 +113,7 @@ export const UploadNFT = () => {
 
   //handles the form submission
   const handleSubmit = (event) => {
-    console.log(event);
+    event.preventDefault();
 
     //The selected categories are stored in an array of strings, however the database needs them as integers
     const selectedCategoryIDs = [];
@@ -137,16 +137,13 @@ export const UploadNFT = () => {
           categoryIDs: selectedCategoryIDs,
         })
         .then((response) => {
-          alert(response.data);
           console.log(response.data);
           navigate(`/itemdetails/${response.data}`);
           resolve(response.data);
         })
         .catch((error) => {
-          alert("error: ", error);
           reject(error);
         });
-      alert("A name was submitted: " + event);
     });
   };
 
