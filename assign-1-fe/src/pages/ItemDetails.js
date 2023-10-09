@@ -44,15 +44,18 @@ export function ItemDetails() {
   //Stores the price of the asset set by the user
   const [listAssetPrice, setListAssetPrice] = React.useState("");
 
+  //handles any changes to the price made by the user.
   const handleListAssetPriceChange = (event) => {
     setListAssetPrice(event.target.value);
   };
 
+  //handles the user closing the list asset dialogue
   const handleCancelListAsset = () => {
     setOpenListAssetDialog(false);
     setListAssetPrice("");
   };
 
+  //handles the user listing an asset.
   const handleListAsset = (event) => {
     console.log(listAssetPrice);
     if (listAssetPrice !== "") {
@@ -68,7 +71,63 @@ export function ItemDetails() {
           loadItemDetails();
         })
         .catch((error) => {
-          console.error("error: " + error);
+          alert("error: " + error);
+        });
+    }
+  };
+
+  //Used to control whether the List Asset dialog box is displayed
+  const [openUpdateListingDialog, setOpenUpdateListingDialog] =
+    React.useState(false);
+
+  //Stores the price of the asset set by the user
+  const [updateListingPrice, setUpdateListingPrice] = React.useState("");
+
+  //handles any changes to the price made by the user.
+  const handleUpdateListingPriceChange = (event) => {
+    setUpdateListingPrice(event.target.value);
+  };
+
+  //handles the user closing the list asset dialogue
+  const handleCancelUpdateListing = () => {
+    setOpenUpdateListingDialog(false);
+    setUpdateListingPrice("");
+  };
+
+  //handles the user updating an item listing.
+  const handleUpdateListing = () => {
+    console.log(updateListingPrice);
+    if (updateListingPrice !== "") {
+      setUpdateListingPrice("");
+      setOpenUpdateListingDialog(false);
+      axios
+        .put("http://127.0.0.1:8000/putassetlisting", {
+          token_id: itemDetails.token_id,
+          selling_price: updateListingPrice,
+        })
+        .then((response) => {
+          console.log(response);
+          loadItemDetails();
+        })
+        .catch((error) => {
+          alert("error: " + error);
+        });
+    }
+  };
+
+  //handles the user deleting an asset listing.
+  const handleDeleteListing = () => {
+    if (updateListingPrice !== "") {
+      setUpdateListingPrice("");
+      setOpenUpdateListingDialog(false);
+      axios
+        .delete(`http://127.0.0.1:8000/deleteassetlisting/${item_id}`)
+        .then((response) => {
+          console.log(response);
+          loadItemDetails();
+        })
+        .catch((error) => {
+          alert("error: " + error);
         });
     }
   };
@@ -81,7 +140,7 @@ export function ItemDetails() {
         setItemDetails(response.data[0]);
       })
       .catch((error) => {
-        console.error("error: " + error);
+        alert("error: " + error);
       });
   }
 
@@ -199,7 +258,7 @@ export function ItemDetails() {
                       </Typography>
                     </div>
                   )}
-                {/* Conditionally rendered option to sell if item is not for sale and ownner is the logged in user */}
+                {/* Conditionally rendered option to sell if item is not for sale and owner is the logged in user */}
                 {itemDetails.selling_price == null &&
                   itemDetails.current_owner_user_id == currentUser.user_id && (
                     <div>
@@ -239,6 +298,61 @@ export function ItemDetails() {
                             Cancel
                           </Button>
                           <Button onClick={handleListAsset}>List Asset</Button>
+                        </DialogActions>
+                      </Dialog>
+                    </div>
+                  )}
+                {/* ! Conditionally rendered option to sell if item is for sale and owner is the logged in user (edit listing) */}
+                {itemDetails.selling_price != null &&
+                  itemDetails.current_owner_user_id == currentUser.user_id && (
+                    <div>
+                      <Typography
+                        variant="h6"
+                        sx={{ display: "inline-flex", mr: 2 }}
+                      >
+                        Item Listed for sale for: {itemDetails.selling_price}{" "}
+                        ETH
+                      </Typography>
+                      <Button
+                        variant="outlined"
+                        onClick={() => {
+                          setOpenUpdateListingDialog(true);
+                          setUpdateListingPrice(itemDetails.selling_price);
+                        }}
+                      >
+                        Edit Listing
+                      </Button>
+
+                      <Dialog open={openUpdateListingDialog}>
+                        <DialogTitle>Update Listing</DialogTitle>
+                        <DialogContent>
+                          <DialogContentText>
+                            You can either change the price, or delete your
+                            listing from this dialog.
+                          </DialogContentText>
+                          <TextField
+                            autoFocus
+                            margin="dense"
+                            onChange={handleUpdateListingPriceChange}
+                            value={updateListingPrice}
+                            id="name"
+                            label="Listing Price (ETH)"
+                            type="email"
+                            fullWidth
+                            variant="standard"
+                            required
+                          />
+                        </DialogContent>
+                        <DialogActions>
+                          <Button onClick={handleCancelUpdateListing}>
+                            Cancel
+                          </Button>
+                          <Button onClick={handleDeleteListing}>
+                            Remove Listing
+                          </Button>
+                          <Button onClick={handleUpdateListing}>
+                            Update Listing
+                          </Button>
                         </DialogActions>
                       </Dialog>
                     </div>

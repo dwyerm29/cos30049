@@ -363,13 +363,13 @@ def postNewAsset(newAsset: CreateAssetRequest):
         return {"error": f"Error: {err}"}
     
 #Custom type for a new asset listing
-class CreateAssetListingRequest(BaseModel):
+class AssetListingRequest(BaseModel):
     token_id: str
     selling_price: str
 
 # Posts a new asset listing, used by owners of an asset that wish to list their asset for sale.
 @app.post("/postassetlisting/")
-def postAssetListing(newListing: CreateAssetListingRequest):
+def postAssetListing(newListing: AssetListingRequest):
     try:
         print(newListing)
         connection = mysql.connector.connect(**db_config)
@@ -383,6 +383,49 @@ def postAssetListing(newListing: CreateAssetListingRequest):
         )
         print(addListingQuery)
         cursor.execute(addListingQuery)
+
+        cursor.close()
+        connection.commit()
+        connection.close()
+    except mysql.connector.Error as err:
+        return {"error": f"Error: {err}"}
+     
+# Puts an asset listing, used by owners of an asset that wish to update the price of an existing asset listing.
+@app.put("/putassetlisting/")
+def putAssetListing(updateListing: AssetListingRequest):
+    try:
+        print(updateListing)
+        connection = mysql.connector.connect(**db_config)
+        cursor = connection.cursor()
+        updateListingQuery = (
+            "UPDATE assetslistedforsale SET selling_price ='"
+            + updateListing.selling_price
+            + "' WHERE token_id = '"
+            + updateListing.token_id
+            + "'"
+        )
+        print(updateListingQuery)
+        cursor.execute(updateListingQuery)
+
+        cursor.close()
+        connection.commit()
+        connection.close()
+    except mysql.connector.Error as err:
+        return {"error": f"Error: {err}"}
+
+# Deletes an asset listing, used by owners of an asset that wish to remove an existing asset listing.
+@app.delete("/deleteassetlisting/{token_id}")
+def deleteAssetListing(token_id: str):
+    try:
+        connection = mysql.connector.connect(**db_config)
+        cursor = connection.cursor()
+        deleteListingQuery = (
+            "DELETE FROM assetslistedforsale WHERE token_id = '"
+            + token_id
+            + "'"
+        )
+        print(deleteListingQuery)
+        cursor.execute(deleteListingQuery)
 
         cursor.close()
         connection.commit()
