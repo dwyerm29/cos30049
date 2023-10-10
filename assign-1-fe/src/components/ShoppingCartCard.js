@@ -14,15 +14,16 @@ const Img = styled("img")({
 });
 export default function ShoppingCartCard({ cartItem }) {
   const dispatch = useDispatch();
-
+  /* Uses dispatch to display item information added to cart */
   return (
     <Card
       sx={{
         my: 1,
-
         flexGrow: 1,
-        maxHeight: 100,
+        maxHeight: "100",
         backgroundColor: "#242424",
+        flexDirection: "column",
+        justifyContent: "space-between",
       }}
     >
       <Grid container spacing={0}>
@@ -72,6 +73,7 @@ export default function ShoppingCartCard({ cartItem }) {
             <DeleteForeverIcon
               fontSize="large"
               sx={{ "&:hover": { backgroundColor: "red", borderRadius: 1 } }}
+              xs={{ "&:hover": { backgroundColor: "red", borderRadius: 1 } }}
               onClick={() => dispatch(removeFromCart(cartItem.token_id))}
             />
           </Grid>

@@ -34,31 +34,44 @@ export const Cart = () => {
         <Paper sx={{ p: 1 }}>
           <Typography variant="h4">Shopping Cart</Typography>
           <Container sx={{ pt: 1 }}>
-            {cartItems.map((item) => {
-              return <ShoppingCartCard cartItem={item} key={item.token_id} />;
-            })}
+            {cartItems.length === 0 ? (
+              <Typography varient="caption">No items in cart</Typography>
+            ) : (
+              cartItems.map((item) => (
+                <ShoppingCartCard cartItem={item} key={item.token_id} />
+              ))
+            )}
             <Typography align="right">
               Total: ${cartTotalPrice.toFixed(2)} ETH
             </Typography>
 
-            {/* if user is logged in then they can check out if not they have to login*/}
+            {/* if user is logged in then they can check out if theres an item in their cart, if not they have to login*/}
             <div className="flex gap-5">
               {user.isAuthenticated ? (
-                <Button
-                  className=" hover:bg-gray-300  bg-gray-900 px-2"
-                  sx={{ mt: 1 }}
-                  variant="contained"
-                  endIcon={
-                    <ShoppingCartCheckoutIcon
-                      size={20}
-                      className="items-baseline"
-                    />
-                  }
-                  component={Link}
-                  to="/checkout"
-                >
-                  Checkout
-                </Button>
+                cartItems.length === 0 ? (
+                  <Link
+                    to="/featureditems"
+                    className="hover:bg-gray-300 active:bg-gray-900 flex gap-1 items-center"
+                  >
+                    Add items to cart to checkout
+                  </Link>
+                ) : (
+                  <Button
+                    className=" hover:bg-gray-300  bg-gray-900 px-2"
+                    sx={{ mt: 1 }}
+                    variant="contained"
+                    endIcon={
+                      <ShoppingCartCheckoutIcon
+                        size={20}
+                        className="items-baseline"
+                      />
+                    }
+                    component={Link}
+                    to="/checkout"
+                  >
+                    Checkout
+                  </Button>
+                )
               ) : (
                 <Button
                   className=" hover:bg-gray-300  bg-gray-900 px-2"
