@@ -50,12 +50,16 @@ export const cartSlice = createSlice({
       }
 
       //update the browser's local storage to cart contents survive refresh
-      localStorage.setItem(
-        "cart",
-        JSON.stringify({
-          ...state.cart,
-        })
-      );
+      if (state.cart.length > 0) {
+        localStorage.setItem(
+          "cart",
+          JSON.stringify({
+            ...state.cart,
+          })
+        );
+      } else {
+        localStorage.removeItem("cart");
+      }
     },
   },
 });
