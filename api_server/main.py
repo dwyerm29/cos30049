@@ -10,6 +10,15 @@ from db_config import db_config
 # DB
 import mysql.connector
 
+#W3
+from web3 import Web3
+w3 = Web3(Web3.HTTPProvider("HTTP://127.0.0.1:7545"))
+from solcx import compile_standard, install_solc
+import json
+
+import time
+
+
 app = FastAPI()
 
 origins = ["*"]
@@ -454,12 +463,138 @@ def deleteAssetListing(token_id: str):
 
 
 # ! Everything below here is examples from the tutorials that I have left in case we need them. To be deleted later.
-# !Blockchain connection
 
+
+# Week 8 sample code:
 @app.get("/")
 async def funcTest1():
+    # type your address here
+    w3 = Web3(Web3.HTTPProvider("HTTP://127.0.0.1:7545"))
+    # Default is 1337 or with the PORT in your Gaanche
+    chain_id = 1337
+    # Find in you account
+    my_address = "0xB97A1ec41C99caF7656958642e0412D433cd7FB3"
+    # Find in you account
+    private_key = "0xb571ee1ad422bfb11d3db97ad44ef23aa5d828e8c540089fbf6fbc1ff03a674e"
 
+
+    with open("./SimpleStorage.sol", "r") as file:
+        simple_storage_file = file.read()
+        
+    install_solc("0.6.0")
+    compiled_sol = compile_standard(
+        {
+            "language": "Solidity",
+            "sources": {"SimpleStorage.sol": {"content": simple_storage_file}},
+            "settings": {
+                "outputSelection": {
+                    "*": {"*": ["abi", "metadata", "evm.bytecode", "evm.sourceMap"]}
+                }
+            },
+        },
+        solc_version="0.6.0",
+    )
+
+    with open("compiled_code.json", "w") as file:
+        json.dump(compiled_sol, file)
+
+    # get bytecode
+    bytecode = compiled_sol["contracts"]["SimpleStorage.sol"]["SimpleStorage"]["evm"][
+        "bytecode"
+    ]["object"]
+
+    # get abi
+    abi = compiled_sol["contracts"]["SimpleStorage.sol"]["SimpleStorage"]["abi"]
+
+
+    SimpleStorage = w3.eth.contract(abi=abi, bytecode=bytecode)
+
+    nonce = w3.eth.get_transaction_count(my_address)
+
+    transaction = SimpleStorage.constructor().build_transaction(
+        {
+            "chainId": chain_id,
+            "gasPrice": w3.eth.gas_price,
+            "from": my_address,
+            "nonce": nonce,
+        }
+    )
+    transaction.pop('to')
+
+
+    signed_txn = w3.eth.account.sign_transaction(transaction, private_key=private_key)
+    tx_hash = w3.eth.send_raw_transaction(signed_txn.rawTransaction)
+    tx_receipt = w3.eth.wait_for_transaction_receipt(tx_hash)
+
+
+    simple_storage = w3.eth.contract(address=tx_receipt.contractAddress, abi=abi)
+
+    store_transaction = simple_storage.functions.store(67).build_transaction(
+        {
+            "chainId": chain_id,
+            "gasPrice": w3.eth.gas_price,
+            "from": my_address,
+            "nonce": nonce + 1,
+        }
+    )
+
+    signed_store_txn = w3.eth.account.sign_transaction(store_transaction, private_key=private_key)
+    send_store_tx = w3.eth.send_raw_transaction(signed_store_txn.rawTransaction)
+    tx_receipt = w3.eth.wait_for_transaction_receipt(send_store_tx)
+
+    
     return "Hello, this is contract deploy preocess"
+
+@app.get("/eventsample")
+async def eventSample():
+    assert w3.isConnected()
+
+    # Contract address and ABI
+    contract_address = '0xYourContractAddress'
+    contract_abi = [...]  # Your contract ABI
+
+    # Create a contract object
+    contract = w3.eth.contract(address=contract_address, abi=contract_abi)
+
+    # Define an event filter
+    event_filter = contract.events.MyEvent.createFilter(fromBlock='latest')
+
+    # Send a transaction to call a function (if needed)
+    tx_hash = contract.functions.myFunction().transact({'from': w3.eth.accounts[0]})
+    w3.eth.waitForTransactionReceipt(tx_hash)
+
+    # Retrieve event logs
+    event_logs = event_filter.get_new_entries()
+    if event_logs:
+        event = event_logs[0]
+        print("Return Value:", event['args']['returnValue'])
+
+
+@app.get("/checktxreciept")
+async def checkreciept():
+    # Send the transaction
+    transaction_hash = w3.eth.sendTransaction({'to': 'receiver_address', 'value': w3.toWei(1, 'ether')})
+
+    # Wait for some time
+    time.sleep(15)  # Adjust the waiting time as needed
+
+    # Query the transaction receipt
+    receipt = w3.eth.getTransactionReceipt(transaction_hash)
+
+    if receipt is not None:
+        if receipt['status'] == 1:
+            print("Transaction successful")
+        else:
+            print("Transaction failed")
+    else:
+        print("Transaction has not been confirmed yet")
+
+    event_logs = event_filter.get_new_entries()
+
+    for event in event_logs:
+        print("New event:", event['args'])
+
+
 
 
 @app.get("/jsonData")
