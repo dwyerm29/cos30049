@@ -23,7 +23,7 @@ function App() {
     dispatch(setUser(JSON.parse(localStorage.getItem("user"))));
   }
 
-  if (localStorage.getItem("cart") > 2) {
+  if (localStorage.getItem("cart") != null) {
     dispatch(setCart(JSON.parse(localStorage.getItem("cart"))));
   }
 
