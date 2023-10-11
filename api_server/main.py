@@ -573,7 +573,7 @@ async def eventSample():
 @app.get("/checktxreciept")
 async def checkreciept():
     # Send the transaction
-    transaction_hash = w3.eth.sendTransaction({'to': 'receiver_address', 'value': w3.toWei(1, 'ether')})
+    transaction_hash = w3.eth.sendTransaction({'to': '0xB97A1ec41C99caF7656958642e0412D433cd7FB3', 'value': w3.toWei(1, 'ether')})
 
     # Wait for some time
     time.sleep(15)  # Adjust the waiting time as needed
