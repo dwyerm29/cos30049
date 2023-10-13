@@ -3,9 +3,7 @@ from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
 from typing import Annotated, Union
 from web3 import Web3
-import os
 from solcx import compile_standard, install_solc
-import json
 # CHECK README IF YOU GET AN ERROR HERE
 from db_config import db_config
 
@@ -458,9 +456,9 @@ def deleteAssetListing(token_id: str):
 # ! Everything below here is examples from the tutorials that I have left in case we need them. To be deleted later.
 # !Blockchain connection
 
-
 @app.get("/")
 async def funcTest1():
+
    # type your address here
     w3 = Web3(Web3.HTTPProvider("HTTP://127.0.0.1:7545"))
     # Default is 1337 or with the PORT in your Gaanche
@@ -470,7 +468,7 @@ async def funcTest1():
     # Find in you account
     private_key = "0xcef9bcdd238b08e02fbea5a71f01e819869f0eea2b6ce5be5d88a02bc7ca2f00"
 
-    with open("./SimpleStorage.sol", "r") as file:
+    with open("../assign-1-fe/contracts/contracts/SimpleStorage.sol", "r") as file:
         simple_storage_file = file.read()
 
     install_solc("0.6.0")
@@ -501,6 +499,16 @@ async def funcTest1():
     SimpleStorage = w3.eth.contract(abi=abi, bytecode=bytecode)
 
     nonce = w3.eth.get_transaction_count(my_address)
+
+    tokenid = 1
+    itemName = "Example Item"
+    itemPrice = 50
+    purchaseTime = 2000
+    firstName = "John"
+    lastName = "Doe"
+    buyerid = 123
+    email = "john.doe@example.com"
+
     # Creation of transation
     transaction = SimpleStorage.constructor().build_transaction(
         {
@@ -523,7 +531,7 @@ async def funcTest1():
     simple_storage = w3.eth.contract(
         address=tx_receipt.contractAddress, abi=abi)
 
-    store_transaction = simple_storage.functions.store(67).build_transaction(
+    store_transaction = simple_storage.functions.store(tokenid, itemName, itemPrice, purchaseTime, firstName, lastName, buyerid, email).build_transaction(
         {
             "chainId": chain_id,
             "gasPrice": w3.eth.gas_price,

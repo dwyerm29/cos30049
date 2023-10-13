@@ -24,9 +24,7 @@ import { useSelector } from "react-redux";
 
 export const Checkout = () => {
   const cartItems = useSelector((state) => state.cart.cart);
-
   const [paymentMethod, setPaymentMethod] = React.useState("");
-
   const handlePaymentMethodChange = (event) => {
     setPaymentMethod(event.target.value);
   };
