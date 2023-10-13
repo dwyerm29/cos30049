@@ -22,25 +22,6 @@ import { Link } from "react-router-dom";
 
 import { useSelector } from "react-redux";
 
-const checkoutItems = [
-  {
-    itemName: "Neon Woman",
-    itemID: 123129,
-    sellerName: "Maria Eduarda Loura Magalhães",
-    licenseType: "Standard",
-    price: "0.4",
-    linkTo: "/itemdetails",
-  },
-  {
-    itemName: "Cyber Girl",
-    itemID: 124343,
-    sellerName: "ThisIsEngineering",
-    licenseType: "Standard",
-    price: "0.6",
-    linkTo: "/itemdetails",
-  },
-];
-
 export const Checkout = () => {
   const cartItems = useSelector((state) => state.cart.cart);
 

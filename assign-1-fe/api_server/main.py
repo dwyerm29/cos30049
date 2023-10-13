@@ -2,7 +2,10 @@ from fastapi import FastAPI, Query
 from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
 from typing import Annotated, Union
-
+from web3 import Web3
+import os
+from solcx import compile_standard, install_solc
+import json
 # CHECK README IF YOU GET AN ERROR HERE
 from db_config import db_config
 
@@ -102,6 +105,8 @@ def get_listed_assets():
 
 # ! attempt to combine search with category filtering
 # get a list of all Assets. Optionally you may provide a list of categories to the query to match the Assets using the following format: http://localhost:8000/Assets/?category=1&category=2
+
+
 @app.get("/assets/search/")
 async def read_items(
     query: Union[str, None] = None, category: Annotated[Union[list[str], None], Query()] = None
@@ -222,14 +227,17 @@ def get_asset_categories():
         query = "SELECT * FROM AssetCategoryDescriptions"
         cursor.execute(query)
         result = cursor.fetchall()
-        AssetCategories = [dict(zip(cursor.column_names, row)) for row in result]
+        AssetCategories = [dict(zip(cursor.column_names, row))
+                           for row in result]
         cursor.close()
         connection.close()
         return AssetCategories
     except mysql.connector.Error as err:
         return {"error": f"Error: {err}"}
-    
+
 # get a list of all asset filetypes along with their descriptions
+
+
 @app.get("/asset_filetypes/")
 def get_asset_filetypes():
     try:
@@ -244,8 +252,10 @@ def get_asset_filetypes():
         return FileTypes
     except mysql.connector.Error as err:
         return {"error": f"Error: {err}"}
-    
+
  # get a list of all asset filetypes along with their descriptions
+
+
 @app.get("/asset_licensetypes/")
 def get_asset_licensetypes():
     try:
@@ -288,7 +298,8 @@ def login(login: LoginRequest):
         return user
     except mysql.connector.Error as err:
         return {"error": f"Error: {err}"}
-    
+
+
 class CreateAssetRequest(BaseModel):
     name: str
     description: str
@@ -301,6 +312,8 @@ class CreateAssetRequest(BaseModel):
     categoryIDs: set[int]
 
 # Posts a new asset to the Assets table, along with a creation transaction (price: 0, both buyer and seller ID that of the uploader), and associated asset categories/
+
+
 @app.post("/postnewasset/")
 def postNewAsset(newAsset: CreateAssetRequest):
     try:
@@ -361,13 +374,17 @@ def postNewAsset(newAsset: CreateAssetRequest):
         return assetID
     except mysql.connector.Error as err:
         return {"error": f"Error: {err}"}
-    
-#Custom type for a new asset listing
+
+# Custom type for a new asset listing
+
+
 class AssetListingRequest(BaseModel):
     token_id: str
     selling_price: str
 
 # Posts a new asset listing, used by owners of an asset that wish to list their asset for sale.
+
+
 @app.post("/postassetlisting/")
 def postAssetListing(newListing: AssetListingRequest):
     try:
@@ -389,8 +406,10 @@ def postAssetListing(newListing: AssetListingRequest):
         connection.close()
     except mysql.connector.Error as err:
         return {"error": f"Error: {err}"}
-     
+
 # Puts an asset listing, used by owners of an asset that wish to update the price of an existing asset listing.
+
+
 @app.put("/putassetlisting/")
 def putAssetListing(updateListing: AssetListingRequest):
     try:
@@ -414,6 +433,8 @@ def putAssetListing(updateListing: AssetListingRequest):
         return {"error": f"Error: {err}"}
 
 # Deletes an asset listing, used by owners of an asset that wish to remove an existing asset listing.
+
+
 @app.delete("/deleteassetlisting/{token_id}")
 def deleteAssetListing(token_id: str):
     try:
@@ -435,9 +456,89 @@ def deleteAssetListing(token_id: str):
 
 
 # ! Everything below here is examples from the tutorials that I have left in case we need them. To be deleted later.
+# !Blockchain connection
+
+
 @app.get("/")
 async def funcTest1():
-    return "Hello, this is fastAPI data"
+   # type your address here
+    w3 = Web3(Web3.HTTPProvider("HTTP://127.0.0.1:7545"))
+    # Default is 1337 or with the PORT in your Gaanche
+    chain_id = 1337
+    # Find in you account
+    my_address = "0xB35B1CdB451257030f91683f4B3439A423EE84b3"
+    # Find in you account
+    private_key = "0xcef9bcdd238b08e02fbea5a71f01e819869f0eea2b6ce5be5d88a02bc7ca2f00"
+
+    with open("./SimpleStorage.sol", "r") as file:
+        simple_storage_file = file.read()
+
+    install_solc("0.6.0")
+    compiled_sol = compile_standard(
+        {
+            "language": "Solidity",
+            "sources": {"SimpleStorage.sol": {"content": simple_storage_file}},
+            "settings": {
+                "outputSelection": {
+                    "*": {"*": ["abi", "metadata", "evm.bytecode", "evm.sourceMap"]}
+                }
+            },
+        },
+        solc_version="0.6.0",
+    )
+
+    with open("compiled_code.json", "w") as file:
+        json.dump(compiled_sol, file)
+
+    # get bytecode
+    bytecode = compiled_sol["contracts"]["SimpleStorage.sol"]["SimpleStorage"]["evm"][
+        "bytecode"
+    ]["object"]
+
+    # get abi
+    abi = compiled_sol["contracts"]["SimpleStorage.sol"]["SimpleStorage"]["abi"]
+
+    SimpleStorage = w3.eth.contract(abi=abi, bytecode=bytecode)
+
+    nonce = w3.eth.get_transaction_count(my_address)
+    # Creation of transation
+    transaction = SimpleStorage.constructor().build_transaction(
+        {
+            "chainId": chain_id,
+            "gasPrice": w3.eth.gas_price,
+            "from": my_address,
+            "nonce": nonce,
+        }
+    )
+    transaction.pop('to')
+
+    # sign the tranaction - the private key is the password to the accounf
+    signed_txn = w3.eth.account.sign_transaction(
+        transaction, private_key=private_key)
+    # sends off the transation hash
+    tx_hash = w3.eth.send_raw_transaction(signed_txn.rawTransaction)
+    # gives a transation recipet from the transation hash - the transation detatils
+    tx_receipt = w3.eth.wait_for_transaction_receipt(tx_hash)
+
+    simple_storage = w3.eth.contract(
+        address=tx_receipt.contractAddress, abi=abi)
+
+    store_transaction = simple_storage.functions.store(67).build_transaction(
+        {
+            "chainId": chain_id,
+            "gasPrice": w3.eth.gas_price,
+            "from": my_address,
+            "nonce": nonce + 1,
+        }
+    )
+
+    signed_store_txn = w3.eth.account.sign_transaction(
+        store_transaction, private_key=private_key)
+    send_store_tx = w3.eth.send_raw_transaction(
+        signed_store_txn.rawTransaction)
+    tx_receipt = w3.eth.wait_for_transaction_receipt(send_store_tx)
+
+    return "Hello, this is contract deploy preocess"
 
 
 @app.get("/jsonData")
