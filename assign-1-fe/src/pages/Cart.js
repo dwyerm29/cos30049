@@ -42,7 +42,7 @@ export const Cart = () => {
               ))
             )}
             <Typography align="right">
-              Total: ${cartTotalPrice.toFixed(2)} ETH
+              Total: {cartTotalPrice.toFixed(2)} ETH
             </Typography>
 
             {/* if user is logged in then they can check out if theres an item in their cart, if not they have to login*/}

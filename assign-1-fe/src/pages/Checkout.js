@@ -24,6 +24,8 @@ import { useSelector } from "react-redux";
 
 export const Checkout = () => {
   const cartItems = useSelector((state) => state.cart.cart);
+  const cartTotalPrice = useSelector((state) => state.cart.totalPrice);
+
   const [paymentMethod, setPaymentMethod] = React.useState("");
   const handlePaymentMethodChange = (event) => {
     setPaymentMethod(event.target.value);
@@ -71,7 +73,9 @@ export const Checkout = () => {
                   <TableRow sx={{ fontWeight: "bold" }}>
                     <TableCell colSpan={3}></TableCell>
                     <TableCell sx={{ fontWeight: "bold" }}>Total</TableCell>
-                    <TableCell sx={{ fontWeight: "bold" }}>1.0 ETH</TableCell>
+                    <TableCell sx={{ fontWeight: "bold" }}>
+                      {cartTotalPrice.toFixed(2)} ETH
+                    </TableCell>
                   </TableRow>
                 </TableBody>
               </Table>
