@@ -45,7 +45,9 @@ export function AuthWrapper() {
             );
             success("success");
           } else {
-            incorrect("Incorrect Password or Email ");
+            incorrect(
+              "Incorrect Password or Email - HINT: try username: john.smith@example.com - password: password"
+            );
           }
         })
         .catch((error) => {
