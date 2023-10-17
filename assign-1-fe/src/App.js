@@ -6,7 +6,6 @@ import CssBaseline from "@mui/material/CssBaseline";
 import { useDispatch } from "react-redux";
 import { setUser } from "./store/userSlice.js";
 import { setCart } from "./store/cartSlice";
-import Web3 from "web3";
 
 const darkTheme = createTheme({
   palette: {
