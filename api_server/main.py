@@ -466,16 +466,16 @@ def deleteAssetListing(token_id: str):
 
 
 # Week 8 sample code:
-@app.get("/")
+@app.get("/deployContract")
 async def funcTest1():
     # type your address here
     w3 = Web3(Web3.HTTPProvider("HTTP://127.0.0.1:7545"))
     # Default is 1337 or with the PORT in your Gaanche
     chain_id = 1337
     # Find in you account
-    my_address = "0xB97A1ec41C99caF7656958642e0412D433cd7FB3"
+    my_address = "0x153aB956036f09E592C37E70f92EF37FbB8f12D2"
     # Find in you account
-    private_key = "0xb571ee1ad422bfb11d3db97ad44ef23aa5d828e8c540089fbf6fbc1ff03a674e"
+    private_key = "0x1229b80388af2cc90f13959a07075b7f4e5535dcebc167d1f6a2b728e1030c03"
 
 
     with open("./SimpleStorage.sol", "r") as file:
@@ -505,6 +505,7 @@ async def funcTest1():
 
     # get abi
     abi = compiled_sol["contracts"]["SimpleStorage.sol"]["SimpleStorage"]["abi"]
+    print("ABI: " + abi)
 
 
     SimpleStorage = w3.eth.contract(abi=abi, bytecode=bytecode)
@@ -526,6 +527,32 @@ async def funcTest1():
     tx_hash = w3.eth.send_raw_transaction(signed_txn.rawTransaction)
     tx_receipt = w3.eth.wait_for_transaction_receipt(tx_hash)
 
+    print("Contract address:")
+    print(tx_receipt.contractAddress)
+
+    try:
+        print(tx_receipt.contractAddress)
+        connection = mysql.connector.connect(**db_config)
+        cursor = connection.cursor()
+        addContractAddressQuery = (
+            "INSERT INTO ContractAddress (contract_address) VALUES ('"
+            + tx_receipt.contractAddress
+            + "')"
+        )
+        print(addContractAddressQuery)
+        cursor.execute(addContractAddressQuery)
+
+        cursor.close()
+        connection.commit()
+        connection.close()
+    except mysql.connector.Error as err:
+        return {"error": f"Error: {err}"}
+
+
+    print(signed_txn)
+    print(tx_hash)
+    print(tx_receipt)
+
 
     simple_storage = w3.eth.contract(address=tx_receipt.contractAddress, abi=abi)
 
@@ -542,8 +569,109 @@ async def funcTest1():
     send_store_tx = w3.eth.send_raw_transaction(signed_store_txn.rawTransaction)
     tx_receipt = w3.eth.wait_for_transaction_receipt(send_store_tx)
 
+    print(signed_store_txn)
+    print(send_store_tx)
+    print(tx_receipt)
+
     
     return "Hello, this is contract deploy preocess"
+
+@app.get("/simpleStorageStore")
+async def funcTest1():
+    w3 = Web3(Web3.HTTPProvider("HTTP://127.0.0.1:7545"))
+    chain_id = 1337
+    my_address = "0x96De804C980b07dFf64FDE714F56938Aa0C23229"
+    private_key = "0x226b32b4bdda1b6150af46e3e8735010b8fa1ce03609d706439558dd4cb21952"
+
+    #get compiled ABI
+    with open("compiled_code.json", "r") as file:
+        compiled_sol = json.load(file)
+        abi = compiled_sol["contracts"]["SimpleStorage.sol"]["SimpleStorage"]["abi"]
+
+    #get contract address from database
+    contractAddress = ""
+    try:
+        connection = mysql.connector.connect(**db_config)
+        cursor = connection.cursor()
+        getContractAddressQuery = (
+            "SELECT * FROM ContractAddress LIMIT 1"
+        )
+        print(getContractAddressQuery)
+        cursor.execute(getContractAddressQuery)
+        result = cursor.fetchone()
+        contractAddress = result[0]
+
+        print(contractAddress)
+
+        cursor.close()
+        connection.commit()
+        connection.close()
+    except mysql.connector.Error as err:
+        return {"error": f"Error: {err}"}
+
+    simple_storage = w3.eth.contract(address=contractAddress, abi=abi)
+    
+    nonce = w3.eth.get_transaction_count(my_address)
+
+    store_transaction = simple_storage.functions.store(67).build_transaction(
+        {
+            "chainId": chain_id,
+            "gasPrice": w3.eth.gas_price,
+            "from": my_address,
+            "nonce": nonce,
+        }
+    )
+
+    signed_store_txn = w3.eth.account.sign_transaction(store_transaction, private_key=private_key)
+    send_store_tx = w3.eth.send_raw_transaction(signed_store_txn.rawTransaction)
+    tx_receipt = w3.eth.wait_for_transaction_receipt(send_store_tx)
+
+    print(signed_store_txn)
+    print(send_store_tx)
+    print(tx_receipt)
+
+    
+    return "Hello, this is contract deploy preocess" 
+
+@app.get("/simpleStorageRetrieve")
+async def funcTest1():
+    w3 = Web3(Web3.HTTPProvider("HTTP://127.0.0.1:7545"))
+
+    #get compiled ABI
+    with open("compiled_code.json", "r") as file:
+        compiled_sol = json.load(file)
+        abi = compiled_sol["contracts"]["SimpleStorage.sol"]["SimpleStorage"]["abi"]
+
+    #get contract address from database
+    contractAddress = ""
+    try:
+        connection = mysql.connector.connect(**db_config)
+        cursor = connection.cursor()
+        getContractAddressQuery = (
+            "SELECT * FROM ContractAddress LIMIT 1"
+        )
+        print(getContractAddressQuery)
+        cursor.execute(getContractAddressQuery)
+        result = cursor.fetchone()
+        contractAddress = result[0]
+
+        print(contractAddress)
+
+        cursor.close()
+        connection.commit()
+        connection.close()
+    except mysql.connector.Error as err:
+        return {"error": f"Error: {err}"}
+
+    simple_storage = w3.eth.contract(address=contractAddress, abi=abi)
+    
+    get_transaction = simple_storage.functions.retrieve().call()
+
+    return get_transaction
+
+
+
+
 
 @app.get("/eventsample")
 async def eventSample():

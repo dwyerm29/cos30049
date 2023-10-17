@@ -83,6 +83,11 @@ CREATE TABLE `AssetsListedForSale` (
   FOREIGN KEY (`token_id`) REFERENCES `Assets` (`token_id`)
 );
 
+CREATE TABLE `ContractAddress`(
+  `contract_address` VARCHAR(42) NOT NULL,
+  PRIMARY KEY (`contract_address`)
+);
+
 INSERT INTO Users (user_id, password, first_name, last_name, email, wallet_id) VALUES ('1', 'password', 'John', 'Smith', 'john.smith@example.com', '13425123');
 INSERT INTO Users (user_id, password, first_name, last_name, email) VALUES ('2', 'password', 'Jane', 'Smith', 'jane.smith@example.com');
 INSERT INTO Users (user_id, password, first_name, last_name, email) VALUES ('3', 'password', 'Maria', 'Eduarda Loura Magalhães', 'maria.magalhaes@example.com');
@@ -111,6 +116,8 @@ INSERT INTO FileTypes ( filetype_id, filetype_name) VALUES ('2', 'PNG');
 
 INSERT INTO LicenseTypes ( license_type_id, license_name) VALUES ('1', 'Standard');
 INSERT INTO LicenseTypes ( license_type_id, license_name) VALUES ('2', 'Standard');
+
+
 
 
 INSERT INTO Assets ( token_id, item_name, item_description, image_url, image_thumbnail_url, image_resolution, image_filetype_id, license_type_id, original_owner, current_owner, sale_price, transaction_datetime) 
