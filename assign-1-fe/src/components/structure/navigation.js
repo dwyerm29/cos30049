@@ -9,10 +9,8 @@ import { Register } from "../../pages/Register";
 import { ItemDetails } from "../../pages/ItemDetails";
 import { Checkout } from "../../pages/Checkout";
 import { OrderSummary } from "../../pages/OrderSummary";
-import { AxiosTest } from "../../pages/AxiosTest";
 import { CounterGrid } from "../../features/counter/CounterGrid";
 import { UploadNFT } from "../../pages/UploadNFT";
-import { OwnedItem } from "../../pages/OwnedItem";
 
 export const navigation = [
   {
@@ -84,13 +82,7 @@ export const navigation = [
     isMenu: false,
     isPrivate: false,
   },
-  {
-    path: "/AxiosTest",
-    name: "AxiosTest",
-    element: <AxiosTest />,
-    isMenu: false,
-    isPrivate: false,
-  },
+
   {
     path: "/Counter",
     name: "Counter",
@@ -110,13 +102,6 @@ export const navigation = [
     path: "/uploadnft",
     name: "UploadNFT",
     element: <UploadNFT />,
-    isMenu: false,
-    isPrivate: false,
-  },
-  {
-    path: "/ownedItem",
-    name: "OwnedItem",
-    element: <OwnedItem />,
     isMenu: false,
     isPrivate: false,
   },
