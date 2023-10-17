@@ -576,8 +576,8 @@ async def funcTest1():
     
     return "Hello, this is contract deploy preocess"
 
-@app.get("/simpleStorageStore")
-async def funcTest1():
+@app.post("/simpleStorageStore")
+async def funcTest1(num: int):
     w3 = Web3(Web3.HTTPProvider("HTTP://127.0.0.1:7545"))
     chain_id = 1337
     my_address = "0x96De804C980b07dFf64FDE714F56938Aa0C23229"
@@ -613,7 +613,7 @@ async def funcTest1():
     
     nonce = w3.eth.get_transaction_count(my_address)
 
-    store_transaction = simple_storage.functions.store(67).build_transaction(
+    store_transaction = simple_storage.functions.store(num).build_transaction(
         {
             "chainId": chain_id,
             "gasPrice": w3.eth.gas_price,
