@@ -9,7 +9,6 @@ import { Register } from "../../pages/Register";
 import { ItemDetails } from "../../pages/ItemDetails";
 import { Checkout } from "../../pages/Checkout";
 import { OrderSummary } from "../../pages/OrderSummary";
-import { CounterGrid } from "../../features/counter/CounterGrid";
 import { UploadNFT } from "../../pages/UploadNFT";
 
 export const navigation = [

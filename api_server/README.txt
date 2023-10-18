@@ -7,3 +7,8 @@ db_config = {
 "password": "password",
 "database": "database name"
 }
+
+blockchain_config = {
+"account_address": "0xXXXXXXXXXXXXXXXXXXXXXXXXX",
+"account_private_Key": "0x44444444444444444444444444444"
+}
