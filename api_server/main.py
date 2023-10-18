@@ -669,7 +669,7 @@ async def funcTest1():
 
     simple_storage = w3.eth.contract(address=contractAddress, abi=abi)
     
-    get_transaction = simple_storage.functions.retrieve().call()
+    get_transaction = simple_storage.functions.retrieveFavouriteNumber().call()
 
     return get_transaction
 
