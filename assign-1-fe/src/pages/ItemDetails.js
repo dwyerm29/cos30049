@@ -12,13 +12,18 @@ import {
   DialogContentText,
   DialogTitle,
   TextField,
+  Collapse,
+  Alert,
+  IconButton,
 } from "@mui/material";
 import AddShoppingCart from "@mui/icons-material/AddShoppingCart";
 import { useParams } from "react-router-dom";
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { addToCart } from "../store/cartSlice";
-
+import { ClickAwayListener } from "@mui/base/ClickAwayListener";
+import { Portal } from "@mui/base/Portal";
+import CloseIcon from "@mui/icons-material/Close";
 import axios from "axios";
 
 import { Link } from "react-router-dom";
@@ -232,6 +237,23 @@ export function ItemDetails() {
                       <Typography variant="h6" component="div">
                         Price: {itemDetails.selling_price} ETH
                       </Typography>
+                      <Collapse in={isInCart}>
+                        <Alert
+                          action={
+                            <IconButton
+                              aria-label="close"
+                              color="inherit"
+                              size="small"
+                              onClick={() => {
+                                setIsInCart(false);
+                              }}
+                            ></IconButton>
+                          }
+                          sx={{ mb: 2 }}
+                        >
+                          Item Added to cart!
+                        </Alert>
+                      </Collapse>
                       <Button
                         variant="contained"
                         endIcon={<AddShoppingCart />}
@@ -240,29 +262,6 @@ export function ItemDetails() {
                       >
                         Add to Cart
                       </Button>
-                      {/* Buy it now button is only enabled if a user is currently logged in */}
-                      {currentUser.isAuthenticated && (
-                        <Button
-                          variant="contained"
-                          sx={{ ml: 2 }}
-                          component={Link}
-                          to="/checkout"
-                        >
-                          Buy it now
-                        </Button>
-                      )}
-                      {/* Buy it now button is only enabled if a user is currently logged in */}
-                      {!currentUser.isAuthenticated && (
-                        <Button
-                          variant="contained"
-                          sx={{ ml: 2 }}
-                          component={Link}
-                          to="/checkout"
-                          disabled="true"
-                        >
-                          Buy it now
-                        </Button>
-                      )}
                     </div>
                   )}
                 {/* Conditionally rendered this if item is not for sale and owner is not the logged in user */}

@@ -13,6 +13,7 @@ import { navigation } from "./structure/navigation";
 import { Input, Button } from "@material-tailwind/react";
 import { Box } from "@mui/material";
 import { useSelector } from "react-redux";
+import Badge from "@mui/material/Badge";
 
 export const ToRoutes = () => {
   const { user } = AuthData();
@@ -146,11 +147,16 @@ export const Menu = () => {
           </Button>
         )}
       </div>
-      {/* cart Items count added in for validity currently */}
+      {/* cart Items count added in for validity  */}
       <Button className="hidden md:flex gap-5 hover:bg-gray-300 active:bg-gray-900 px-2">
         <Link to="/cart">
-          {cartItems.length}
-          <AiOutlineShoppingCart size={20} />
+          <Badge
+            badgeContent={cartItems.length}
+            showZero
+            className="px-1 right-1"
+          >
+            <AiOutlineShoppingCart size={20} />
+          </Badge>
         </Link>
       </Button>
 
@@ -212,9 +218,16 @@ export const Menu = () => {
             </div>
           )}
         </div>
+        {/* Handles items added to cart and cart link*/}
         <div className="uppercase flex justify-between items-center p-4 md:hidden">
           <CustomLink to="/cart" onClick={handleNav}>
-            <AiOutlineShoppingCart size={20} />
+            <Badge
+              badgeContent={cartItems.length}
+              className="px-1 right-1"
+              showZero
+            >
+              <AiOutlineShoppingCart size={20} />
+            </Badge>
             <span>Cart</span>
           </CustomLink>
         </div>
