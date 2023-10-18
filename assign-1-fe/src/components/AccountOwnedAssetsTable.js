@@ -19,9 +19,34 @@ export default function AccountOwnedAssetsTable({ user_id }) {
 
   useEffect(() => {
     axios
-      .get(`http://127.0.0.1:8000/user/${user_id}/owned_assets/`)
+      .get(
+        `http://127.0.0.1:8000/transaction_storage_get_all_owned_assets_for_user/${user_id}/`
+      )
       .then((response) => {
-        setOwnedAssets(response.data);
+        var tempTransactions = [];
+        if (response.data.length > 0) {
+          response.data.map((transaction) => {
+            var transactionType = "";
+            if (transaction[3] === transaction[2]) transactionType = "Creation";
+            else if (user_id === transaction[3]) transactionType = "Purchase";
+            else if (user_id === transaction[2]) transactionType = "Sale";
+
+            tempTransactions.push({
+              transaction_id: transaction[0],
+              token_id: transaction[1],
+              seller_id: transaction[2],
+              buyer_id: transaction[3],
+              transaction_date_time: transaction[4],
+              sale_price: transaction[5],
+              owner_name: transaction[6],
+              owner_email: transaction[7],
+              asset_name: transaction[8],
+              transaction_type: transactionType,
+            });
+          });
+        }
+        console.log(tempTransactions);
+        setOwnedAssets(tempTransactions);
       })
       .catch((error) => {
         console.error("error here: ", error);
@@ -43,11 +68,11 @@ export default function AccountOwnedAssetsTable({ user_id }) {
         <TableBody>
           {ownedAssets.map((asset) => (
             <TableRow
-              key={asset.token_id}
+              key={asset.transaction_id}
               sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
             >
               <TableCell component="th" scope="row">
-                {asset.item_name}
+                {asset.asset_name}
               </TableCell>
               <TableCell>
                 <Typography
