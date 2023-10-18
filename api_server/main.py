@@ -462,7 +462,7 @@ def deleteAssetListing(token_id: str):
     except mysql.connector.Error as err:
         return {"error": f"Error: {err}"}
 
-@app.get("/TransactionStorageDeployContract")
+@app.get("/transaction_storage_deploy_contract")
 async def TransactionStorageDeployContract():
     # type your address here
     w3 = Web3(Web3.HTTPProvider("HTTP://127.0.0.1:7545"))
@@ -553,7 +553,7 @@ async def TransactionStorageDeployContract():
 
 
 #Used to populate the transaction history once when initialising the smart contract
-@app.post("/TransactionStoragePopulateTransactions")
+@app.get("/transaction_storage_populate_transactions")
 async def TransactionStoragePopulateTransactions():
     w3 = Web3(Web3.HTTPProvider("HTTP://127.0.0.1:7545"))
     chain_id = 1337
@@ -643,7 +643,7 @@ async def TransactionStoragePopulateTransactions():
 #tx_receipt
 
 
-@app.get("/TransactionStorageGetAllTransactions")
+@app.get("/transaction_storage_get_all_transactions")
 async def TransactionStorageGetAllTransactions():
     w3 = Web3(Web3.HTTPProvider("HTTP://127.0.0.1:7545"))
 
@@ -680,7 +680,7 @@ async def TransactionStorageGetAllTransactions():
     return get_transaction
 
 
-@app.post("/TransactionStorageGetAllTransactionsForUser")
+@app.get("/transaction_storage_get_all_transactions_for_user/{user_id}")
 async def TransactionStorageGetAllTransactionsForUser(user_id: int):
     w3 = Web3(Web3.HTTPProvider("HTTP://127.0.0.1:7545"))
 
@@ -718,7 +718,7 @@ async def TransactionStorageGetAllTransactionsForUser(user_id: int):
 
 
 
-@app.post("/TransactionStorageGetAllOwnedAssetsForUser")
+@app.get("/transaction_storage_get_all_owned_assets_for_user/{user_id}")
 async def TransactionStorageGetAllOwnedAssetsForUser(user_id: int):
     w3 = Web3(Web3.HTTPProvider("HTTP://127.0.0.1:7545"))
 
