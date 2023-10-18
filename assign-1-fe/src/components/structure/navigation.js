@@ -82,14 +82,6 @@ export const navigation = [
     isMenu: false,
     isPrivate: false,
   },
-
-  {
-    path: "/Counter",
-    name: "Counter",
-    element: <CounterGrid />,
-    isMenu: false,
-    isPrivate: false,
-  },
   //Only shows when is private is true
   {
     path: "/account",
