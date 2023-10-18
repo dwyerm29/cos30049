@@ -536,11 +536,11 @@ async def funcTest1():
         connection = mysql.connector.connect(**db_config)
         cursor = connection.cursor()
         addContractAddressQuery = (
-            "INSERT INTO ContractAddress (contract_address) VALUES ('"
+            "REPLACE INTO ContractAddress (contract_name, contract_address) VALUES ('SimpleStorage', '"
             + tx_receipt.contractAddress
             + "')"
         )
-        #print(addContractAddressQuery)
+        print(addContractAddressQuery)
         cursor.execute(addContractAddressQuery)
 
         cursor.close()
@@ -598,7 +598,7 @@ async def funcTest1(num: int):
         connection = mysql.connector.connect(**db_config)
         cursor = connection.cursor()
         getContractAddressQuery = (
-            "SELECT * FROM ContractAddress LIMIT 1"
+            "SELECT contract_address FROM ContractAddress WHERE contract_name='SimpleStorage'"
         )
         print(getContractAddressQuery)
         cursor.execute(getContractAddressQuery)
@@ -652,7 +652,7 @@ async def funcTest1():
         connection = mysql.connector.connect(**db_config)
         cursor = connection.cursor()
         getContractAddressQuery = (
-            "SELECT * FROM ContractAddress LIMIT 1"
+            "SELECT contract_address FROM ContractAddress WHERE contract_name='SimpleStorage'"
         )
         print(getContractAddressQuery)
         cursor.execute(getContractAddressQuery)

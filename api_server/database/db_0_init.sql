@@ -8,6 +8,7 @@ DROP TABLE IF EXISTS `Assets`;
 DROP TABLE IF EXISTS `LicenseTypes`;
 DROP TABLE IF EXISTS `FileTypes`;
 DROP TABLE IF EXISTS `Users`;
+DROP TABLE IF EXISTS `ContractAddress`;
 
 CREATE TABLE `Users` (
   `user_id` INT NOT NULL AUTO_INCREMENT,
@@ -84,8 +85,9 @@ CREATE TABLE `AssetsListedForSale` (
 );
 
 CREATE TABLE `ContractAddress`(
+  `contract_name` VARCHAR(50) NOT NULL,
   `contract_address` VARCHAR(42) NOT NULL,
-  PRIMARY KEY (`contract_address`)
+  PRIMARY KEY (`contract_name`)
 );
 
 INSERT INTO Users (user_id, password, first_name, last_name, email, wallet_id) VALUES ('1', 'password', 'John', 'Smith', 'john.smith@example.com', '13425123');
