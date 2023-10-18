@@ -317,6 +317,8 @@ class CreateAssetRequest(BaseModel):
     licenseTypeID: int
     imageFileTypeID: int
     ownerID: int
+    ownerName: str
+    ownerEmail: str
     categoryIDs: set[int]
 
 # Posts a new asset to the Assets table, along with a creation transaction (price: 0, both buyer and seller ID that of the uploader), and associated asset categories/
@@ -351,24 +353,24 @@ def postNewAsset(newAsset: CreateAssetRequest):
         )
         print(addAssetQuery)
         cursor.execute(addAssetQuery)
-        assetID = cursor.lastrowid
-        print(assetID)
+        token_id = cursor.lastrowid
+        print(token_id)
 
-        addTransactionQuery = (
+        """         addTransactionQuery = (
             "INSERT INTO `Transactions` (`token_id`, `seller_id`, `buyer_id`, `sale_price`, `sale_time`) VALUES ('"
-            + str(assetID)
+            + str(token_id)
             + "', '"
             + str(newAsset.ownerID)
             + "', '"
             + str(newAsset.ownerID)
             + "', '0', NOW())")
         print(addTransactionQuery)
-        cursor.execute(addTransactionQuery)
+        cursor.execute(addTransactionQuery) """
 
         for categoryID in newAsset.categoryIDs:
             addAssetCategoryQuery = (
                 "INSERT INTO AssetCategories ( token_id, category_id) VALUES ('"
-                + str(assetID)
+                + str(token_id)
                 + "', '"
                 + str(categoryID)
                 + "')"
@@ -379,13 +381,76 @@ def postNewAsset(newAsset: CreateAssetRequest):
         cursor.close()
         connection.commit()
         connection.close()
-        return assetID
+
+        w3 = Web3(Web3.HTTPProvider("HTTP://127.0.0.1:7545"))
+        chain_id = 1337
+        # gets the account address from your blockchain_config file
+        my_address = str(blockchain_config.get("account_address"))
+        print("my_address = " + my_address)
+        # # gets your account private key from your blockchain_config file
+        private_key = str(blockchain_config.get("account_private_key"))
+        print("private_key= " + private_key)
+
+        #get compiled ABI
+        with open("transaction_storage_compiled.json", "r") as file:
+            compiled_sol = json.load(file)
+            contract_abi = compiled_sol["contracts"]["TransactionStorage.sol"]["TransactionStorage"]["abi"]
+
+        #get contract address from database
+        contractAddress = ""
+        try:
+            connection = mysql.connector.connect(**db_config)
+            cursor = connection.cursor()
+            getContractAddressQuery = (
+                "SELECT contract_address FROM ContractAddress WHERE contract_name='TransactionStorage'"
+            )
+            print(getContractAddressQuery)
+            cursor.execute(getContractAddressQuery)
+            result = cursor.fetchone()
+            contractAddress = result[0]
+
+            print(contractAddress)
+
+            cursor.close()
+            connection.commit()
+            connection.close()
+        except mysql.connector.Error as err:
+            return {"error": f"Error: {err}"}
+
+        transaction_storage = w3.eth.contract(address=contractAddress, abi=contract_abi)
+        
+        nonce = w3.eth.get_transaction_count(my_address)
+
+        newTransaction = [token_id, newAsset.ownerID, newAsset.ownerID, int(round(time.time() * 1000)), "0", newAsset.ownerName, newAsset.ownerEmail, newAsset.name]
+
+        print(newTransaction)
+
+        nonce = w3.eth.get_transaction_count(my_address)    
+
+        store_transaction = transaction_storage.functions.addTransaction(token_id, newAsset.ownerID, newAsset.ownerID, int(round(time.time() * 1000)), "0", newAsset.ownerName, newAsset.ownerEmail, newAsset.name).build_transaction(
+            {
+                "chainId": chain_id,
+                "gasPrice": w3.eth.gas_price,
+                "from": my_address,
+                "nonce": nonce,
+            }
+        )
+
+        signed_store_txn = w3.eth.account.sign_transaction(store_transaction, private_key=private_key)
+        send_store_tx = w3.eth.send_raw_transaction(signed_store_txn.rawTransaction)
+        tx_receipt = w3.eth.wait_for_transaction_receipt(send_store_tx)
+
+        print(w3.to_json(tx_receipt))
+    
+        return token_id
     except mysql.connector.Error as err:
         return {"error": f"Error: {err}"}
 
+    #return str(w3.to_json(tx_receipt))
+
+    
+
 # Custom type for a new asset listing
-
-
 class AssetListingRequest(BaseModel):
     token_id: str
     selling_price: str

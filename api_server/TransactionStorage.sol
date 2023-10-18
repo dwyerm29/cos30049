@@ -24,7 +24,7 @@ contract TransactionStorage {
     //used to determine who the owner of a token is
     mapping(uint256 => Transaction) public tokenIdToLatestTransaction;
 
-    function addTransaction(uint256 _token_id, uint256 _seller_id, uint256 _buyer_id, uint256 _sale_time, string memory _sale_price, string memory _owner_email, string memory _owner_name, string memory _token_name) public {
+    function addTransaction(uint _token_id, uint _seller_id, uint _buyer_id, uint _sale_time, string memory _sale_price, string memory _owner_email, string memory _owner_name, string memory _token_name) public {
         uint256 newTransactionID = transactions.length + 1;
         Transaction memory newTransaction = Transaction({transaction_id: newTransactionID, token_id: _token_id, seller_id : _seller_id, buyer_id: _buyer_id, sale_time: _sale_time, sale_price: _sale_price, owner_name: _owner_name, owner_email: _owner_email, token_name: _token_name});
         transactions.push(newTransaction);

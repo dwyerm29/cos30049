@@ -134,6 +134,8 @@ export const UploadNFT = () => {
           licenseTypeID: selectedLicenseTypeID,
           imageFileTypeID: selectedFileTypeID,
           ownerID: user.user_id,
+          ownerName: `${user.first_name} ${user.last_name}`,
+          ownerEmail: user.email,
           categoryIDs: selectedCategoryIDs,
         })
         .then((response) => {
