@@ -6,6 +6,7 @@ from web3 import Web3
 from solcx import compile_standard, install_solc
 # CHECK README IF YOU GET AN ERROR HERE
 from db_config import db_config
+from blockchain_config import blockchain_config
 
 # DB
 import mysql.connector
@@ -472,10 +473,12 @@ async def funcTest1():
     w3 = Web3(Web3.HTTPProvider("HTTP://127.0.0.1:7545"))
     # Default is 1337 or with the PORT in your Gaanche
     chain_id = 1337
-    # Find in you account
-    my_address = "0x153aB956036f09E592C37E70f92EF37FbB8f12D2"
-    # Find in you account
-    private_key = "0x1229b80388af2cc90f13959a07075b7f4e5535dcebc167d1f6a2b728e1030c03"
+    # gets the account address from your blockchain_config file
+    my_address = str(blockchain_config.get("account_address"))
+    print("my_address = " + my_address)
+    # # gets your account private key from your blockchain_config file
+    private_key = str(blockchain_config.get("account_private_key"))
+    print("private_key= " + private_key)
 
 
     with open("./SimpleStorage.sol", "r") as file:
@@ -505,8 +508,6 @@ async def funcTest1():
 
     # get abi
     abi = compiled_sol["contracts"]["SimpleStorage.sol"]["SimpleStorage"]["abi"]
-    print("ABI: " + abi)
-
 
     SimpleStorage = w3.eth.contract(abi=abi, bytecode=bytecode)
 
@@ -531,7 +532,7 @@ async def funcTest1():
     print(tx_receipt.contractAddress)
 
     try:
-        print(tx_receipt.contractAddress)
+        #print(tx_receipt.contractAddress)
         connection = mysql.connector.connect(**db_config)
         cursor = connection.cursor()
         addContractAddressQuery = (
@@ -539,7 +540,7 @@ async def funcTest1():
             + tx_receipt.contractAddress
             + "')"
         )
-        print(addContractAddressQuery)
+        #print(addContractAddressQuery)
         cursor.execute(addContractAddressQuery)
 
         cursor.close()
@@ -554,7 +555,7 @@ async def funcTest1():
     print(tx_receipt)
 
 
-    simple_storage = w3.eth.contract(address=tx_receipt.contractAddress, abi=abi)
+    """     simple_storage = w3.eth.contract(address=tx_receipt.contractAddress, abi=abi)
 
     store_transaction = simple_storage.functions.store(67).build_transaction(
         {
@@ -571,17 +572,20 @@ async def funcTest1():
 
     print(signed_store_txn)
     print(send_store_tx)
-    print(tx_receipt)
+    print(tx_receipt) """
 
-    
-    return "Hello, this is contract deploy preocess"
+    return tx_receipt.contractAddress
 
 @app.post("/simpleStorageStore")
 async def funcTest1(num: int):
     w3 = Web3(Web3.HTTPProvider("HTTP://127.0.0.1:7545"))
     chain_id = 1337
-    my_address = "0x96De804C980b07dFf64FDE714F56938Aa0C23229"
-    private_key = "0x226b32b4bdda1b6150af46e3e8735010b8fa1ce03609d706439558dd4cb21952"
+    # gets the account address from your blockchain_config file
+    my_address = str(blockchain_config.get("account_address"))
+    print("my_address = " + my_address)
+    # # gets your account private key from your blockchain_config file
+    private_key = str(blockchain_config.get("account_private_key"))
+    print("private_key= " + private_key)
 
     #get compiled ABI
     with open("compiled_code.json", "r") as file:
