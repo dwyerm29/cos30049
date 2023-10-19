@@ -10,5 +10,5 @@ db_config = {
 
 blockchain_config = {
 "account_address": "0xXXXXXXXXXXXXXXXXXXXXXXXXX",
-"account_private_Key": "0x44444444444444444444444444444"
+"account_private_key": "0x44444444444444444444444444444"
 }
