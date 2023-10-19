@@ -1,6 +1,5 @@
 import {
   Container,
-  Box,
   Grid,
   Button,
   Paper,
@@ -21,12 +20,8 @@ import { useParams } from "react-router-dom";
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { addToCart } from "../store/cartSlice";
-import { ClickAwayListener } from "@mui/base/ClickAwayListener";
-import { Portal } from "@mui/base/Portal";
-import CloseIcon from "@mui/icons-material/Close";
-import axios from "axios";
 
-import { Link } from "react-router-dom";
+import axios from "axios";
 
 const Img = styled("img")({
   margin: "auto",
