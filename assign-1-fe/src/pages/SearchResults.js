@@ -12,6 +12,7 @@ import {
   OutlinedInput,
   Checkbox,
   ListItemText,
+  Alert,
 } from "@mui/material";
 import GalleryGrid from "../components/GalleryGrid";
 
@@ -159,7 +160,7 @@ export const SearchResults = () => {
         console.error("error here: ", error);
       });
   }, [searchQuery]);
-
+  const noResult = searchResults.length === 0;
   return (
     <div>
       <Container>
@@ -207,7 +208,11 @@ export const SearchResults = () => {
             </Box>
           </Grid>
         </div>
-        <GalleryGrid items={searchResults} />
+        {noResult ? (
+          <Alert severity="warning">No items found. Please try again!</Alert>
+        ) : (
+          <GalleryGrid items={searchResults} />
+        )}
       </Container>
     </div>
   );
