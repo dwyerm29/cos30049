@@ -28,6 +28,8 @@ export const Cart = () => {
 
   const { user } = AuthData();
 
+  console.log(cartItems);
+
   return (
     <Container>
       <Box sx={{ mt: 2, borderRadius: 2 }}>

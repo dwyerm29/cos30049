@@ -11,24 +11,61 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
 } from "@mui/material";
 
-import ShoppingCartCheckoutIcon from "@mui/icons-material/ShoppingCartCheckout";
-import { Link } from "react-router-dom";
+import axios from "axios";
 
-import { useSelector } from "react-redux";
+import ShoppingCartCheckoutIcon from "@mui/icons-material/ShoppingCartCheckout";
+import { useNavigate } from "react-router-dom";
+
+import { setCart } from "../store/cartSlice";
+
+import { useSelector, useDispatch } from "react-redux";
 
 export const Checkout = () => {
   const cartItems = useSelector((state) => state.cart.cart);
   const cartTotalPrice = useSelector((state) => state.cart.totalPrice);
+  const user = useSelector((state) => state.user);
 
-  const [paymentMethod, setPaymentMethod] = React.useState("");
-  const handlePaymentMethodChange = (event) => {
-    setPaymentMethod(event.target.value);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const handleCheckout = () => {
+    let transactionList = [];
+    for (const item of cartItems) {
+      console.log(item);
+      transactionList.push({
+        token_id: item.token_id,
+        seller_id: item.current_owner_user_id,
+        buyer_id: user.user_id,
+        sale_price: item.selling_price,
+        owner_name: `${user.first_name} ${user.last_name}`,
+        owner_email: user.email,
+        token_name: item.item_name,
+      });
+    }
+
+    console.log(transactionList);
+
+    console.log(JSON.stringify(transactionList));
+
+    axios
+      .post(
+        "http://127.0.0.1:8000/transaction_storage_add_multiple_transactions/",
+        transactionList
+      )
+      .then((response) => {
+        console.log(response.data);
+        dispatch(setCart({ cart: [], totalPrice: 0 }));
+        navigate("/ordersummary", {
+          state: {
+            receipt: response.data,
+          },
+        });
+      })
+      .catch((error) => {
+        alert("error: " + error);
+      });
   };
 
   return (
@@ -80,32 +117,12 @@ export const Checkout = () => {
                 </TableBody>
               </Table>
             </TableContainer>
-            <Box sx={{ pt: 4 }}>
-              <Typography variant="h6">Select Payment Method:</Typography>
-              <Box sx={{ pt: 1, maxWidth: 200 }}>
-                <FormControl fullWidth>
-                  <InputLabel id="payment-method">Payment Method</InputLabel>
-                  <Select
-                    labelId="payment-method"
-                    id="payment-method"
-                    value={paymentMethod}
-                    label="payment-method"
-                    onChange={handlePaymentMethodChange}
-                  >
-                    <MenuItem value={1}>Etherium Wallet</MenuItem>
-                    <MenuItem value={2}>Bitcoin Wallet</MenuItem>
-                    <MenuItem value={3}>Dogecoin Wallet</MenuItem>
-                    <MenuItem value={4}>Oldest Added</MenuItem>
-                  </Select>
-                </FormControl>
-              </Box>
-            </Box>
             <Typography align="right">
               <Button
                 sx={{ mt: 1 }}
                 variant="contained"
                 endIcon={<ShoppingCartCheckoutIcon />}
-                component={Link}
+                onClick={handleCheckout}
                 to="/ordersummary"
               >
                 Complete Purchase
