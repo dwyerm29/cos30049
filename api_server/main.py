@@ -322,7 +322,7 @@ class CreateAssetRequest(BaseModel):
 # Posts a new asset to the Assets table, along with a creation transaction (price: 0, both buyer and seller ID that of the uploader), and associated asset categories/
 
 
-@app.post("/postnewasset/")
+@app.post("/post_new_asset/")
 def postNewAsset(newAsset: CreateAssetRequest):
     try:
         print(newAsset)
@@ -456,7 +456,7 @@ class AssetListingRequest(BaseModel):
 # Posts a new asset listing, used by owners of an asset that wish to list their asset for sale.
 
 
-@app.post("/postassetlisting/")
+@app.post("/post_asset_listing/")
 def postAssetListing(newListing: AssetListingRequest):
     try:
         print(newListing)
@@ -481,7 +481,7 @@ def postAssetListing(newListing: AssetListingRequest):
 # Puts an asset listing, used by owners of an asset that wish to update the price of an existing asset listing.
 
 
-@app.put("/putassetlisting/")
+@app.put("/put_asset_listing/")
 def putAssetListing(updateListing: AssetListingRequest):
     try:
         print(updateListing)
@@ -506,7 +506,7 @@ def putAssetListing(updateListing: AssetListingRequest):
 # Deletes an asset listing, used by owners of an asset that wish to remove an existing asset listing.
 
 
-@app.delete("/deleteassetlisting/{token_id}")
+@app.delete("/delete_asset_listing/{token_id}")
 def deleteAssetListing(token_id: str):
     try:
         connection = mysql.connector.connect(**db_config)

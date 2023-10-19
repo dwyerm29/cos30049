@@ -125,7 +125,7 @@ export const UploadNFT = () => {
     console.log(selectedCategoryIDs);
     return new Promise((resolve, reject) => {
       axios
-        .post("http://127.0.0.1:8000/postnewasset/", {
+        .post("http://127.0.0.1:8000/post_new_asset/", {
           name: assetName,
           description: assetDescription,
           imageURL: assetImageURL,

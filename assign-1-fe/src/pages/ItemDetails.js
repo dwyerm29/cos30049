@@ -72,7 +72,7 @@ export function ItemDetails() {
       setListAssetPrice("");
       setOpenListAssetDialog(false);
       axios
-        .post("http://127.0.0.1:8000/postassetlisting", {
+        .post("http://127.0.0.1:8000/post_asset_listing", {
           token_id: itemDetails.token_id,
           selling_price: listAssetPrice,
         })
@@ -111,7 +111,7 @@ export function ItemDetails() {
       setUpdateListingPrice("");
       setOpenUpdateListingDialog(false);
       axios
-        .put("http://127.0.0.1:8000/putassetlisting", {
+        .put("http://127.0.0.1:8000/put_asset_listing", {
           token_id: itemDetails.token_id,
           selling_price: updateListingPrice,
         })
@@ -131,7 +131,7 @@ export function ItemDetails() {
       setUpdateListingPrice("");
       setOpenUpdateListingDialog(false);
       axios
-        .delete(`http://127.0.0.1:8000/deleteassetlisting/${item_id}`)
+        .delete(`http://127.0.0.1:8000/delete_asset_listing/${item_id}`)
         .then((response) => {
           console.log(response);
           loadItemDetails();
