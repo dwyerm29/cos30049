@@ -36,7 +36,7 @@ export default function AccountTradingHistoryTable({ user_id }) {
               token_id: transaction[1],
               seller_id: transaction[2],
               buyer_id: transaction[3],
-              transaction_date_time: transaction[4],
+              date_time: transaction[4],
               sale_price: transaction[5],
               owner_name: transaction[6],
               owner_email: transaction[7],

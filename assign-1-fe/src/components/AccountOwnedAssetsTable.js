@@ -36,7 +36,7 @@ export default function AccountOwnedAssetsTable({ user_id }) {
               token_id: transaction[1],
               seller_id: transaction[2],
               buyer_id: transaction[3],
-              transaction_date_time: transaction[4],
+              date_time: transaction[4],
               sale_price: transaction[5],
               owner_name: transaction[6],
               owner_email: transaction[7],
@@ -84,9 +84,7 @@ export default function AccountOwnedAssetsTable({ user_id }) {
                   {asset.token_id}
                 </Typography>
               </TableCell>
-              <TableCell>
-                {moment(asset.transaction_datetime).format("LL LTS")}
-              </TableCell>
+              <TableCell>{moment(asset.date_time).format("LL LTS")}</TableCell>
               <TableCell>{asset.sale_price} ETH</TableCell>
             </TableRow>
           ))}
