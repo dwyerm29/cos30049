@@ -90,7 +90,6 @@ def get_smart_contract_address():
 # get information for a single asset, along with details like selling price if it exists
 @app.get("/asset/{token_id}/")
 def get_assets(token_id: int):
-
     #First This get most of the asset's details such as license type, image URL, FileType, etc. from the MYSQL Database
     try:
         connection = mysql.connector.connect(**db_config)
@@ -106,7 +105,6 @@ def get_assets(token_id: int):
     except mysql.connector.Error as err:
         return {"error": f"Error: {err}"}
     
-
     #Next, add other information such as token name, owner name, etc. from the TransactionStorage smart contract
     #get compiled ABI
     contract_abi = get_abi()
@@ -207,30 +205,6 @@ async def read_items(
     except mysql.connector.Error as err:
         return {"error": f"Error: {err}"}
 
-
-# return a list of Transactions that a particular user has been involved in
-@app.get("/user/{user_id}/transactions/")
-def get_user_transactions(user_id: int):
-    try:
-        connection = mysql.connector.connect(**db_config)
-        cursor = connection.cursor()
-        query = (
-            "SELECT transaction_id, Transactions.token_id, seller_id, buyer_id, assets.sale_price, sale_time, item_name, item_description, image_url, image_thumbnail_url, image_resolution, filetype_name, license_name FROM Transactions JOIN assets ON Transactions.token_id=assets.token_id JOIN FileTypes ON assets.image_filetype_id=FileTypes.filetype_id JOIN LicenseTypes ON assets.license_type_id=LicenseTypes.license_type_id WHERE seller_id='"
-            + str(user_id)
-            + "' OR buyer_id = '"
-            + str(user_id)
-            + "'"
-        )
-        cursor.execute(query)
-        result = cursor.fetchall()
-        Assets = [dict(zip(cursor.column_names, row)) for row in result]
-        cursor.close()
-        connection.close()
-        return Assets
-    except mysql.connector.Error as err:
-        return {"error": f"Error: {err}"}
-
-
 # return a list of Assets that a particular user has for sale
 @app.get("/user/{user_id}/listed_assets/")
 def get_listed_assets(user_id: int):
@@ -251,28 +225,6 @@ def get_listed_assets(user_id: int):
     except mysql.connector.Error as err:
         return {"error": f"Error: {err}"}
 
-
-# return a list of Assets that a specified user currently owns
-@app.get("/user/{user_id}/owned_assets/")
-def get_user_Transactions(user_id: int):
-    try:
-        connection = mysql.connector.connect(**db_config)
-        cursor = connection.cursor()
-        query = (
-            "SELECT assets.token_id, item_name, item_description, image_url, image_thumbnail_url, image_resolution, filetype_name, license_name, sale_price, transaction_datetime FROM assets JOIN FileTypes ON assets.image_filetype_id = FileTypes.filetype_id JOIN LicenseTypes ON assets.license_type_id = LicenseTypes.license_type_id WHERE assets.current_owner='"
-            + str(user_id)
-            + "'"
-        )
-        cursor.execute(query)
-        result = cursor.fetchall()
-        Assets = [dict(zip(cursor.column_names, row)) for row in result]
-        cursor.close()
-        connection.close()
-        return Assets
-    except mysql.connector.Error as err:
-        return {"error": f"Error: {err}"}
-
-
 # get a list of all asset categories along with their descriptions
 @app.get("/asset_categories/")
 def get_asset_categories():
@@ -291,8 +243,6 @@ def get_asset_categories():
         return {"error": f"Error: {err}"}
 
 # get a list of all asset filetypes along with their descriptions
-
-
 @app.get("/asset_filetypes/")
 def get_asset_filetypes():
     try:
@@ -309,8 +259,6 @@ def get_asset_filetypes():
         return {"error": f"Error: {err}"}
 
  # get a list of all asset filetypes along with their descriptions
-
-
 @app.get("/asset_licensetypes/")
 def get_asset_licensetypes():
     try:
@@ -369,8 +317,6 @@ class CreateAssetRequest(BaseModel):
     categoryIDs: set[int]
 
 # Posts a new asset to the Assets table, along with a creation transaction (price: 0, both buyer and seller ID that of the uploader), and associated asset categories/
-
-
 @app.post("/post_new_asset/")
 def postNewAsset(newAsset: CreateAssetRequest):
     try:
@@ -402,17 +348,6 @@ def postNewAsset(newAsset: CreateAssetRequest):
         cursor.execute(addAssetQuery)
         token_id = cursor.lastrowid
         print(token_id)
-
-        """         addTransactionQuery = (
-            "INSERT INTO `Transactions` (`token_id`, `seller_id`, `buyer_id`, `sale_price`, `sale_time`) VALUES ('"
-            + str(token_id)
-            + "', '"
-            + str(newAsset.ownerID)
-            + "', '"
-            + str(newAsset.ownerID)
-            + "', '0', NOW())")
-        print(addTransactionQuery)
-        cursor.execute(addTransactionQuery) """
 
         for categoryID in newAsset.categoryIDs:
             addAssetCategoryQuery = (
@@ -501,8 +436,6 @@ class AssetListingRequest(BaseModel):
     selling_price: str
 
 # Posts a new asset listing, used by owners of an asset that wish to list their asset for sale.
-
-
 @app.post("/post_asset_listing/")
 def postAssetListing(newListing: AssetListingRequest):
     try:
@@ -526,8 +459,6 @@ def postAssetListing(newListing: AssetListingRequest):
         return {"error": f"Error: {err}"}
 
 # Puts an asset listing, used by owners of an asset that wish to update the price of an existing asset listing.
-
-
 @app.put("/put_asset_listing/")
 def putAssetListing(updateListing: AssetListingRequest):
     try:
@@ -551,8 +482,6 @@ def putAssetListing(updateListing: AssetListingRequest):
         return {"error": f"Error: {err}"}
 
 # Deletes an asset listing, used by owners of an asset that wish to remove an existing asset listing.
-
-
 @app.delete("/delete_asset_listing/{token_id}")
 def deleteAssetListing(token_id: str):
     try:
@@ -665,7 +594,6 @@ async def TransactionStorageDeployContract():
 #Used to populate the transaction history once when initialising the smart contract
 @app.get("/transaction_storage_populate_transactions")
 async def TransactionStoragePopulateTransactions():
-
     chain_id = 1337
     # gets the account address from your blockchain_config file
     my_address = str(blockchain_config.get("account_address"))
@@ -793,8 +721,6 @@ async def TransactionStoragePopulateTransactions():
 
 @app.get("/transaction_storage_get_all_transactions")
 async def TransactionStorageGetAllTransactions():
-
-
     #get compiled ABI
     contract_abi = get_abi()
 
@@ -810,8 +736,6 @@ async def TransactionStorageGetAllTransactions():
 
 @app.get("/transaction_storage_get_all_transactions_for_user/{user_id}")
 async def TransactionStorageGetAllTransactionsForUser(user_id: int):
-
-
     #get compiled ABI
     contract_abi = get_abi()
 
@@ -828,8 +752,6 @@ async def TransactionStorageGetAllTransactionsForUser(user_id: int):
 
 @app.get("/transaction_storage_get_all_owned_assets_for_user/{user_id}")
 async def TransactionStorageGetAllOwnedAssetsForUser(user_id: int):
-
-
     #get compiled ABI
     contract_abi = get_abi()
 
