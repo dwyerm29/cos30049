@@ -100,7 +100,7 @@ INSERT INTO FileTypes ( filetype_id, filetype_name) VALUES ('2', 'PNG');
 
 
 INSERT INTO LicenseTypes ( license_type_id, license_name) VALUES ('1', 'Standard');
-INSERT INTO LicenseTypes ( license_type_id, license_name) VALUES ('2', 'Standard');
+INSERT INTO LicenseTypes ( license_type_id, license_name) VALUES ('2', 'Non-Commercial');
 
 
 
