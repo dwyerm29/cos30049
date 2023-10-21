@@ -126,6 +126,7 @@ export function ItemDetails() {
       axios
         .put("http://127.0.0.1:8000/put_asset_listing", {
           token_id: itemDetails.token_id,
+          seller_id: currentUser.user_id,
           selling_price: updateListingPrice,
         })
         .then((response) => {

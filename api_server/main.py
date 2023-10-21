@@ -410,6 +410,7 @@ def postNewAsset(newAsset: CreateAssetRequest):
 class AssetListingRequest(BaseModel):
     token_id: str
     selling_price: str
+    seller_id: int
 
 # Posts a new asset listing, used by owners of an asset that wish to list their asset for sale.
 @app.post("/post_asset_listing/")
@@ -420,9 +421,9 @@ def postAssetListing(newListing: AssetListingRequest):
         cursor = connection.cursor()
         addListingQuery = (
             "INSERT INTO AssetListings (token_id, seller_id, selling_price, time_listed) VALUES ('"
-            + newListing.seller_id
-            + "', '"
             + newListing.token_id
+            + "', '"
+            + str(newListing.seller_id)
             + "', '"
             + newListing.selling_price
             + "', NOW())"

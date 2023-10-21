@@ -218,6 +218,5 @@ INSERT INTO AssetListings ( token_id, seller_id, selling_price, time_listed) VAL
 INSERT INTO AssetListings ( token_id, seller_id, selling_price, time_listed) VALUES ('123136', '2', '0.5', '2023-08-28 04:22:34.60');
 INSERT INTO AssetListings ( token_id, seller_id, selling_price, time_listed) VALUES ('124343', '4', '0.6', '2023-08-29 08:22:34.60');
 INSERT INTO AssetListings ( token_id, seller_id, selling_price, time_listed) VALUES ('3032346', '1', '0.5', '2023-08-28 04:22:34.60');
-INSERT INTO AssetListings ( token_id, seller_id, selling_price, time_listed) VALUES ('2373453', '1', '0.6', '2023-08-29 08:22:34.60');
 
 
