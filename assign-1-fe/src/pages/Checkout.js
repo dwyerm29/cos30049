@@ -36,7 +36,7 @@ export const Checkout = () => {
       console.log(item);
       transactionList.push({
         token_id: item.token_id,
-        seller_id: item.current_owner_user_id,
+        seller_id: item.owner_id,
         buyer_id: user.user_id,
         sale_price: item.selling_price,
         owner_name: `${user.first_name} ${user.last_name}`,

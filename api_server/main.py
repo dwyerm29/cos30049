@@ -57,26 +57,73 @@ def get_users():
     except mysql.connector.Error as err:
         return {"error": f"Error: {err}"}
 
+#used by all functions that make use of a smart contract to retrieve the contract's ABI    
+def get_abi():
+    with open("transaction_storage_compiled.json", "r") as file:
+        compiled_sol = json.load(file)
+        abi = compiled_sol["contracts"]["TransactionStorage.sol"]["TransactionStorage"]["abi"]
+    return abi
+
+#used by all functions that make use of a smart contract to retrieve the contract's address (requires the contract to be deployed first)    
+def get_smart_contract_address():
+    contractAddress = ""
+    try:
+        connection = mysql.connector.connect(**db_config)
+        cursor = connection.cursor()
+        getContractAddressQuery = (
+            "SELECT contract_address FROM SmartContractAddresses WHERE contract_name='TransactionStorage'"
+        )
+        cursor.execute(getContractAddressQuery)
+        result = cursor.fetchone()
+        contractAddress = result[0]
+
+        print(contractAddress)
+
+        cursor.close()
+        connection.commit()
+        connection.close()
+        return contractAddress
+    except mysql.connector.Error as err:
+        return {"error": f"Error: {err}"}
+
 
 # get information for a single asset, along with details like selling price if it exists
 @app.get("/asset/{token_id}/")
 def get_assets(token_id: int):
+    #First This get most of the asset's details such as license type, image URL, FileType, etc. from the MYSQL Database
     try:
         connection = mysql.connector.connect(**db_config)
         cursor = connection.cursor()
-        query = (
-            "SELECT Assets.token_id, item_name, item_description, image_url, image_thumbnail_url, image_resolution, selling_price, time_listed, filetype_name, license_name, orig_owner.first_name AS original_owner_first_name, orig_owner.last_name AS original_owner_last_name, orig_owner.user_id AS original_owner_user_id, current_owner.first_name AS current_owner_first_name, current_owner.last_name AS current_owner_last_name, current_owner.user_id AS current_owner_user_id FROM Assets LEFT JOIN AssetsListedForSale ON Assets.token_id=AssetsListedForSale.token_id JOIN FileTypes ON Assets.image_filetype_id=FileTypes.filetype_id JOIN LicenseTypes ON Assets.license_type_id=LicenseTypes.license_type_id JOIN Users orig_owner ON Assets.original_owner=orig_owner.user_id JOIN Users current_owner ON Assets.current_owner=current_owner.user_id WHERE Assets.token_id="
-            + str(token_id)
-        )
+        query = ("SELECT assets.token_id, item_description, image_url, image_thumbnail_url, image_resolution, selling_price, time_listed, filetype_name, license_name, orig_owner.first_name AS original_owner_first_name, orig_owner.last_name AS original_owner_last_name, orig_owner.user_id AS original_owner_user_id FROM assets LEFT JOIN AssetListings ON assets.token_id=AssetListings.token_id JOIN filetypes ON assets.image_filetype_id=filetypes.filetype_id JOIN licensetypes ON assets.license_type_id=licensetypes.license_type_id JOIN users orig_owner ON assets.original_owner=orig_owner.user_id WHERE assets.token_id="
+        + str(token_id))
         cursor.execute(query)
-        result = cursor.fetchall()
-        Assets = [dict(zip(cursor.column_names, row)) for row in result]
+        result = cursor.fetchone()
+        asset = dict(zip(cursor.column_names, result))
         cursor.close()
         connection.close()
-        return Assets
+
     except mysql.connector.Error as err:
         return {"error": f"Error: {err}"}
+    
+    #Next, add other information such as token name, owner name, etc. from the TransactionStorage smart contract
+    #get compiled ABI
+    contract_abi = get_abi()
 
+    #get contract address from database
+    contractAddress = get_smart_contract_address()
+
+    transaction_storage = w3.eth.contract(address=contractAddress, abi=contract_abi)
+    get_transaction = transaction_storage.functions.tokenIdToLatestTransaction(token_id).call()
+
+    #add the relevant fields from the smart contract to the asset
+    asset["item_name"] = get_transaction[8]
+    asset["owner_name"] = get_transaction[6]
+    asset["owner_id"] = get_transaction[3]
+    asset["owner_email"] = get_transaction[7]
+    asset["sale_price"] = get_transaction[5]
+    asset["sale_time"] = get_transaction[4]
+
+    return asset
 
 # get a list of all Assets listed for sale along with other info
 @app.get("/listed_assets/")
@@ -84,7 +131,7 @@ def get_listed_assets():
     try:
         connection = mysql.connector.connect(**db_config)
         cursor = connection.cursor()
-        query = "SELECT Assets.token_id, item_name, item_description, image_url, image_thumbnail_url, image_resolution, selling_price, time_listed, filetype_name, license_name FROM Assets JOIN AssetsListedForSale ON Assets.token_id=AssetsListedForSale.token_id JOIN FileTypes on Assets.image_filetype_id=FileTypes.filetype_id JOIN LicenseTypes on Assets.license_type_id=LicenseTypes.license_type_id"
+        query = "SELECT assets.token_id, item_name, item_description, image_url, image_thumbnail_url, image_resolution, selling_price, time_listed, filetype_name, license_name FROM assets JOIN AssetListings ON assets.token_id=AssetListings.token_id JOIN FileTypes on assets.image_filetype_id=FileTypes.filetype_id JOIN LicenseTypes on assets.license_type_id=LicenseTypes.license_type_id"
         cursor.execute(query)
         result = cursor.fetchall()
         Assets = [dict(zip(cursor.column_names, row)) for row in result]
@@ -101,7 +148,7 @@ def get_listed_assets():
     try:
         connection = mysql.connector.connect(**db_config)
         cursor = connection.cursor()
-        query = "SELECT Assets.token_id, item_name, item_description, image_url, image_thumbnail_url, image_resolution, selling_price, time_listed, filetype_name, license_name FROM Assets JOIN AssetsListedForSale ON Assets.token_id = AssetsListedForSale.token_id JOIN FileTypes ON Assets.image_filetype_id = FileTypes.filetype_id JOIN LicenseTypes ON Assets.license_type_id = LicenseTypes.license_type_id JOIN AssetCategories ON Assets.token_id = AssetCategories.token_id JOIN AssetCategoryDescriptions ON AssetCategories.category_id=AssetCategoryDescriptions.category_id WHERE AssetCategoryDescriptions.category_name = 'Featured'"
+        query = "SELECT assets.token_id, item_name, item_description, image_url, image_thumbnail_url, image_resolution, selling_price, time_listed, filetype_name, license_name FROM assets JOIN AssetListings ON assets.token_id = AssetListings.token_id JOIN FileTypes ON assets.image_filetype_id = FileTypes.filetype_id JOIN LicenseTypes ON assets.license_type_id = LicenseTypes.license_type_id JOIN AssetCategories ON assets.token_id = AssetCategories.token_id JOIN AssetCategoryDescriptions ON AssetCategories.category_id=AssetCategoryDescriptions.category_id WHERE AssetCategoryDescriptions.category_name = 'Featured'"
         cursor.execute(query)
         result = cursor.fetchall()
         Assets = [dict(zip(cursor.column_names, row)) for row in result]
@@ -120,7 +167,7 @@ async def read_items(
     try:
         connection = mysql.connector.connect(**db_config)
         cursor = connection.cursor()
-        dbQuery = "SELECT DISTINCT Assets.token_id, item_name, item_description, image_url, image_thumbnail_url, image_resolution, selling_price, time_listed, filetype_name, license_name FROM Assets JOIN AssetsListedForSale ON Assets.token_id=AssetsListedForSale.token_id JOIN FileTypes ON Assets.image_filetype_id=FileTypes.filetype_id JOIN LicenseTypes ON Assets.license_type_id=LicenseTypes.license_type_id JOIN AssetCategories ON Assets.token_id=AssetCategories.token_id JOIN AssetCategoryDescriptions ON AssetCategories.category_id=AssetCategoryDescriptions.category_id"
+        dbQuery = "SELECT DISTINCT assets.token_id, item_name, item_description, image_url, image_thumbnail_url, image_resolution, selling_price, time_listed, filetype_name, license_name FROM assets JOIN AssetListings ON assets.token_id=AssetListings.token_id JOIN FileTypes ON assets.image_filetype_id=FileTypes.filetype_id JOIN LicenseTypes ON assets.license_type_id=LicenseTypes.license_type_id JOIN AssetCategories ON assets.token_id=AssetCategories.token_id JOIN AssetCategoryDescriptions ON AssetCategories.category_id=AssetCategoryDescriptions.category_id"
         if category != None:
             if len(category) > 0:
                 dbQuery += (
@@ -158,30 +205,6 @@ async def read_items(
     except mysql.connector.Error as err:
         return {"error": f"Error: {err}"}
 
-
-# return a list of Transactions that a particular user has been involved in
-@app.get("/user/{user_id}/transactions/")
-def get_user_transactions(user_id: int):
-    try:
-        connection = mysql.connector.connect(**db_config)
-        cursor = connection.cursor()
-        query = (
-            "SELECT transaction_id, Transactions.token_id, seller_id, buyer_id, Assets.sale_price, sale_time, item_name, item_description, image_url, image_thumbnail_url, image_resolution, filetype_name, license_name FROM Transactions JOIN Assets ON Transactions.token_id=Assets.token_id JOIN FileTypes ON Assets.image_filetype_id=FileTypes.filetype_id JOIN LicenseTypes ON Assets.license_type_id=LicenseTypes.license_type_id WHERE seller_id='"
-            + str(user_id)
-            + "' OR buyer_id = '"
-            + str(user_id)
-            + "'"
-        )
-        cursor.execute(query)
-        result = cursor.fetchall()
-        Assets = [dict(zip(cursor.column_names, row)) for row in result]
-        cursor.close()
-        connection.close()
-        return Assets
-    except mysql.connector.Error as err:
-        return {"error": f"Error: {err}"}
-
-
 # return a list of Assets that a particular user has for sale
 @app.get("/user/{user_id}/listed_assets/")
 def get_listed_assets(user_id: int):
@@ -189,7 +212,7 @@ def get_listed_assets(user_id: int):
         connection = mysql.connector.connect(**db_config)
         cursor = connection.cursor()
         query = (
-            "SELECT Assets.token_id, item_name, item_description, image_url, image_thumbnail_url, image_resolution, selling_price, time_listed, filetype_name, license_name FROM Assets JOIN AssetsListedForSale ON Assets.token_id = AssetsListedForSale.token_id JOIN FileTypes ON Assets.image_filetype_id = FileTypes.filetype_id JOIN LicenseTypes ON Assets.license_type_id = LicenseTypes.license_type_id WHERE Assets.current_owner='"
+            "SELECT assets.token_id, item_name, item_description, image_url, image_thumbnail_url, image_resolution, selling_price, time_listed, filetype_name, license_name FROM assets JOIN AssetListings ON assets.token_id = AssetListings.token_id JOIN FileTypes ON assets.image_filetype_id = FileTypes.filetype_id JOIN LicenseTypes ON assets.license_type_id = LicenseTypes.license_type_id WHERE AssetListings.seller_id='"
             + str(user_id)
             + "'"
         )
@@ -201,28 +224,6 @@ def get_listed_assets(user_id: int):
         return Assets
     except mysql.connector.Error as err:
         return {"error": f"Error: {err}"}
-
-
-# return a list of Assets that a specified user currently owns
-@app.get("/user/{user_id}/owned_assets/")
-def get_user_Transactions(user_id: int):
-    try:
-        connection = mysql.connector.connect(**db_config)
-        cursor = connection.cursor()
-        query = (
-            "SELECT Assets.token_id, item_name, item_description, image_url, image_thumbnail_url, image_resolution, filetype_name, license_name, sale_price, transaction_datetime FROM Assets JOIN FileTypes ON Assets.image_filetype_id = FileTypes.filetype_id JOIN LicenseTypes ON Assets.license_type_id = LicenseTypes.license_type_id WHERE Assets.current_owner='"
-            + str(user_id)
-            + "'"
-        )
-        cursor.execute(query)
-        result = cursor.fetchall()
-        Assets = [dict(zip(cursor.column_names, row)) for row in result]
-        cursor.close()
-        connection.close()
-        return Assets
-    except mysql.connector.Error as err:
-        return {"error": f"Error: {err}"}
-
 
 # get a list of all asset categories along with their descriptions
 @app.get("/asset_categories/")
@@ -242,8 +243,6 @@ def get_asset_categories():
         return {"error": f"Error: {err}"}
 
 # get a list of all asset filetypes along with their descriptions
-
-
 @app.get("/asset_filetypes/")
 def get_asset_filetypes():
     try:
@@ -260,8 +259,6 @@ def get_asset_filetypes():
         return {"error": f"Error: {err}"}
 
  # get a list of all asset filetypes along with their descriptions
-
-
 @app.get("/asset_licensetypes/")
 def get_asset_licensetypes():
     try:
@@ -320,8 +317,6 @@ class CreateAssetRequest(BaseModel):
     categoryIDs: set[int]
 
 # Posts a new asset to the Assets table, along with a creation transaction (price: 0, both buyer and seller ID that of the uploader), and associated asset categories/
-
-
 @app.post("/post_new_asset/")
 def postNewAsset(newAsset: CreateAssetRequest):
     try:
@@ -329,7 +324,7 @@ def postNewAsset(newAsset: CreateAssetRequest):
         connection = mysql.connector.connect(**db_config)
         cursor = connection.cursor()
         addAssetQuery = (
-            "INSERT INTO Assets (item_name, item_description, image_url, image_thumbnail_url, image_resolution, image_filetype_id, license_type_id, original_owner, current_owner, sale_price, transaction_datetime) VALUES ('"
+            "INSERT INTO assets (item_name, item_description, image_url, image_thumbnail_url, image_resolution, image_filetype_id, license_type_id, original_owner) VALUES ('"
             + newAsset.name
             + "', '"
             + newAsset.description
@@ -345,25 +340,12 @@ def postNewAsset(newAsset: CreateAssetRequest):
             + str(newAsset.licenseTypeID)
             + "', '"
             + str(newAsset.ownerID)
-            + "', '"
-            + str(newAsset.ownerID)
-            + "', '0', NOW())"
+            + "')"
         )
         print(addAssetQuery)
         cursor.execute(addAssetQuery)
         token_id = cursor.lastrowid
         print(token_id)
-
-        """         addTransactionQuery = (
-            "INSERT INTO `Transactions` (`token_id`, `seller_id`, `buyer_id`, `sale_price`, `sale_time`) VALUES ('"
-            + str(token_id)
-            + "', '"
-            + str(newAsset.ownerID)
-            + "', '"
-            + str(newAsset.ownerID)
-            + "', '0', NOW())")
-        print(addTransactionQuery)
-        cursor.execute(addTransactionQuery) """
 
         for categoryID in newAsset.categoryIDs:
             addAssetCategoryQuery = (
@@ -380,7 +362,7 @@ def postNewAsset(newAsset: CreateAssetRequest):
         connection.commit()
         connection.close()
 
-        w3 = Web3(Web3.HTTPProvider("HTTP://127.0.0.1:7545"))
+    
         chain_id = 1337
         # gets the account address from your blockchain_config file
         my_address = str(blockchain_config.get("account_address"))
@@ -390,40 +372,16 @@ def postNewAsset(newAsset: CreateAssetRequest):
         print("private_key= " + private_key)
 
         #get compiled ABI
-        with open("transaction_storage_compiled.json", "r") as file:
-            compiled_sol = json.load(file)
-            contract_abi = compiled_sol["contracts"]["TransactionStorage.sol"]["TransactionStorage"]["abi"]
+        contract_abi = get_abi()
 
         #get contract address from database
-        contractAddress = ""
-        try:
-            connection = mysql.connector.connect(**db_config)
-            cursor = connection.cursor()
-            getContractAddressQuery = (
-                "SELECT contract_address FROM ContractAddress WHERE contract_name='TransactionStorage'"
-            )
-            print(getContractAddressQuery)
-            cursor.execute(getContractAddressQuery)
-            result = cursor.fetchone()
-            contractAddress = result[0]
-
-            print(contractAddress)
-
-            cursor.close()
-            connection.commit()
-            connection.close()
-        except mysql.connector.Error as err:
-            return {"error": f"Error: {err}"}
+        contractAddress = get_smart_contract_address()
 
         transaction_storage = w3.eth.contract(address=contractAddress, abi=contract_abi)
         
         nonce = w3.eth.get_transaction_count(my_address)
 
-        newTransaction = [token_id, newAsset.ownerID, newAsset.ownerID, int(round(time.time() * 1000)), "0", newAsset.ownerName, newAsset.ownerEmail, newAsset.name]
-
-        print(newTransaction)
-
-        nonce = w3.eth.get_transaction_count(my_address)    
+        print(newAsset)
 
         store_transaction = transaction_storage.functions.addTransaction(token_id, newAsset.ownerID, newAsset.ownerID, int(round(time.time() * 1000)), "0", newAsset.ownerName, newAsset.ownerEmail, newAsset.name).build_transaction(
             {
@@ -452,10 +410,9 @@ def postNewAsset(newAsset: CreateAssetRequest):
 class AssetListingRequest(BaseModel):
     token_id: str
     selling_price: str
+    seller_id: int
 
 # Posts a new asset listing, used by owners of an asset that wish to list their asset for sale.
-
-
 @app.post("/post_asset_listing/")
 def postAssetListing(newListing: AssetListingRequest):
     try:
@@ -463,8 +420,10 @@ def postAssetListing(newListing: AssetListingRequest):
         connection = mysql.connector.connect(**db_config)
         cursor = connection.cursor()
         addListingQuery = (
-            "INSERT INTO assetslistedforsale (token_id, selling_price, time_listed) VALUES ('"
+            "INSERT INTO AssetListings (token_id, seller_id, selling_price, time_listed) VALUES ('"
             + newListing.token_id
+            + "', '"
+            + str(newListing.seller_id)
             + "', '"
             + newListing.selling_price
             + "', NOW())"
@@ -479,8 +438,6 @@ def postAssetListing(newListing: AssetListingRequest):
         return {"error": f"Error: {err}"}
 
 # Puts an asset listing, used by owners of an asset that wish to update the price of an existing asset listing.
-
-
 @app.put("/put_asset_listing/")
 def putAssetListing(updateListing: AssetListingRequest):
     try:
@@ -488,7 +445,7 @@ def putAssetListing(updateListing: AssetListingRequest):
         connection = mysql.connector.connect(**db_config)
         cursor = connection.cursor()
         updateListingQuery = (
-            "UPDATE assetslistedforsale SET selling_price ='"
+            "UPDATE AssetListings SET selling_price ='"
             + updateListing.selling_price
             + "' WHERE token_id = '"
             + updateListing.token_id
@@ -504,15 +461,13 @@ def putAssetListing(updateListing: AssetListingRequest):
         return {"error": f"Error: {err}"}
 
 # Deletes an asset listing, used by owners of an asset that wish to remove an existing asset listing.
-
-
 @app.delete("/delete_asset_listing/{token_id}")
 def deleteAssetListing(token_id: str):
     try:
         connection = mysql.connector.connect(**db_config)
         cursor = connection.cursor()
         deleteListingQuery = (
-            "DELETE FROM assetslistedforsale WHERE token_id = '"
+            "DELETE FROM AssetListings WHERE token_id = '"
             + token_id
             + "'"
         )
@@ -528,7 +483,7 @@ def deleteAssetListing(token_id: str):
 @app.get("/transaction_storage_deploy_contract")
 async def TransactionStorageDeployContract():
     # type your address here
-    w3 = Web3(Web3.HTTPProvider("HTTP://127.0.0.1:7545"))
+
     # Default is 1337 or with the PORT in your Gaanche
     chain_id = 1337
     # gets the account address from your blockchain_config file
@@ -594,7 +549,7 @@ async def TransactionStorageDeployContract():
         connection = mysql.connector.connect(**db_config)
         cursor = connection.cursor()
         addContractAddressQuery = (
-            "REPLACE INTO ContractAddress (contract_name, contract_address) VALUES ('TransactionStorage', '"
+            "REPLACE INTO SmartContractAddresses (contract_name, contract_address) VALUES ('TransactionStorage', '"
             + tx_receipt.contractAddress
             + "')"
         )
@@ -612,13 +567,12 @@ async def TransactionStorageDeployContract():
     print(tx_hash)
     print(tx_receipt)
 
-    return tx_receipt.contractAddress
+    return "Contract Address: " + tx_receipt.contractAddress
 
 
 #Used to populate the transaction history once when initialising the smart contract
 @app.get("/transaction_storage_populate_transactions")
 async def TransactionStoragePopulateTransactions():
-    w3 = Web3(Web3.HTTPProvider("HTTP://127.0.0.1:7545"))
     chain_id = 1337
     # gets the account address from your blockchain_config file
     my_address = str(blockchain_config.get("account_address"))
@@ -628,30 +582,10 @@ async def TransactionStoragePopulateTransactions():
     print("private_key= " + private_key)
 
     #get compiled ABI
-    with open("transaction_storage_compiled.json", "r") as file:
-        compiled_sol = json.load(file)
-        contract_abi = compiled_sol["contracts"]["TransactionStorage.sol"]["TransactionStorage"]["abi"]
+    contract_abi = get_abi()
 
     #get contract address from database
-    contractAddress = ""
-    try:
-        connection = mysql.connector.connect(**db_config)
-        cursor = connection.cursor()
-        getContractAddressQuery = (
-            "SELECT contract_address FROM ContractAddress WHERE contract_name='TransactionStorage'"
-        )
-        print(getContractAddressQuery)
-        cursor.execute(getContractAddressQuery)
-        result = cursor.fetchone()
-        contractAddress = result[0]
-
-        print(contractAddress)
-
-        cursor.close()
-        connection.commit()
-        connection.close()
-    except mysql.connector.Error as err:
-        return {"error": f"Error: {err}"}
+    contractAddress = get_smart_contract_address()
 
     transaction_storage = w3.eth.contract(address=contractAddress, abi=contract_abi)
     
@@ -766,35 +700,13 @@ async def TransactionStoragePopulateTransactions():
 
 @app.get("/transaction_storage_get_all_transactions")
 async def TransactionStorageGetAllTransactions():
-    w3 = Web3(Web3.HTTPProvider("HTTP://127.0.0.1:7545"))
-
     #get compiled ABI
-    with open("transaction_storage_compiled.json", "r") as file:
-        compiled_sol = json.load(file)
-        abi = compiled_sol["contracts"]["TransactionStorage.sol"]["TransactionStorage"]["abi"]
+    contract_abi = get_abi()
 
     #get contract address from database
-    contractAddress = ""
-    try:
-        connection = mysql.connector.connect(**db_config)
-        cursor = connection.cursor()
-        getContractAddressQuery = (
-            "SELECT contract_address FROM ContractAddress WHERE contract_name='TransactionStorage'"
-        )
-        print(getContractAddressQuery)
-        cursor.execute(getContractAddressQuery)
-        result = cursor.fetchone()
-        contractAddress = result[0]
+    contractAddress = get_smart_contract_address()
 
-        print(contractAddress)
-
-        cursor.close()
-        connection.commit()
-        connection.close()
-    except mysql.connector.Error as err:
-        return {"error": f"Error: {err}"}
-
-    transaction_storage = w3.eth.contract(address=contractAddress, abi=abi)
+    transaction_storage = w3.eth.contract(address=contractAddress, abi=contract_abi)
     
     get_transaction = transaction_storage.functions.getAllTransactions().call()
 
@@ -803,35 +715,13 @@ async def TransactionStorageGetAllTransactions():
 
 @app.get("/transaction_storage_get_all_transactions_for_user/{user_id}")
 async def TransactionStorageGetAllTransactionsForUser(user_id: int):
-    w3 = Web3(Web3.HTTPProvider("HTTP://127.0.0.1:7545"))
-
     #get compiled ABI
-    with open("transaction_storage_compiled.json", "r") as file:
-        compiled_sol = json.load(file)
-        abi = compiled_sol["contracts"]["TransactionStorage.sol"]["TransactionStorage"]["abi"]
+    contract_abi = get_abi()
 
     #get contract address from database
-    contractAddress = ""
-    try:
-        connection = mysql.connector.connect(**db_config)
-        cursor = connection.cursor()
-        getContractAddressQuery = (
-            "SELECT contract_address FROM ContractAddress WHERE contract_name='TransactionStorage'"
-        )
-        print(getContractAddressQuery)
-        cursor.execute(getContractAddressQuery)
-        result = cursor.fetchone()
-        contractAddress = result[0]
+    contractAddress = get_smart_contract_address()
 
-        print(contractAddress)
-
-        cursor.close()
-        connection.commit()
-        connection.close()
-    except mysql.connector.Error as err:
-        return {"error": f"Error: {err}"}
-
-    transaction_storage = w3.eth.contract(address=contractAddress, abi=abi)
+    transaction_storage = w3.eth.contract(address=contractAddress, abi=contract_abi)
     
     get_transaction = transaction_storage.functions.getAllTransactionsForUser(user_id).call()
 
@@ -841,35 +731,13 @@ async def TransactionStorageGetAllTransactionsForUser(user_id: int):
 
 @app.get("/transaction_storage_get_all_owned_assets_for_user/{user_id}")
 async def TransactionStorageGetAllOwnedAssetsForUser(user_id: int):
-    w3 = Web3(Web3.HTTPProvider("HTTP://127.0.0.1:7545"))
-
     #get compiled ABI
-    with open("transaction_storage_compiled.json", "r") as file:
-        compiled_sol = json.load(file)
-        abi = compiled_sol["contracts"]["TransactionStorage.sol"]["TransactionStorage"]["abi"]
+    contract_abi = get_abi()
 
     #get contract address from database
-    contractAddress = ""
-    try:
-        connection = mysql.connector.connect(**db_config)
-        cursor = connection.cursor()
-        getContractAddressQuery = (
-            "SELECT contract_address FROM ContractAddress WHERE contract_name='TransactionStorage'"
-        )
-        print(getContractAddressQuery)
-        cursor.execute(getContractAddressQuery)
-        result = cursor.fetchone()
-        contractAddress = result[0]
+    contractAddress = get_smart_contract_address()
 
-        print(contractAddress)
-
-        cursor.close()
-        connection.commit()
-        connection.close()
-    except mysql.connector.Error as err:
-        return {"error": f"Error: {err}"}
-
-    transaction_storage = w3.eth.contract(address=contractAddress, abi=abi)
+    transaction_storage = w3.eth.contract(address=contractAddress, abi=contract_abi)
     
     get_transaction = transaction_storage.functions.getAllOwnedAssetsForUser(user_id).call()
 
@@ -887,7 +755,7 @@ class Transaction(BaseModel):
 #Used to add multiple transactions when checking out
 @app.post("/transaction_storage_add_multiple_transactions")
 async def TransactionStorageAddMultipleTransactions(transactions: list[Transaction]):
-    w3 = Web3(Web3.HTTPProvider("HTTP://127.0.0.1:7545"))
+
     chain_id = 1337
     # gets the account address from your blockchain_config file
     my_address = str(blockchain_config.get("account_address"))
@@ -897,49 +765,21 @@ async def TransactionStorageAddMultipleTransactions(transactions: list[Transacti
     print("private_key= " + private_key)
 
     #get compiled ABI
-    with open("transaction_storage_compiled.json", "r") as file:
-        compiled_sol = json.load(file)
-        contract_abi = compiled_sol["contracts"]["TransactionStorage.sol"]["TransactionStorage"]["abi"]
+    contract_abi = get_abi()
 
     #get contract address from database
-    contractAddress = ""
-    try:
-        connection = mysql.connector.connect(**db_config)
-        cursor = connection.cursor()
-        getContractAddressQuery = (
-            "SELECT contract_address FROM ContractAddress WHERE contract_name='TransactionStorage'"
-        )
-        print(getContractAddressQuery)
-        cursor.execute(getContractAddressQuery)
-        result = cursor.fetchone()
-        contractAddress = result[0]
-
-        print(contractAddress)
-
-        cursor.close()
-        connection.commit()
-        connection.close()
-    except mysql.connector.Error as err:
-        return {"error": f"Error: {err}"}
-
-    transaction_storage = w3.eth.contract(address=contractAddress, abi=contract_abi)
-    
-    nonce = w3.eth.get_transaction_count(my_address)
+    contractAddress = get_smart_contract_address()
 
     arrayedTransactions = []
 
-    print(transactions)
-
-    print(len(transactions))
-
-    for i in range(len(transactions)):
-        print(i)
-        print(transactions[i])
-        arrayedTransactions.append([transactions[i].token_id, transactions[i].seller_id, transactions[i].buyer_id, int(round(time.time() * 1000)), transactions[i].sale_price, transactions[i].owner_name, transactions[i].owner_email, transactions[i].token_name])
+    for transaction in transactions:
+        if(transaction.seller_id != transaction.buyer_id):
+            arrayedTransactions.append([transaction.token_id, transaction.seller_id, transaction.buyer_id, int(round(time.time() * 1000)), transaction.sale_price, transaction.owner_name, transaction.owner_email, transaction.token_name])
 
     print(arrayedTransactions)
 
-    nonce = w3.eth.get_transaction_count(my_address)    
+    transaction_storage = w3.eth.contract(address=contractAddress, abi=contract_abi)
+    nonce = w3.eth.get_transaction_count(my_address)  
 
     store_transaction = transaction_storage.functions.addMultipleTransactions(arrayedTransactions).build_transaction(
         {
@@ -956,6 +796,10 @@ async def TransactionStorageAddMultipleTransactions(transactions: list[Transacti
 
     print(w3.to_json(tx_receiptA))
 
+    #remove item listings after making transactions
+    for transaction in transactions:
+        deleteAssetListing(str(transaction.token_id))
+
     return str(w3.to_json(tx_receiptA))
 
 # ! Everything below here is examples from the tutorials that I have left in case we need them. To be deleted later.
@@ -965,7 +809,7 @@ async def TransactionStorageAddMultipleTransactions(transactions: list[Transacti
 @app.get("/deployContract")
 async def funcTest1():
     # type your address here
-    w3 = Web3(Web3.HTTPProvider("HTTP://127.0.0.1:7545"))
+
     # Default is 1337 or with the PORT in your Gaanche
     chain_id = 1337
     # gets the account address from your blockchain_config file
@@ -1031,7 +875,7 @@ async def funcTest1():
         connection = mysql.connector.connect(**db_config)
         cursor = connection.cursor()
         addContractAddressQuery = (
-            "REPLACE INTO ContractAddress (contract_name, contract_address) VALUES ('SimpleStorage', '"
+            "REPLACE INTO SmartContractAddresses (contract_name, contract_address) VALUES ('SimpleStorage', '"
             + tx_receipt.contractAddress
             + "')"
         )
@@ -1073,7 +917,7 @@ async def funcTest1():
 
 @app.post("/simpleStorageStore")
 async def funcTest1(num: int):
-    w3 = Web3(Web3.HTTPProvider("HTTP://127.0.0.1:7545"))
+
     chain_id = 1337
     # gets the account address from your blockchain_config file
     my_address = str(blockchain_config.get("account_address"))
@@ -1088,25 +932,7 @@ async def funcTest1(num: int):
         abi = compiled_sol["contracts"]["SimpleStorage.sol"]["SimpleStorage"]["abi"]
 
     #get contract address from database
-    contractAddress = ""
-    try:
-        connection = mysql.connector.connect(**db_config)
-        cursor = connection.cursor()
-        getContractAddressQuery = (
-            "SELECT contract_address FROM ContractAddress WHERE contract_name='SimpleStorage'"
-        )
-        print(getContractAddressQuery)
-        cursor.execute(getContractAddressQuery)
-        result = cursor.fetchone()
-        contractAddress = result[0]
-
-        print(contractAddress)
-
-        cursor.close()
-        connection.commit()
-        connection.close()
-    except mysql.connector.Error as err:
-        return {"error": f"Error: {err}"}
+    contractAddress = get_smart_contract_address()
 
     simple_storage = w3.eth.contract(address=contractAddress, abi=abi)
     
@@ -1134,7 +960,7 @@ async def funcTest1(num: int):
 
 @app.get("/simpleStorageRetrieve")
 async def funcTest1():
-    w3 = Web3(Web3.HTTPProvider("HTTP://127.0.0.1:7545"))
+
 
     #get compiled ABI
     with open("compiled_code.json", "r") as file:
@@ -1142,25 +968,7 @@ async def funcTest1():
         abi = compiled_sol["contracts"]["SimpleStorage.sol"]["SimpleStorage"]["abi"]
 
     #get contract address from database
-    contractAddress = ""
-    try:
-        connection = mysql.connector.connect(**db_config)
-        cursor = connection.cursor()
-        getContractAddressQuery = (
-            "SELECT contract_address FROM ContractAddress WHERE contract_name='SimpleStorage'"
-        )
-        print(getContractAddressQuery)
-        cursor.execute(getContractAddressQuery)
-        result = cursor.fetchone()
-        contractAddress = result[0]
-
-        print(contractAddress)
-
-        cursor.close()
-        connection.commit()
-        connection.close()
-    except mysql.connector.Error as err:
-        return {"error": f"Error: {err}"}
+    contractAddress = get_smart_contract_address()
 
     simple_storage = w3.eth.contract(address=contractAddress, abi=abi)
     
