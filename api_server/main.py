@@ -780,10 +780,9 @@ async def TransactionStorageAddMultipleTransactions(transactions: list[Transacti
 
     print(len(transactions))
 
-    for i in range(len(transactions)):
-        print(i)
-        print(transactions[i])
-        arrayedTransactions.append([transactions[i].token_id, transactions[i].seller_id, transactions[i].buyer_id, int(round(time.time() * 1000)), transactions[i].sale_price, transactions[i].owner_name, transactions[i].owner_email, transactions[i].token_name])
+    for transaction in transactions:
+        if(transaction.seller_id != transaction.buyer_id):
+            arrayedTransactions.append([transaction.token_id, transaction.seller_id, transaction.buyer_id, int(round(time.time() * 1000)), transaction.sale_price, transaction.owner_name, transaction.owner_email, transaction.token_name])
 
     print(arrayedTransactions)
 
@@ -803,6 +802,10 @@ async def TransactionStorageAddMultipleTransactions(transactions: list[Transacti
     tx_receiptA = w3.eth.wait_for_transaction_receipt(send_store_tx)
 
     print(w3.to_json(tx_receiptA))
+
+    #remove item listings after making transactions
+    for transaction in transactions:
+        deleteAssetListing(str(transaction.token_id))
 
     return str(w3.to_json(tx_receiptA))
 
