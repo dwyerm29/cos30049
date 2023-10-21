@@ -12,6 +12,14 @@ export const cartSlice = createSlice({
       state.cart = action.payload.cart;
       state.totalPrice = action.payload.totalPrice;
       console.log(action.payload);
+
+      //update the browser's local storage to cart contents survive refresh
+      localStorage.setItem(
+        "cart",
+        JSON.stringify({
+          ...state,
+        })
+      );
     },
     addToCart: (state, action) => {
       let isDuplicate = false;
