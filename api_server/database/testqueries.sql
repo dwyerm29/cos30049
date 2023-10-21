@@ -97,7 +97,6 @@ WHERE assets.current_owner='1';
 -- get information for a single asset, along with details like selling price if it exists
 SELECT
     assets.token_id,
-    item_name,
     item_description,
     image_url,
     image_thumbnail_url,
@@ -108,19 +107,33 @@ SELECT
     license_name,
     orig_owner.first_name AS original_owner_first_name,
     orig_owner.last_name AS original_owner_last_name,
-    orig_owner.user_id AS original_owner_user_id,
-    current_owner.first_name AS current_owner_first_name,
-    current_owner.last_name AS current_owner_last_name,
-    current_owner.user_id AS current_owner_user_id
+    orig_owner.user_id AS original_owner_user_id
 FROM
     assets
     LEFT JOIN assetslistedforsale ON assets.token_id=assetslistedforsale.token_id
     JOIN filetypes ON assets.image_filetype_id=filetypes.filetype_id
     JOIN licensetypes ON assets.license_type_id=licensetypes.license_type_id
     JOIN users orig_owner ON assets.original_owner=orig_owner.user_id
-    JOIN users current_owner ON assets.current_owner=current_owner.user_id
 WHERE
-    assets.token_id='2623426';
+    assets.token_id='2623426';  
+
+SELECT 
+    assets.token_id, 
+    item_description, 
+    image_url, 
+    image_thumbnail_url, 
+    image_resolution, 
+    selling_price, 
+    time_listed, 
+    filetype_name, 
+    license_name 
+FROM 
+    assets 
+    LEFT JOIN assetslistedforsale ON assets.token_id=assetslistedforsale.token_id 
+    JOIN filetypes ON assets.image_filetype_id=filetypes.filetype_id 
+    JOIN licensetypes ON assets.license_type_id=licensetypes.license_type_id 
+WHERE 
+    assets.token_id=123133 
 
 -- return a list of users without their passwords
 SELECT

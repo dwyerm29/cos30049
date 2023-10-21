@@ -23,6 +23,8 @@ import { addToCart } from "../store/cartSlice";
 
 import axios from "axios";
 
+import moment from "moment";
+
 const Img = styled("img")({
   margin: "auto",
   display: "block",
@@ -37,7 +39,22 @@ export function ItemDetails() {
   //used to set whether the add to cart button is disabled when an item is already in the cart
   const [isInCart, setIsInCart] = useState(false);
 
-  const [itemDetails, setItemDetails] = useState({});
+  const [itemDetails, setItemDetails] = useState({
+    token_id: 0,
+    item_description: "",
+    image_url: "",
+    image_thumbnail_url: "",
+    image_resolution: "",
+    time_listed: "",
+    filetype_name: "",
+    license_name: "",
+    item_name: "",
+    owner_name: "",
+    owner_id: 0,
+    owner_email: "",
+    sale_price: "",
+    sale_time: 0,
+  });
 
   const currentUser = useSelector((state) => state.user);
 
@@ -147,7 +164,8 @@ export function ItemDetails() {
     axios
       .get(`http://127.0.0.1:8000/asset/${item_id}`)
       .then((response) => {
-        setItemDetails(response.data[0]);
+        console.log(response.data);
+        setItemDetails(response.data);
       })
       .catch((error) => {
         alert("error: " + error);
@@ -199,8 +217,16 @@ export function ItemDetails() {
                 </Typography>
                 <br />
                 <Typography variant="p">
-                  Current Owner: {itemDetails.current_owner_first_name}{" "}
-                  {itemDetails.current_owner_last_name}
+                  Owner Name: {itemDetails.owner_name}
+                </Typography>{" "}
+                <br />
+                <Typography variant="p">
+                  Owner Email: {itemDetails.owner_email}
+                </Typography>{" "}
+                <br />
+                <Typography variant="p">
+                  Last Sale Time:{" "}
+                  {moment(itemDetails.sale_time).format("LL LTS")}
                 </Typography>{" "}
                 <br />
                 <Typography variant="p">
@@ -227,7 +253,7 @@ export function ItemDetails() {
               >
                 {/* Conditionally rendered this if item is for sale and seller is not the logged in user */}
                 {itemDetails.selling_price != null &&
-                  itemDetails.current_owner_user_id !== currentUser.user_id && (
+                  itemDetails.owner_id !== currentUser.user_id && (
                     <div>
                       <Typography variant="h6" component="div">
                         Price: {itemDetails.selling_price} ETH
@@ -261,7 +287,7 @@ export function ItemDetails() {
                   )}
                 {/* Conditionally rendered this if item is not for sale and owner is not the logged in user */}
                 {itemDetails.selling_price == null &&
-                  itemDetails.current_owner_user_id !== currentUser.user_id && (
+                  itemDetails.owner_id !== currentUser.user_id && (
                     <div>
                       <Typography variant="h6">
                         Note: This Item Is Not For Sale
@@ -270,7 +296,7 @@ export function ItemDetails() {
                   )}
                 {/* Conditionally rendered option to sell if item is not for sale and owner is the logged in user */}
                 {itemDetails.selling_price == null &&
-                  itemDetails.current_owner_user_id == currentUser.user_id && (
+                  itemDetails.owner_id == currentUser.user_id && (
                     <div>
                       <Button
                         variant="outlined"
@@ -314,7 +340,7 @@ export function ItemDetails() {
                   )}
                 {/* ! Conditionally rendered option to sell if item is for sale and owner is the logged in user (edit listing) */}
                 {itemDetails.selling_price != null &&
-                  itemDetails.current_owner_user_id == currentUser.user_id && (
+                  itemDetails.owner_id == currentUser.user_id && (
                     <div>
                       <Typography
                         variant="h6"

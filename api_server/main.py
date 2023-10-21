@@ -61,22 +61,64 @@ def get_users():
 # get information for a single asset, along with details like selling price if it exists
 @app.get("/asset/{token_id}/")
 def get_assets(token_id: int):
+
+    #First This get most of the asset's details such as license type, image URL, FileType, etc. from the MYSQL Database
     try:
         connection = mysql.connector.connect(**db_config)
         cursor = connection.cursor()
-        query = (
-            "SELECT Assets.token_id, item_name, item_description, image_url, image_thumbnail_url, image_resolution, selling_price, time_listed, filetype_name, license_name, orig_owner.first_name AS original_owner_first_name, orig_owner.last_name AS original_owner_last_name, orig_owner.user_id AS original_owner_user_id, current_owner.first_name AS current_owner_first_name, current_owner.last_name AS current_owner_last_name, current_owner.user_id AS current_owner_user_id FROM Assets LEFT JOIN AssetsListedForSale ON Assets.token_id=AssetsListedForSale.token_id JOIN FileTypes ON Assets.image_filetype_id=FileTypes.filetype_id JOIN LicenseTypes ON Assets.license_type_id=LicenseTypes.license_type_id JOIN Users orig_owner ON Assets.original_owner=orig_owner.user_id JOIN Users current_owner ON Assets.current_owner=current_owner.user_id WHERE Assets.token_id="
-            + str(token_id)
-        )
+        query = ("SELECT assets.token_id, item_description, image_url, image_thumbnail_url, image_resolution, selling_price, time_listed, filetype_name, license_name, orig_owner.first_name AS original_owner_first_name, orig_owner.last_name AS original_owner_last_name, orig_owner.user_id AS original_owner_user_id FROM assets LEFT JOIN assetslistedforsale ON assets.token_id=assetslistedforsale.token_id JOIN filetypes ON assets.image_filetype_id=filetypes.filetype_id JOIN licensetypes ON assets.license_type_id=licensetypes.license_type_id JOIN users orig_owner ON assets.original_owner=orig_owner.user_id WHERE assets.token_id="
+        + str(token_id))
         cursor.execute(query)
-        result = cursor.fetchall()
-        Assets = [dict(zip(cursor.column_names, row)) for row in result]
+        result = cursor.fetchone()
+        asset = dict(zip(cursor.column_names, result))
         cursor.close()
         connection.close()
-        return Assets
+
+    except mysql.connector.Error as err:
+        return {"error": f"Error: {err}"}
+    
+
+    #Next, add other information such as token name, owner name, etc. from the TransactionStorage smart contract
+    w3 = Web3(Web3.HTTPProvider("HTTP://127.0.0.1:7545"))
+
+    #get compiled ABI
+    with open("transaction_storage_compiled.json", "r") as file:
+        compiled_sol = json.load(file)
+        abi = compiled_sol["contracts"]["TransactionStorage.sol"]["TransactionStorage"]["abi"]
+
+    #get contract address from database
+    contractAddress = ""
+    try:
+        connection = mysql.connector.connect(**db_config)
+        cursor = connection.cursor()
+        getContractAddressQuery = (
+            "SELECT contract_address FROM ContractAddress WHERE contract_name='TransactionStorage'"
+        )
+        print(getContractAddressQuery)
+        cursor.execute(getContractAddressQuery)
+        result = cursor.fetchone()
+        contractAddress = result[0]
+
+        print(contractAddress)
+
+        cursor.close()
+        connection.commit()
+        connection.close()
     except mysql.connector.Error as err:
         return {"error": f"Error: {err}"}
 
+    transaction_storage = w3.eth.contract(address=contractAddress, abi=abi)
+    get_transaction = transaction_storage.functions.tokenIdToLatestTransaction(token_id).call()
+
+    #add the relevant fields from the smart contract to the asset
+    asset["item_name"] = get_transaction[8]
+    asset["owner_name"] = get_transaction[6]
+    asset["owner_id"] = get_transaction[3]
+    asset["owner_email"] = get_transaction[7]
+    asset["sale_price"] = get_transaction[5]
+    asset["sale_time"] = get_transaction[4]
+
+    return asset
 
 # get a list of all Assets listed for sale along with other info
 @app.get("/listed_assets/")
@@ -84,7 +126,7 @@ def get_listed_assets():
     try:
         connection = mysql.connector.connect(**db_config)
         cursor = connection.cursor()
-        query = "SELECT Assets.token_id, item_name, item_description, image_url, image_thumbnail_url, image_resolution, selling_price, time_listed, filetype_name, license_name FROM Assets JOIN AssetsListedForSale ON Assets.token_id=AssetsListedForSale.token_id JOIN FileTypes on Assets.image_filetype_id=FileTypes.filetype_id JOIN LicenseTypes on Assets.license_type_id=LicenseTypes.license_type_id"
+        query = "SELECT assets.token_id, item_name, item_description, image_url, image_thumbnail_url, image_resolution, selling_price, time_listed, filetype_name, license_name FROM assets JOIN assetsListedForSale ON assets.token_id=assetsListedForSale.token_id JOIN FileTypes on assets.image_filetype_id=FileTypes.filetype_id JOIN LicenseTypes on assets.license_type_id=LicenseTypes.license_type_id"
         cursor.execute(query)
         result = cursor.fetchall()
         Assets = [dict(zip(cursor.column_names, row)) for row in result]
@@ -101,7 +143,7 @@ def get_listed_assets():
     try:
         connection = mysql.connector.connect(**db_config)
         cursor = connection.cursor()
-        query = "SELECT Assets.token_id, item_name, item_description, image_url, image_thumbnail_url, image_resolution, selling_price, time_listed, filetype_name, license_name FROM Assets JOIN AssetsListedForSale ON Assets.token_id = AssetsListedForSale.token_id JOIN FileTypes ON Assets.image_filetype_id = FileTypes.filetype_id JOIN LicenseTypes ON Assets.license_type_id = LicenseTypes.license_type_id JOIN AssetCategories ON Assets.token_id = AssetCategories.token_id JOIN AssetCategoryDescriptions ON AssetCategories.category_id=AssetCategoryDescriptions.category_id WHERE AssetCategoryDescriptions.category_name = 'Featured'"
+        query = "SELECT assets.token_id, item_name, item_description, image_url, image_thumbnail_url, image_resolution, selling_price, time_listed, filetype_name, license_name FROM assets JOIN assetsListedForSale ON assets.token_id = assetsListedForSale.token_id JOIN FileTypes ON assets.image_filetype_id = FileTypes.filetype_id JOIN LicenseTypes ON assets.license_type_id = LicenseTypes.license_type_id JOIN AssetCategories ON assets.token_id = AssetCategories.token_id JOIN AssetCategoryDescriptions ON AssetCategories.category_id=AssetCategoryDescriptions.category_id WHERE AssetCategoryDescriptions.category_name = 'Featured'"
         cursor.execute(query)
         result = cursor.fetchall()
         Assets = [dict(zip(cursor.column_names, row)) for row in result]
@@ -120,7 +162,7 @@ async def read_items(
     try:
         connection = mysql.connector.connect(**db_config)
         cursor = connection.cursor()
-        dbQuery = "SELECT DISTINCT Assets.token_id, item_name, item_description, image_url, image_thumbnail_url, image_resolution, selling_price, time_listed, filetype_name, license_name FROM Assets JOIN AssetsListedForSale ON Assets.token_id=AssetsListedForSale.token_id JOIN FileTypes ON Assets.image_filetype_id=FileTypes.filetype_id JOIN LicenseTypes ON Assets.license_type_id=LicenseTypes.license_type_id JOIN AssetCategories ON Assets.token_id=AssetCategories.token_id JOIN AssetCategoryDescriptions ON AssetCategories.category_id=AssetCategoryDescriptions.category_id"
+        dbQuery = "SELECT DISTINCT assets.token_id, item_name, item_description, image_url, image_thumbnail_url, image_resolution, selling_price, time_listed, filetype_name, license_name FROM assets JOIN assetsListedForSale ON assets.token_id=assetsListedForSale.token_id JOIN FileTypes ON assets.image_filetype_id=FileTypes.filetype_id JOIN LicenseTypes ON assets.license_type_id=LicenseTypes.license_type_id JOIN AssetCategories ON assets.token_id=AssetCategories.token_id JOIN AssetCategoryDescriptions ON AssetCategories.category_id=AssetCategoryDescriptions.category_id"
         if category != None:
             if len(category) > 0:
                 dbQuery += (
@@ -166,7 +208,7 @@ def get_user_transactions(user_id: int):
         connection = mysql.connector.connect(**db_config)
         cursor = connection.cursor()
         query = (
-            "SELECT transaction_id, Transactions.token_id, seller_id, buyer_id, Assets.sale_price, sale_time, item_name, item_description, image_url, image_thumbnail_url, image_resolution, filetype_name, license_name FROM Transactions JOIN Assets ON Transactions.token_id=Assets.token_id JOIN FileTypes ON Assets.image_filetype_id=FileTypes.filetype_id JOIN LicenseTypes ON Assets.license_type_id=LicenseTypes.license_type_id WHERE seller_id='"
+            "SELECT transaction_id, Transactions.token_id, seller_id, buyer_id, assets.sale_price, sale_time, item_name, item_description, image_url, image_thumbnail_url, image_resolution, filetype_name, license_name FROM Transactions JOIN assets ON Transactions.token_id=assets.token_id JOIN FileTypes ON assets.image_filetype_id=FileTypes.filetype_id JOIN LicenseTypes ON assets.license_type_id=LicenseTypes.license_type_id WHERE seller_id='"
             + str(user_id)
             + "' OR buyer_id = '"
             + str(user_id)
@@ -189,7 +231,7 @@ def get_listed_assets(user_id: int):
         connection = mysql.connector.connect(**db_config)
         cursor = connection.cursor()
         query = (
-            "SELECT Assets.token_id, item_name, item_description, image_url, image_thumbnail_url, image_resolution, selling_price, time_listed, filetype_name, license_name FROM Assets JOIN AssetsListedForSale ON Assets.token_id = AssetsListedForSale.token_id JOIN FileTypes ON Assets.image_filetype_id = FileTypes.filetype_id JOIN LicenseTypes ON Assets.license_type_id = LicenseTypes.license_type_id WHERE Assets.current_owner='"
+            "SELECT assets.token_id, item_name, item_description, image_url, image_thumbnail_url, image_resolution, selling_price, time_listed, filetype_name, license_name FROM assets JOIN assetsListedForSale ON assets.token_id = assetsListedForSale.token_id JOIN FileTypes ON assets.image_filetype_id = FileTypes.filetype_id JOIN LicenseTypes ON assets.license_type_id = LicenseTypes.license_type_id WHERE assets.current_owner='"
             + str(user_id)
             + "'"
         )
@@ -210,7 +252,7 @@ def get_user_Transactions(user_id: int):
         connection = mysql.connector.connect(**db_config)
         cursor = connection.cursor()
         query = (
-            "SELECT Assets.token_id, item_name, item_description, image_url, image_thumbnail_url, image_resolution, filetype_name, license_name, sale_price, transaction_datetime FROM Assets JOIN FileTypes ON Assets.image_filetype_id = FileTypes.filetype_id JOIN LicenseTypes ON Assets.license_type_id = LicenseTypes.license_type_id WHERE Assets.current_owner='"
+            "SELECT assets.token_id, item_name, item_description, image_url, image_thumbnail_url, image_resolution, filetype_name, license_name, sale_price, transaction_datetime FROM assets JOIN FileTypes ON assets.image_filetype_id = FileTypes.filetype_id JOIN LicenseTypes ON assets.license_type_id = LicenseTypes.license_type_id WHERE assets.current_owner='"
             + str(user_id)
             + "'"
         )
@@ -329,7 +371,7 @@ def postNewAsset(newAsset: CreateAssetRequest):
         connection = mysql.connector.connect(**db_config)
         cursor = connection.cursor()
         addAssetQuery = (
-            "INSERT INTO Assets (item_name, item_description, image_url, image_thumbnail_url, image_resolution, image_filetype_id, license_type_id, original_owner, current_owner, sale_price, transaction_datetime) VALUES ('"
+            "INSERT INTO assets (item_name, item_description, image_url, image_thumbnail_url, image_resolution, image_filetype_id, license_type_id, original_owner, current_owner, sale_price, transaction_datetime) VALUES ('"
             + newAsset.name
             + "', '"
             + newAsset.description
