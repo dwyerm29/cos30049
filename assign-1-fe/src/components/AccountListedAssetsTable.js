@@ -30,7 +30,7 @@ export default function AccountListedAssetsTable({ user_id }) {
       });
   }, []);
   return (
-    <TableContainer component={Paper}>
+    <TableContainer>
       <Table stickyHeader aria-label="table" sx={{ mt: 1 }}>
         <TableHead>
           <TableRow sx={{ fontWeight: "bold" }}>

@@ -72,7 +72,7 @@ export const Checkout = () => {
         <Paper sx={{ p: 1 }}>
           <Typography variant="h4">Checkout</Typography>
           <Container sx={{ pt: 1 }}>
-            <TableContainer component={Paper}>
+            <TableContainer>
               <Table
                 sx={{ minWidth: 650 }}
                 size="small"
