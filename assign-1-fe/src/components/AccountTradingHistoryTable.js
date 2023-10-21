@@ -6,7 +6,6 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  Paper,
   Typography,
 } from "@mui/material";
 import { Link } from "react-router-dom";
@@ -17,6 +16,7 @@ import moment from "moment";
 export default function AccountTradingHistoryTable({ user_id }) {
   const [transactions, setTransactions] = useState([]);
 
+  //Populate a list of all transactions a user has been involved in with an API call
   useEffect(() => {
     axios
       .get(
@@ -58,7 +58,9 @@ export default function AccountTradingHistoryTable({ user_id }) {
         <TableHead>
           <TableRow sx={{ fontWeight: "bold" }}>
             <TableCell sx={{ fontWeight: "bold" }}>Transaction ID</TableCell>
+
             <TableCell sx={{ fontWeight: "bold" }}>Token ID</TableCell>
+            <TableCell sx={{ fontWeight: "bold" }}>Token Name</TableCell>
             <TableCell sx={{ fontWeight: "bold" }}>
               Transaction Date/Time
             </TableCell>
@@ -69,6 +71,7 @@ export default function AccountTradingHistoryTable({ user_id }) {
           </TableRow>
         </TableHead>
         <TableBody>
+          {/* Iterate through the list of assets to display in a table */}
           {transactions.map((transaction) => (
             <TableRow
               key={transaction.transaction_id}
@@ -77,6 +80,7 @@ export default function AccountTradingHistoryTable({ user_id }) {
               <TableCell component="th" scope="row">
                 {transaction.transaction_id}
               </TableCell>
+
               <TableCell>
                 <Typography
                   variant="body2"
@@ -87,6 +91,7 @@ export default function AccountTradingHistoryTable({ user_id }) {
                   {transaction.token_id}
                 </Typography>
               </TableCell>
+              <TableCell>{transaction.asset_name}</TableCell>
               <TableCell>
                 {moment(transaction.date_time).format("LL LTS")}
               </TableCell>

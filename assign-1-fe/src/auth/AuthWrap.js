@@ -1,7 +1,7 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext } from "react";
 import { Menu, ToRoutes } from "../components/Navbar.js";
 
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import { useSelector, useDispatch } from "react-redux";
 import { setUser, clearUser } from "../store/userSlice.js";
@@ -15,12 +15,11 @@ export function AuthWrapper() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  /*   if (localStorage.getItem("user") != null) {
-    dispatch(setUser(JSON.parse(localStorage.getItem("user"))));
-  } */
+  // Loads in the user from the Redux store
   const user = useSelector((state) => state.user);
 
   const login = (username, password) => {
+    // axios tries the given login information and returns success, as well as sets the redux store and localstorage user credentials if successful
     return new Promise((success, incorrect) => {
       axios
         .post("http://127.0.0.1:8000/login", {
@@ -28,7 +27,7 @@ export function AuthWrapper() {
           password: password,
         })
         .then((response) => {
-          console.log(response);
+          //console.log(response);
           if (response.data.length > 0) {
             localStorage.setItem(
               "user",
@@ -56,6 +55,7 @@ export function AuthWrapper() {
     });
   };
 
+  //clears the user information from the redux store and browser's local storage, navigates back to the home page.
   const logout = () => {
     dispatch(clearUser());
     localStorage.removeItem("user");

@@ -81,11 +81,13 @@ export const Menu = () => {
 
   let navigate = useNavigate();
 
+  //passes the search query to the search results page using the React Router.
   const searchResults = () => {
     setNav(false);
     navigate(`/searchresults?query=${searchQuery}`);
   };
 
+  //search if the user presses enter while typing in the search bar.
   const searchHandleKeyDown = (e) => {
     if (e.key === "Enter") {
       searchResults();

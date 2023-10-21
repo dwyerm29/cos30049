@@ -2,6 +2,8 @@ import * as React from "react";
 import { Box, Grid } from "@mui/material";
 import GalleryCard from "./GalleryCard";
 
+//This component is used by both SearchResults and FeaturedItems to display assets in a gallery
+//It recieves a list of items as a prop, which it then iterates through and dispays on a responseive grid grid
 export default function GalleryGrid({ items }) {
   return (
     <Box sx={{ flexGrow: 1, pt: 2 }}>

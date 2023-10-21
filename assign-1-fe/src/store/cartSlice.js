@@ -8,10 +8,10 @@ export const cartSlice = createSlice({
   },
   reducers: {
     setCart: (state, action) => {
-      console.log(action.payload);
+      //console.log(action.payload);
       state.cart = action.payload.cart;
       state.totalPrice = action.payload.totalPrice;
-      console.log(action.payload);
+      //console.log(action.payload);
 
       //update the browser's local storage to cart contents survive refresh
       localStorage.setItem(
@@ -21,6 +21,8 @@ export const cartSlice = createSlice({
         })
       );
     },
+
+    //add an item to the cart if it has not already been added, and set the total price
     addToCart: (state, action) => {
       let isDuplicate = false;
       for (let i = 0; i < state.cart.length; i++) {
@@ -46,6 +48,7 @@ export const cartSlice = createSlice({
       );
     },
 
+    //remove item from the cart, and set the total price
     removeFromCart: (state, action) => {
       for (let i = 0; i < state.cart.length; i++) {
         if (state.cart[i].token_id === action.payload) {

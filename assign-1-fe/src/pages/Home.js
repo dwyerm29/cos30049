@@ -1,6 +1,7 @@
 import React from "react";
 import homebg from "../images/homebg.jpg";
 
+//static home page
 export const Home = () => {
   return (
     <div className="w-full h-screen">

@@ -17,6 +17,8 @@ const Img = styled("img")({
   maxWidth: "100%",
   maxHeight: "100%",
 });
+
+//This component is used to display basic asset details as well as a small version of its image in a gallery grid
 export default function GalleryCard({
   itemName,
   imageSRC,

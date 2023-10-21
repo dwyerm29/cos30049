@@ -3,7 +3,6 @@ import {
   Box,
   Paper,
   Typography,
-  Card,
   Table,
   TableBody,
   TableCell,
@@ -16,43 +15,47 @@ import { useLocation } from "react-router-dom";
 
 import moment from "moment";
 
+//This page displays the order summary after the order has been made by the checkout page
 export const OrderSummary = (props) => {
+  //information is passed to this page using the react router useLocation function
   const location = useLocation();
-
-  console.log(location);
 
   return (
     <Container>
       <Box sx={{ mt: 2, borderRadius: 2 }}>
         <Paper sx={{ p: 2 }}>
-          <Typography variant="h4">Order Summary</Typography>
-          <br />
-          <Typography variant="h6">Etherium Transaction Receipt</Typography>
-          <Box sx={{ px: 2 }}>
-            <Typography variant="subtitle1">
-              <b>Transaction Hash:</b>{" "}
-              {JSON.parse(location.state.Receipt).transactionHash}
-            </Typography>
-            <Typography variant="subtitle1">
-              <b>Block Number:</b>{" "}
-              {JSON.parse(location.state.Receipt).blockNumber}
-            </Typography>
-            <Typography variant="subtitle1">
-              <b>Block Hash:</b> {JSON.parse(location.state.Receipt).blockHash}
-            </Typography>
-            <Typography variant="subtitle1">
-              <b>From:</b> {JSON.parse(location.state.Receipt).from}
-            </Typography>
-            <Typography variant="subtitle1">
-              <b>To:</b> {JSON.parse(location.state.Receipt).to}
-            </Typography>
-            <Typography variant="subtitle1">
-              <b>Gas Used:</b> {JSON.parse(location.state.Receipt).gasUsed}
-            </Typography>
+          {/* Displays the Etherium transaction receipt (transaction hash, block number, etc.) */}
+          <Box>
+            <Typography variant="h4">Order Summary</Typography>
+            <br />
+            <Typography variant="h6">Etherium Transaction Receipt</Typography>
+            <Box sx={{ px: 2 }}>
+              <Typography variant="subtitle1">
+                <b>Transaction Hash:</b>{" "}
+                {JSON.parse(location.state.Receipt).transactionHash}
+              </Typography>
+              <Typography variant="subtitle1">
+                <b>Block Number:</b>{" "}
+                {JSON.parse(location.state.Receipt).blockNumber}
+              </Typography>
+              <Typography variant="subtitle1">
+                <b>Block Hash:</b>{" "}
+                {JSON.parse(location.state.Receipt).blockHash}
+              </Typography>
+              <Typography variant="subtitle1">
+                <b>From:</b> {JSON.parse(location.state.Receipt).from}
+              </Typography>
+              <Typography variant="subtitle1">
+                <b>To:</b> {JSON.parse(location.state.Receipt).to}
+              </Typography>
+              <Typography variant="subtitle1">
+                <b>Gas Used:</b> {JSON.parse(location.state.Receipt).gasUsed}
+              </Typography>
+            </Box>
           </Box>
           <br />
           <Typography variant="h6">Items Purchased</Typography>
-
+          {/* Maps the list of assets that have been returned emitted by the transaction_storage_add_multiple_transactions function's completion event to a table */}
           <TableContainer>
             <Table
               sx={{ minWidth: 650 }}

@@ -6,19 +6,18 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  Paper,
   Typography,
 } from "@mui/material";
 
 import { Link } from "react-router-dom";
 
 import axios from "axios";
-
 import moment from "moment";
 
 export default function AccountListedAssetsTable({ user_id }) {
   const [listedAssets, setListedAssets] = useState([]);
 
+  //populates the assets a user has listed for sale using an API call
   useEffect(() => {
     axios
       .get(`http://127.0.0.1:8000/user/${user_id}/listed_assets/`)
@@ -41,6 +40,7 @@ export default function AccountListedAssetsTable({ user_id }) {
           </TableRow>
         </TableHead>
         <TableBody>
+          {/* Iterates through the list of listed assets and displays them in a table */}
           {listedAssets.map((asset) => (
             <TableRow
               key={asset.token_id}

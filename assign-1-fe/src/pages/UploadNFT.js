@@ -36,6 +36,7 @@ const MenuProps = {
   },
 };
 
+//Page where users can create new assets.
 export const UploadNFT = () => {
   const navigate = useNavigate();
 
@@ -93,7 +94,7 @@ export const UploadNFT = () => {
       .get(`http://127.0.0.1:8000/asset_licensetypes`)
       .then((response) => {
         setLicenseTypeOptions(response.data);
-        console.log(response.data);
+        //console.log(response.data);
       })
       .catch((error) => {
         console.error("error here: ", error);
@@ -122,31 +123,27 @@ export const UploadNFT = () => {
         selectedCategoryIDs.push(categoryOption.category_id);
     }
 
-    console.log(selectedCategoryIDs);
-    return new Promise((resolve, reject) => {
-      axios
-        .post("http://127.0.0.1:8000/post_new_asset/", {
-          name: assetName,
-          description: assetDescription,
-          imageURL: assetImageURL,
-          imageThumbnailURL: assetImageThumbnailURL,
-          imageResolution: assetImageResolution,
-          licenseTypeID: selectedLicenseTypeID,
-          imageFileTypeID: selectedFileTypeID,
-          ownerID: user.user_id,
-          ownerName: `${user.first_name} ${user.last_name}`,
-          ownerEmail: user.email,
-          categoryIDs: selectedCategoryIDs,
-        })
-        .then((response) => {
-          console.log(response.data);
-          navigate(`/itemdetails/${response.data}`);
-          resolve(response.data);
-        })
-        .catch((error) => {
-          reject(error);
-        });
-    });
+    //API call post call to create the new asset. Upon successful completion, it havigates the user to the itemdetails page for the asset they just uploaded.
+    axios
+      .post("http://127.0.0.1:8000/post_new_asset/", {
+        name: assetName,
+        description: assetDescription,
+        imageURL: assetImageURL,
+        imageThumbnailURL: assetImageThumbnailURL,
+        imageResolution: assetImageResolution,
+        licenseTypeID: selectedLicenseTypeID,
+        imageFileTypeID: selectedFileTypeID,
+        ownerID: user.user_id,
+        ownerName: `${user.first_name} ${user.last_name}`,
+        ownerEmail: user.email,
+        categoryIDs: selectedCategoryIDs,
+      })
+      .then((response) => {
+        navigate(`/itemdetails/${response.data}`);
+      })
+      .catch((error) => {
+        alert(error);
+      });
   };
 
   return (
@@ -203,7 +200,7 @@ export const UploadNFT = () => {
                       variant="outlined"
                       value={assetName}
                       onChange={(e) => setAssetName(e.target.value)}
-                      required
+                      required //form can only be submitted when every field has been filled in.
                       fullWidth
                     />
                     <TextField
@@ -306,6 +303,7 @@ export const UploadNFT = () => {
                         renderValue={(selected) => selected.join(", ")}
                         MenuProps={MenuProps}
                       >
+                        {/* maps the category option to a dropdown menu */}
                         {categoryOptions.map((categoryOptions) => (
                           <MenuItem
                             key={categoryOptions.category_id}

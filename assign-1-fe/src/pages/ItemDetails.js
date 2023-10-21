@@ -32,6 +32,8 @@ const Img = styled("img")({
   maxHeight: "100%",
 });
 
+//This page displays a card with a large verson of the asset image, as well as other information about the asset.
+//Can also choose to display a price if the asset is for sale, and options to list for sale and/or edit the listing if it is owned by the current user.
 export function ItemDetails() {
   const dispatch = useDispatch();
   const { item_id } = useParams();
@@ -79,7 +81,7 @@ export function ItemDetails() {
 
   //handles the user listing an asset.
   const handleListAsset = (event) => {
-    console.log(listAssetPrice);
+    //console.log(listAssetPrice);
     if (listAssetPrice !== "") {
       setListAssetPrice("");
       setOpenListAssetDialog(false);
@@ -90,7 +92,7 @@ export function ItemDetails() {
           selling_price: listAssetPrice,
         })
         .then((response) => {
-          console.log(response);
+          //console.log(response);
           loadItemDetails();
         })
         .catch((error) => {
@@ -119,7 +121,7 @@ export function ItemDetails() {
 
   //handles the user updating an item listing.
   const handleUpdateListing = () => {
-    console.log(updateListingPrice);
+    //console.log(updateListingPrice);
     if (updateListingPrice !== "") {
       setUpdateListingPrice("");
       setOpenUpdateListingDialog(false);
@@ -130,7 +132,7 @@ export function ItemDetails() {
           selling_price: updateListingPrice,
         })
         .then((response) => {
-          console.log(response);
+          //console.log(response);
           loadItemDetails();
         })
         .catch((error) => {
@@ -147,7 +149,7 @@ export function ItemDetails() {
       axios
         .delete(`http://127.0.0.1:8000/delete_asset_listing/${item_id}`)
         .then((response) => {
-          console.log(response);
+          //console.log(response);
           loadItemDetails();
         })
         .catch((error) => {
@@ -156,6 +158,7 @@ export function ItemDetails() {
     }
   };
 
+  //adds the asset to the cart
   const handleAddToCart = () => {
     dispatch(addToCart(itemDetails));
     setIsInCart(true);
@@ -166,7 +169,7 @@ export function ItemDetails() {
     axios
       .get(`http://127.0.0.1:8000/asset/${item_id}`)
       .then((response) => {
-        console.log(response.data);
+        //console.log(response.data);
         setItemDetails(response.data);
       })
       .catch((error) => {
@@ -308,10 +311,8 @@ export function ItemDetails() {
                       >
                         List Asset For Sale
                       </Button>
-                      <Dialog
-                        open={openListAssetDialog}
-                        //onClose={handleCancelListAsset}
-                      >
+                      {/*Dialogue box for adding a new asset listing*/}
+                      <Dialog open={openListAssetDialog}>
                         <DialogTitle>List Asset for Sale</DialogTitle>
                         <DialogContent>
                           <DialogContentText>
@@ -360,7 +361,7 @@ export function ItemDetails() {
                       >
                         Edit Listing
                       </Button>
-
+                      {/*Dialogue box for editing an existing asset listing*/}
                       <Dialog open={openUpdateListingDialog}>
                         <DialogTitle>Update Listing</DialogTitle>
                         <DialogContent>

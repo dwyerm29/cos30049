@@ -15,6 +15,7 @@ import AccountOwnedAssetsTable from "../components/AccountOwnedAssetsTable";
 
 import { useSelector } from "react-redux";
 
+//The account page is mostly filed with cards that display information about a user's assets, transactions, or asset listings, along with basic user information.
 export const Account = () => {
   const user = useSelector((state) => state.user);
 

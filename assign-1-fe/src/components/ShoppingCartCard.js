@@ -12,9 +12,10 @@ const Img = styled("img")({
   maxWidth: "100%",
   maxHeight: "100%",
 });
+
+//This component is used by the Cart page to display one shopping cart item in a card
 export default function ShoppingCartCard({ cartItem }) {
   const dispatch = useDispatch();
-  /* Uses dispatch to display item information added to cart */
   return (
     <Card
       sx={{
@@ -74,6 +75,7 @@ export default function ShoppingCartCard({ cartItem }) {
               fontSize="large"
               sx={{ "&:hover": { backgroundColor: "red", borderRadius: 1 } }}
               xs={{ "&:hover": { backgroundColor: "red", borderRadius: 1 } }}
+              //call the removeFromCart function in the redux store to remove an item from the cart.
               onClick={() => dispatch(removeFromCart(cartItem.token_id))}
             />
           </Grid>

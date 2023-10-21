@@ -36,6 +36,7 @@ export const SearchResults = () => {
 
   const [categoryFilters, setCategoryFilters] = useState([]);
 
+  //Handles all the different sort options
   const handleSortChange = (event) => {
     setSort(event.target.value);
     switch (event.target.value) {
@@ -53,19 +54,19 @@ export const SearchResults = () => {
             return 0;
           })
         );
-        console.log("sort by Name");
+        //console.log("sort by Name");
         break;
       case 1:
         setSearchResults(
           searchResults.sort((a, b) => a.selling_price - b.selling_price)
         );
-        console.log("sort by price (lowest)");
+        //console.log("sort by price (lowest)");
         break;
       case 2:
         setSearchResults(
           searchResults.sort((a, b) => b.selling_price - a.selling_price)
         );
-        console.log("sort by price (highest)");
+        //console.log("sort by price (highest)");
         break;
       case 3:
         setSearchResults(
@@ -81,7 +82,7 @@ export const SearchResults = () => {
             return 0;
           })
         );
-        console.log("sort by recently added");
+        //console.log("sort by recently added");
         break;
       case 4:
         setSearchResults(
@@ -97,7 +98,7 @@ export const SearchResults = () => {
             return 0;
           })
         );
-        console.log("sort by oldest");
+        //console.log("sort by oldest");
         break;
       default:
     }
@@ -105,6 +106,7 @@ export const SearchResults = () => {
 
   const [filterVal, setFilter] = useState("");
 
+  //Sets filterVal when the user selects or unselects a category from the dropdown menu.
   const handleFilterChange = (event) => {
     const {
       target: { value },
@@ -114,9 +116,13 @@ export const SearchResults = () => {
       typeof value === "string" ? value.split(",") : value
     );
   };
+
+  //search query is taken from the URL (this is set by the NavBar when a user seraches for an item)
   const { search } = useLocation();
   const searchQuery = search.match(/query=(.*)/)?.[1];
 
+  //Called when the page is loaded in, and when the value of filterVal or serachQuery changes.
+  //This makes an API call to get a list of all items that are on sale, in the selected categories, and that match the user's search query.
   useEffect(() => {
     var categoryQuery = "";
     for (const cat of filterVal) {
@@ -146,6 +152,7 @@ export const SearchResults = () => {
       });
   }, [searchQuery, filterVal]);
 
+  //Called when the page is loaded in to get a list of all asset categories that the user has the option of selecting in a the categories dropdown.
   useEffect(() => {
     axios
       .get(`http://127.0.0.1:8000/asset_categories`)
@@ -159,7 +166,7 @@ export const SearchResults = () => {
       .catch((error) => {
         console.error("error here: ", error);
       });
-  }, [searchQuery]);
+  }, []);
   const noResult = searchResults.length === 0;
   return (
     <div>

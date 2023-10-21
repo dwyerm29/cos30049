@@ -10,6 +10,7 @@ export const userSlice = createSlice({
     isAuthenticated: false,
   },
   reducers: {
+    //sets the state of the user (when logging in)
     setUser: (state, action) => {
       state.value += 1;
       state.user_id = action.payload.user_id;
@@ -18,6 +19,7 @@ export const userSlice = createSlice({
       state.email = action.payload.email;
       state.isAuthenticated = action.payload.isAuthenticated;
     },
+    //clears the state of the user (when logging out)
     clearUser: (state) => {
       state.user_id = 0;
       state.first_name = "";

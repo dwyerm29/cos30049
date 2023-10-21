@@ -31,9 +31,10 @@ export const Checkout = () => {
   const dispatch = useDispatch();
 
   const handleCheckout = () => {
+    //first prepares a list of objects that contain the fields that the API call requires.
     let transactionList = [];
     for (const item of cartItems) {
-      console.log(item);
+      //console.log(item);
       transactionList.push({
         token_id: item.token_id,
         seller_id: item.owner_id,
@@ -45,17 +46,15 @@ export const Checkout = () => {
       });
     }
 
-    console.log(transactionList);
-
-    console.log(JSON.stringify(transactionList));
-
+    //API call to add multiple transactions to the smart contract.
     axios
       .post(
         "http://127.0.0.1:8000/transaction_storage_add_multiple_transactions/",
         transactionList
       )
       .then((response) => {
-        console.log(response.data);
+        //console.log(response.data);
+        //clear the cart and navigate to the order summary page upon successful completion of API call.
         dispatch(setCart({ cart: [], totalPrice: 0 }));
         navigate("/ordersummary", {
           state: response.data,
@@ -88,6 +87,7 @@ export const Checkout = () => {
                   </TableRow>
                 </TableHead>
                 <TableBody>
+                  {/* Map the contents of the cart  to a table summarising what the user is about to purchase, along with a total price */}
                   {cartItems.map((row) => (
                     <TableRow
                       key={row.token_id}

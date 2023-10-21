@@ -775,7 +775,8 @@ async def transaction_storage_add_multiple_transactions(transactions: list[Trans
     for transaction in transactions:
         delete_asset_listing(str(transaction.token_id))
 
+    #returns both the etherium transaction receipt and what was returned by the smart contract event to be displayed in the order summary page.
     return {
         "Receipt": str(w3.to_json(tx_receiptA)),
-        "AddedTransactions": event['args']['completedTransactions']
+        "CompletedTransactions": event['args']['completedTransactions']
     }

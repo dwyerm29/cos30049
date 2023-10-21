@@ -4,25 +4,31 @@ import { Link } from "react-router-dom";
 
 import axios from "axios";
 
+//Registration page where new users can sign up to the website.
 export const Register = () => {
+  //used to store the inputs' data.
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmationPassword, setConfirmationPassword] = useState("");
-  const [error, setError] = useState("");
 
+  //user to display success or error messages
+  const [error, setError] = useState("");
   const [isSuccessful, setIsSuccessful] = useState(false);
 
+  //handles form submission.
   const submitForm = (event) => {
     event.preventDefault();
 
+    //Checks whether both passwords given match, and exits early if not.
     if (password !== confirmationPassword) {
       setError("Passwords do not match!");
       return;
     } else {
       setError("");
     }
+    //halts if any of the fields are empty
     if (
       firstName === "" ||
       lastName === "" ||
@@ -33,8 +39,8 @@ export const Register = () => {
       setError("You must fill in all fields to create a new user");
       return;
     }
-    console.log(firstName);
 
+    //api post call with the new user's information. Either displays a success or error message upon completion.
     axios
       .post("http://127.0.0.1:8000/post_new_user", {
         first_name: firstName,
@@ -47,7 +53,7 @@ export const Register = () => {
         if (response.data.length !== 0) setError(response.data.error);
       })
       .catch((error) => {
-        console.log("error here: ", error);
+        //console.log("error here: ", error);
       });
 
     //setFormError(inputError);
@@ -74,7 +80,7 @@ export const Register = () => {
               value={firstName}
               onChange={(e) => {
                 setFirstName(e.target.value);
-                console.log(e.target.value);
+                //console.log(e.target.value);
               }}
             />
           </div>

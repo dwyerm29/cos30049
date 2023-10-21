@@ -2,6 +2,7 @@ import { useReducer, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { AuthData } from "../auth/AuthWrap";
 
+//This page is where the user logs in. Authentication is handled by AuthWrap, and this form only accepts a username and password to send there.
 export const Login = () => {
   const navigate = useNavigate();
   const { login } = AuthData();

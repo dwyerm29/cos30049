@@ -22,13 +22,16 @@ export const ToRoutes = () => {
     </Routes>
   );
 };
+
+//The shopping card page contains a list of ShoppingCardCart components if there is anything in the cart, along with total price.
+//If there is nothing in the cart and/or there is no user logged in, it provides buttons that link to rectify that situation.
 export const Cart = () => {
   const cartItems = useSelector((state) => state.cart.cart);
   const cartTotalPrice = useSelector((state) => state.cart.totalPrice);
 
   const { user } = AuthData();
 
-  console.log(cartItems);
+  //console.log(cartItems);
 
   return (
     <Container>
@@ -51,12 +54,13 @@ export const Cart = () => {
             <div className="flex gap-5">
               {user.isAuthenticated ? (
                 cartItems.length === 0 ? (
-                  <Link
+                  <Button
                     to="/featureditems"
-                    className="hover:bg-gray-300 active:bg-gray-900 flex gap-1 items-center"
+                    component={Link}
+                    variant="contained"
                   >
                     Add items to cart to checkout
-                  </Link>
+                  </Button>
                 ) : (
                   <Button
                     className=" hover:bg-gray-300  bg-gray-900 px-2"

@@ -28,6 +28,7 @@ const MenuProps = {
   },
 };
 
+//Very close in functionality to the search results page, except there is no search query, and the "Featured" category is always selected.
 export const FeaturedItems = () => {
   const [featuredItems, setFeaturedItems] = useState([]);
 
@@ -35,6 +36,7 @@ export const FeaturedItems = () => {
 
   const [categoryFilters, setCategoryFilters] = useState([]);
 
+  //Handles all the different sorting options
   const handleSortChange = (event) => {
     setSort(event.target.value);
     switch (event.target.value) {
@@ -52,19 +54,19 @@ export const FeaturedItems = () => {
             return 0;
           })
         );
-        console.log("sort by Name");
+        //console.log("sort by Name");
         break;
       case 1:
         setFeaturedItems(
           featuredItems.sort((a, b) => a.selling_price - b.selling_price)
         );
-        console.log("sort by price (lowest)");
+        //console.log("sort by price (lowest)");
         break;
       case 2:
         setFeaturedItems(
           featuredItems.sort((a, b) => b.selling_price - a.selling_price)
         );
-        console.log("sort by price (highest)");
+        //console.log("sort by price (highest)");
         break;
       case 3:
         setFeaturedItems(
@@ -80,7 +82,7 @@ export const FeaturedItems = () => {
             return 0;
           })
         );
-        console.log("sort by recently added");
+        //console.log("sort by recently added");
         break;
       case 4:
         setFeaturedItems(
@@ -96,7 +98,7 @@ export const FeaturedItems = () => {
             return 0;
           })
         );
-        console.log("sort by oldest");
+        //console.log("sort by oldest");
         break;
       default:
     }
@@ -104,16 +106,20 @@ export const FeaturedItems = () => {
 
   const [filterVal, setFilter] = useState("");
 
+  //set filterVal according to the filter the user has selected
   const handleFilterChange = (event) => {
     const {
       target: { value },
     } = event;
+    //Always set the "Featured" filter to be on
     if (!value.includes("Featured")) value.push("Featured");
     setFilter(value);
   };
 
+  //Called when the page is loaded in, and when the value of filterVal changes.
+  //This makes an API call to get a list of all items that are on sale and in the featured as well as any other category the user has selected.
   useEffect(() => {
-    var categoryQuery = "&category=Featured";
+    var categoryQuery = "";
     for (const cat of filterVal) {
       categoryQuery += `&category=${cat}`;
     }
@@ -139,6 +145,7 @@ export const FeaturedItems = () => {
       });
   }, [filterVal]);
 
+  //Called once when the page is loaded in to get a list of all asset categories that the user has the option of selecting.
   useEffect(() => {
     axios
       .get(`http://127.0.0.1:8000/asset_categories`)

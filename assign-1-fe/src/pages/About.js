@@ -1,6 +1,7 @@
 import React from "react";
 import homebg from "../images/homebg.jpg";
 
+//Static page used to display sources, authors' names, and basic website information.
 export const About = () => {
   return (
     <div className="w-full h-screen">

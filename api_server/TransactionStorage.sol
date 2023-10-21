@@ -4,6 +4,7 @@ pragma solidity ^0.8.18;
 //pragma experimental ABIEncoderV2;
 
 contract TransactionStorage {
+    //data structure for storing transactions.
     struct Transaction {
         uint256 transaction_id;
         uint256 token_id;
@@ -16,12 +17,16 @@ contract TransactionStorage {
         string token_name;
     }
 
-    Transaction[] public transactions;
+    //list of all transactions that have ever been made
+    Transaction[] private transactions;
     
-    mapping(uint256 => uint256) public tokenIdToOwnerId;
-    //used to determine who the owner of a token is
+    //used to determine who the owner of a token is by the getAllOwnedAssetsForUser function
+    mapping(uint256 => uint256) private tokenIdToOwnerId;
+    
+    //used to get information such as item name, owner name, transaction time, etc by the API for the asset details page
     mapping(uint256 => Transaction) public tokenIdToLatestTransaction;
 
+    //adds one transaction to the list of transactions
     function addTransaction(uint _token_id, uint _seller_id, uint _buyer_id, uint _sale_time, string memory _sale_price, string memory _owner_name, string memory _owner_email, string memory _token_name) public returns (Transaction memory){
         uint256 newTransactionID = transactions.length + 1;
         Transaction memory newTransaction = Transaction({transaction_id: newTransactionID, token_id: _token_id, seller_id : _seller_id, buyer_id: _buyer_id, sale_time: _sale_time, sale_price: _sale_price, owner_name: _owner_name, owner_email: _owner_email, token_name: _token_name});
@@ -45,6 +50,7 @@ contract TransactionStorage {
         string token_name;
     }
 
+    //emmited upon successful completion of all transactions
     event CompletedTransactions(Transaction[] completedTransactions);
 
     //used to to make more than transaction at once, for instance when purchasing more than one asset, or initialising a database
@@ -55,6 +61,7 @@ contract TransactionStorage {
             completedTransactions[i] = addTransaction(_transactions[i].token_id, _transactions[i].seller_id, _transactions[i].buyer_id, _transactions[i].sale_time, _transactions[i].sale_price, _transactions[i].owner_name, _transactions[i].owner_email, _transactions[i].token_name);
         }
 
+        //emits an event with which transactions were successfully completed 
         emit CompletedTransactions(completedTransactions);
     }
 

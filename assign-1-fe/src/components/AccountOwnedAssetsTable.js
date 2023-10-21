@@ -6,7 +6,6 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  Paper,
   Typography,
 } from "@mui/material";
 
@@ -17,6 +16,7 @@ import { Link } from "react-router-dom";
 export default function AccountOwnedAssetsTable({ user_id }) {
   const [ownedAssets, setOwnedAssets] = useState([]);
 
+  //populate the list of owned assets for a given user using an API call
   useEffect(() => {
     axios
       .get(
@@ -25,12 +25,8 @@ export default function AccountOwnedAssetsTable({ user_id }) {
       .then((response) => {
         var tempTransactions = [];
         if (response.data.length > 0) {
+          //list of transactions is returned by the API server in the form of a 2d array, here it is converted into a list of objects
           response.data.map((transaction) => {
-            var transactionType = "";
-            if (transaction[3] === transaction[2]) transactionType = "Creation";
-            else if (user_id === transaction[3]) transactionType = "Purchase";
-            else if (user_id === transaction[2]) transactionType = "Sale";
-
             tempTransactions.push({
               transaction_id: transaction[0],
               token_id: transaction[1],
@@ -41,11 +37,10 @@ export default function AccountOwnedAssetsTable({ user_id }) {
               owner_name: transaction[6],
               owner_email: transaction[7],
               asset_name: transaction[8],
-              transaction_type: transactionType,
             });
           });
         }
-        console.log(tempTransactions);
+        //console.log(tempTransactions);
         setOwnedAssets(tempTransactions);
       })
       .catch((error) => {
@@ -66,6 +61,7 @@ export default function AccountOwnedAssetsTable({ user_id }) {
           </TableRow>
         </TableHead>
         <TableBody>
+          {/* Iterate through the list of assets to display in a table */}
           {ownedAssets.map((asset) => (
             <TableRow
               key={asset.transaction_id}
