@@ -14,7 +14,7 @@ CREATE TABLE `Users` (
   `password` VARCHAR(50) NOT NULL,
   `first_name` VARCHAR (50),
   `last_name` VARCHAR (50),
-  `email` VARCHAR(50),
+  `email` VARCHAR(50) UNIQUE,
   PRIMARY KEY (`user_id`)
 );
 

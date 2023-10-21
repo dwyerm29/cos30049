@@ -279,7 +279,6 @@ class LoginRequest(BaseModel):
     email: str
     password: str
 
-
 # check whether a user's username and password are correct. returns a user object if successful, or empty response if unsuccessful
 @app.post("/login/")
 def login(login: LoginRequest):
@@ -297,6 +296,42 @@ def login(login: LoginRequest):
         result = cursor.fetchall()
         user = [dict(zip(cursor.column_names, row)) for row in result]
         cursor.close()
+        connection.close()
+        return user
+    except mysql.connector.Error as err:
+        return {"error": f"Error: {err}"}
+    
+class NewUser(BaseModel):
+    first_name: str
+    last_name: str
+    email: str
+    password: str
+
+
+# post new user, used for registering new users
+@app.post("/post_new_user/")
+def post_new_user(newUser: NewUser):
+    try:
+        connection = mysql.connector.connect(**db_config)
+        cursor = connection.cursor()
+        query = (
+            "INSERT INTO Users (password, first_name, last_name, email) VALUES ('"
+            + newUser.password
+            + "', '"
+            + newUser.first_name
+            + "', '"
+            + newUser.last_name
+            + "', '"
+            + newUser.email
+            + "')"
+        )
+        print(query)
+        cursor.execute(query)
+        result = cursor.fetchall()
+        print(result)
+        user = dict(zip(cursor.column_names, result))
+        cursor.close()
+        connection.commit()
         connection.close()
         return user
     except mysql.connector.Error as err:
