@@ -779,6 +779,10 @@ async def TransactionStorageAddMultipleTransactions(transactions: list[Transacti
     print(arrayedTransactions)
 
     transaction_storage = w3.eth.contract(address=contractAddress, abi=contract_abi)
+
+    # Define an event filter
+    event_filter = transaction_storage.events.CompletedTransactions.create_filter(fromBlock='latest')
+
     nonce = w3.eth.get_transaction_count(my_address)  
 
     store_transaction = transaction_storage.functions.addMultipleTransactions(arrayedTransactions).build_transaction(
@@ -796,11 +800,20 @@ async def TransactionStorageAddMultipleTransactions(transactions: list[Transacti
 
     print(w3.to_json(tx_receiptA))
 
+    # Retrieve event logs
+    event_logs = event_filter.get_new_entries()
+    event = ""
+    if event_logs:
+        event = event_logs[0]
+
     #remove item listings after making transactions
     for transaction in transactions:
         deleteAssetListing(str(transaction.token_id))
 
-    return str(w3.to_json(tx_receiptA))
+    return {
+        "Receipt": str(w3.to_json(tx_receiptA)),
+        "CompletedTransactions": event['args']['completedTransactions']
+    }
 
 # ! Everything below here is examples from the tutorials that I have left in case we need them. To be deleted later.
 

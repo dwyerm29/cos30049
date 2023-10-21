@@ -58,9 +58,7 @@ export const Checkout = () => {
         console.log(response.data);
         dispatch(setCart({ cart: [], totalPrice: 0 }));
         navigate("/ordersummary", {
-          state: {
-            receipt: response.data,
-          },
+          state: response.data,
         });
       })
       .catch((error) => {
@@ -99,10 +97,7 @@ export const Checkout = () => {
                         {row.token_id}
                       </TableCell>
                       <TableCell>{row.item_name}</TableCell>
-                      <TableCell>
-                        {row.current_owner_first_name}{" "}
-                        {row.current_owner_last_name}
-                      </TableCell>
+                      <TableCell>{row.owner_name}</TableCell>
                       <TableCell>{row.license_name}</TableCell>
                       <TableCell>{row.selling_price} ETH</TableCell>
                     </TableRow>
