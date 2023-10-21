@@ -7,7 +7,6 @@ export const userSlice = createSlice({
     first_name: "",
     last_name: "",
     email: "",
-    wallet_id: 0,
     isAuthenticated: false,
   },
   reducers: {
@@ -17,7 +16,6 @@ export const userSlice = createSlice({
       state.first_name = action.payload.first_name;
       state.last_name = action.payload.last_name;
       state.email = action.payload.email;
-      state.wallet_id = action.payload.wallet_id;
       state.isAuthenticated = action.payload.isAuthenticated;
     },
     clearUser: (state) => {
@@ -25,7 +23,6 @@ export const userSlice = createSlice({
       state.first_name = "";
       state.last_name = "";
       state.email = "";
-      state.wallet_id = 0;
       state.isAuthenticated = false;
     },
   },

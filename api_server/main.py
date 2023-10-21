@@ -43,7 +43,7 @@ def get_users():
         # Create a cursor to execute SQL queries
         cursor = connection.cursor()
         # Define the SQL query to retrieve data (e.g., all Users)
-        query = "SELECT user_id, first_name, last_name, email, wallet_id FROM Users;"
+        query = "SELECT user_id, first_name, last_name, email FROM Users;"
         # Execute the SQL query
         cursor.execute(query)
         # Fetch all the rows
@@ -287,7 +287,7 @@ def login(login: LoginRequest):
         connection = mysql.connector.connect(**db_config)
         cursor = connection.cursor()
         query = (
-            "SELECT user_id, first_name, last_name, email, wallet_id FROM Users WHERE email='"
+            "SELECT user_id, first_name, last_name, email FROM Users WHERE email='"
             + login.email
             + "' AND password='"
             + login.password
@@ -812,7 +812,7 @@ async def TransactionStorageAddMultipleTransactions(transactions: list[Transacti
 
     return {
         "Receipt": str(w3.to_json(tx_receiptA)),
-        "CompletedTransactions": event['args']['completedTransactions']
+        "AddedTransactions": event['args']['completedTransactions']
     }
 
 # ! Everything below here is examples from the tutorials that I have left in case we need them. To be deleted later.

@@ -15,7 +15,6 @@ CREATE TABLE `Users` (
   `first_name` VARCHAR (50),
   `last_name` VARCHAR (50),
   `email` VARCHAR(50),
-  `wallet_id` INT,
   PRIMARY KEY (`user_id`)
 );
 
@@ -74,7 +73,7 @@ CREATE TABLE `SmartContractAddresses`(
   PRIMARY KEY (`contract_name`)
 );
 
-INSERT INTO Users (user_id, password, first_name, last_name, email, wallet_id) VALUES ('1', 'password', 'John', 'Smith', 'john.smith@example.com', '13425123');
+INSERT INTO Users (user_id, password, first_name, last_name, email) VALUES ('1', 'password', 'John', 'Smith', 'john.smith@example.com');
 INSERT INTO Users (user_id, password, first_name, last_name, email) VALUES ('2', 'password', 'Jane', 'Smith', 'jane.smith@example.com');
 INSERT INTO Users (user_id, password, first_name, last_name, email) VALUES ('3', 'password', 'Maria', 'Eduarda Loura Magalhães', 'maria.magalhaes@example.com');
 INSERT INTO Users (user_id, password, first_name, email) VALUES ('4', 'password', 'ThisIsEngineering', 'thisisengineering@example.com');

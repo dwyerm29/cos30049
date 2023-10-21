@@ -41,10 +41,7 @@ export const Account = () => {
                       User ID: {user.user_id}
                       <br />
                     </Typography>
-                    <Typography variant="body">
-                      Wallet ID: {user.wallet_id}
-                      <br />
-                    </Typography>
+
                     <Typography variant="body">
                       Email: {user.email}
                       <br />

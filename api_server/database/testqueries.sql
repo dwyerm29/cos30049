@@ -141,7 +141,6 @@ SELECT
     first_name,
     last_name,
     email,
-    wallet_id
 FROM
     users;
 
@@ -225,7 +224,6 @@ SELECT
     first_name,
     last_name,
     email,
-    wallet_id
 FROM
     users
 WHERE
