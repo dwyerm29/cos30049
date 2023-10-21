@@ -770,15 +770,7 @@ async def TransactionStorageAddMultipleTransactions(transactions: list[Transacti
     #get contract address from database
     contractAddress = get_smart_contract_address()
 
-    transaction_storage = w3.eth.contract(address=contractAddress, abi=contract_abi)
-    
-    nonce = w3.eth.get_transaction_count(my_address)
-
     arrayedTransactions = []
-
-    print(transactions)
-
-    print(len(transactions))
 
     for transaction in transactions:
         if(transaction.seller_id != transaction.buyer_id):
@@ -786,7 +778,8 @@ async def TransactionStorageAddMultipleTransactions(transactions: list[Transacti
 
     print(arrayedTransactions)
 
-    nonce = w3.eth.get_transaction_count(my_address)    
+    transaction_storage = w3.eth.contract(address=contractAddress, abi=contract_abi)
+    nonce = w3.eth.get_transaction_count(my_address)  
 
     store_transaction = transaction_storage.functions.addMultipleTransactions(arrayedTransactions).build_transaction(
         {
