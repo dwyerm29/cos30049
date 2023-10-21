@@ -57,6 +57,35 @@ def get_users():
     except mysql.connector.Error as err:
         return {"error": f"Error: {err}"}
 
+#used by all functions that make use of a smart contract to retrieve the contract's ABI    
+def get_abi():
+    with open("transaction_storage_compiled.json", "r") as file:
+        compiled_sol = json.load(file)
+        abi = compiled_sol["contracts"]["TransactionStorage.sol"]["TransactionStorage"]["abi"]
+    return abi
+
+#used by all functions that make use of a smart contract to retrieve the contract's address (requires the contract to be deployed first)    
+def get_smart_contract_address():
+    contractAddress = ""
+    try:
+        connection = mysql.connector.connect(**db_config)
+        cursor = connection.cursor()
+        getContractAddressQuery = (
+            "SELECT contract_address FROM ContractAddress WHERE contract_name='TransactionStorage'"
+        )
+        cursor.execute(getContractAddressQuery)
+        result = cursor.fetchone()
+        contractAddress = result[0]
+
+        print(contractAddress)
+
+        cursor.close()
+        connection.commit()
+        connection.close()
+        return contractAddress
+    except mysql.connector.Error as err:
+        return {"error": f"Error: {err}"}
+
 
 # get information for a single asset, along with details like selling price if it exists
 @app.get("/asset/{token_id}/")
@@ -79,35 +108,13 @@ def get_assets(token_id: int):
     
 
     #Next, add other information such as token name, owner name, etc. from the TransactionStorage smart contract
-    w3 = Web3(Web3.HTTPProvider("HTTP://127.0.0.1:7545"))
-
     #get compiled ABI
-    with open("transaction_storage_compiled.json", "r") as file:
-        compiled_sol = json.load(file)
-        abi = compiled_sol["contracts"]["TransactionStorage.sol"]["TransactionStorage"]["abi"]
+    contract_abi = get_abi()
 
     #get contract address from database
-    contractAddress = ""
-    try:
-        connection = mysql.connector.connect(**db_config)
-        cursor = connection.cursor()
-        getContractAddressQuery = (
-            "SELECT contract_address FROM ContractAddress WHERE contract_name='TransactionStorage'"
-        )
-        print(getContractAddressQuery)
-        cursor.execute(getContractAddressQuery)
-        result = cursor.fetchone()
-        contractAddress = result[0]
+    contractAddress = get_smart_contract_address()
 
-        print(contractAddress)
-
-        cursor.close()
-        connection.commit()
-        connection.close()
-    except mysql.connector.Error as err:
-        return {"error": f"Error: {err}"}
-
-    transaction_storage = w3.eth.contract(address=contractAddress, abi=abi)
+    transaction_storage = w3.eth.contract(address=contractAddress, abi=contract_abi)
     get_transaction = transaction_storage.functions.tokenIdToLatestTransaction(token_id).call()
 
     #add the relevant fields from the smart contract to the asset
@@ -422,7 +429,7 @@ def postNewAsset(newAsset: CreateAssetRequest):
         connection.commit()
         connection.close()
 
-        w3 = Web3(Web3.HTTPProvider("HTTP://127.0.0.1:7545"))
+    
         chain_id = 1337
         # gets the account address from your blockchain_config file
         my_address = str(blockchain_config.get("account_address"))
@@ -432,9 +439,7 @@ def postNewAsset(newAsset: CreateAssetRequest):
         print("private_key= " + private_key)
 
         #get compiled ABI
-        with open("transaction_storage_compiled.json", "r") as file:
-            compiled_sol = json.load(file)
-            contract_abi = compiled_sol["contracts"]["TransactionStorage.sol"]["TransactionStorage"]["abi"]
+        contract_abi = get_abi()
 
         #get contract address from database
         contractAddress = ""
@@ -570,7 +575,7 @@ def deleteAssetListing(token_id: str):
 @app.get("/transaction_storage_deploy_contract")
 async def TransactionStorageDeployContract():
     # type your address here
-    w3 = Web3(Web3.HTTPProvider("HTTP://127.0.0.1:7545"))
+
     # Default is 1337 or with the PORT in your Gaanche
     chain_id = 1337
     # gets the account address from your blockchain_config file
@@ -660,7 +665,7 @@ async def TransactionStorageDeployContract():
 #Used to populate the transaction history once when initialising the smart contract
 @app.get("/transaction_storage_populate_transactions")
 async def TransactionStoragePopulateTransactions():
-    w3 = Web3(Web3.HTTPProvider("HTTP://127.0.0.1:7545"))
+
     chain_id = 1337
     # gets the account address from your blockchain_config file
     my_address = str(blockchain_config.get("account_address"))
@@ -670,30 +675,10 @@ async def TransactionStoragePopulateTransactions():
     print("private_key= " + private_key)
 
     #get compiled ABI
-    with open("transaction_storage_compiled.json", "r") as file:
-        compiled_sol = json.load(file)
-        contract_abi = compiled_sol["contracts"]["TransactionStorage.sol"]["TransactionStorage"]["abi"]
+    contract_abi = get_abi()
 
     #get contract address from database
-    contractAddress = ""
-    try:
-        connection = mysql.connector.connect(**db_config)
-        cursor = connection.cursor()
-        getContractAddressQuery = (
-            "SELECT contract_address FROM ContractAddress WHERE contract_name='TransactionStorage'"
-        )
-        print(getContractAddressQuery)
-        cursor.execute(getContractAddressQuery)
-        result = cursor.fetchone()
-        contractAddress = result[0]
-
-        print(contractAddress)
-
-        cursor.close()
-        connection.commit()
-        connection.close()
-    except mysql.connector.Error as err:
-        return {"error": f"Error: {err}"}
+    contractAddress = get_smart_contract_address()
 
     transaction_storage = w3.eth.contract(address=contractAddress, abi=contract_abi)
     
@@ -808,35 +793,15 @@ async def TransactionStoragePopulateTransactions():
 
 @app.get("/transaction_storage_get_all_transactions")
 async def TransactionStorageGetAllTransactions():
-    w3 = Web3(Web3.HTTPProvider("HTTP://127.0.0.1:7545"))
+
 
     #get compiled ABI
-    with open("transaction_storage_compiled.json", "r") as file:
-        compiled_sol = json.load(file)
-        abi = compiled_sol["contracts"]["TransactionStorage.sol"]["TransactionStorage"]["abi"]
+    contract_abi = get_abi()
 
     #get contract address from database
-    contractAddress = ""
-    try:
-        connection = mysql.connector.connect(**db_config)
-        cursor = connection.cursor()
-        getContractAddressQuery = (
-            "SELECT contract_address FROM ContractAddress WHERE contract_name='TransactionStorage'"
-        )
-        print(getContractAddressQuery)
-        cursor.execute(getContractAddressQuery)
-        result = cursor.fetchone()
-        contractAddress = result[0]
+    contractAddress = get_smart_contract_address()
 
-        print(contractAddress)
-
-        cursor.close()
-        connection.commit()
-        connection.close()
-    except mysql.connector.Error as err:
-        return {"error": f"Error: {err}"}
-
-    transaction_storage = w3.eth.contract(address=contractAddress, abi=abi)
+    transaction_storage = w3.eth.contract(address=contractAddress, abi=contract_abi)
     
     get_transaction = transaction_storage.functions.getAllTransactions().call()
 
@@ -845,35 +810,15 @@ async def TransactionStorageGetAllTransactions():
 
 @app.get("/transaction_storage_get_all_transactions_for_user/{user_id}")
 async def TransactionStorageGetAllTransactionsForUser(user_id: int):
-    w3 = Web3(Web3.HTTPProvider("HTTP://127.0.0.1:7545"))
+
 
     #get compiled ABI
-    with open("transaction_storage_compiled.json", "r") as file:
-        compiled_sol = json.load(file)
-        abi = compiled_sol["contracts"]["TransactionStorage.sol"]["TransactionStorage"]["abi"]
+    contract_abi = get_abi()
 
     #get contract address from database
-    contractAddress = ""
-    try:
-        connection = mysql.connector.connect(**db_config)
-        cursor = connection.cursor()
-        getContractAddressQuery = (
-            "SELECT contract_address FROM ContractAddress WHERE contract_name='TransactionStorage'"
-        )
-        print(getContractAddressQuery)
-        cursor.execute(getContractAddressQuery)
-        result = cursor.fetchone()
-        contractAddress = result[0]
+    contractAddress = get_smart_contract_address()
 
-        print(contractAddress)
-
-        cursor.close()
-        connection.commit()
-        connection.close()
-    except mysql.connector.Error as err:
-        return {"error": f"Error: {err}"}
-
-    transaction_storage = w3.eth.contract(address=contractAddress, abi=abi)
+    transaction_storage = w3.eth.contract(address=contractAddress, abi=contract_abi)
     
     get_transaction = transaction_storage.functions.getAllTransactionsForUser(user_id).call()
 
@@ -883,35 +828,15 @@ async def TransactionStorageGetAllTransactionsForUser(user_id: int):
 
 @app.get("/transaction_storage_get_all_owned_assets_for_user/{user_id}")
 async def TransactionStorageGetAllOwnedAssetsForUser(user_id: int):
-    w3 = Web3(Web3.HTTPProvider("HTTP://127.0.0.1:7545"))
+
 
     #get compiled ABI
-    with open("transaction_storage_compiled.json", "r") as file:
-        compiled_sol = json.load(file)
-        abi = compiled_sol["contracts"]["TransactionStorage.sol"]["TransactionStorage"]["abi"]
+    contract_abi = get_abi()
 
     #get contract address from database
-    contractAddress = ""
-    try:
-        connection = mysql.connector.connect(**db_config)
-        cursor = connection.cursor()
-        getContractAddressQuery = (
-            "SELECT contract_address FROM ContractAddress WHERE contract_name='TransactionStorage'"
-        )
-        print(getContractAddressQuery)
-        cursor.execute(getContractAddressQuery)
-        result = cursor.fetchone()
-        contractAddress = result[0]
+    contractAddress = get_smart_contract_address()
 
-        print(contractAddress)
-
-        cursor.close()
-        connection.commit()
-        connection.close()
-    except mysql.connector.Error as err:
-        return {"error": f"Error: {err}"}
-
-    transaction_storage = w3.eth.contract(address=contractAddress, abi=abi)
+    transaction_storage = w3.eth.contract(address=contractAddress, abi=contract_abi)
     
     get_transaction = transaction_storage.functions.getAllOwnedAssetsForUser(user_id).call()
 
@@ -929,7 +854,7 @@ class Transaction(BaseModel):
 #Used to add multiple transactions when checking out
 @app.post("/transaction_storage_add_multiple_transactions")
 async def TransactionStorageAddMultipleTransactions(transactions: list[Transaction]):
-    w3 = Web3(Web3.HTTPProvider("HTTP://127.0.0.1:7545"))
+
     chain_id = 1337
     # gets the account address from your blockchain_config file
     my_address = str(blockchain_config.get("account_address"))
@@ -939,30 +864,10 @@ async def TransactionStorageAddMultipleTransactions(transactions: list[Transacti
     print("private_key= " + private_key)
 
     #get compiled ABI
-    with open("transaction_storage_compiled.json", "r") as file:
-        compiled_sol = json.load(file)
-        contract_abi = compiled_sol["contracts"]["TransactionStorage.sol"]["TransactionStorage"]["abi"]
+    contract_abi = get_abi()
 
     #get contract address from database
-    contractAddress = ""
-    try:
-        connection = mysql.connector.connect(**db_config)
-        cursor = connection.cursor()
-        getContractAddressQuery = (
-            "SELECT contract_address FROM ContractAddress WHERE contract_name='TransactionStorage'"
-        )
-        print(getContractAddressQuery)
-        cursor.execute(getContractAddressQuery)
-        result = cursor.fetchone()
-        contractAddress = result[0]
-
-        print(contractAddress)
-
-        cursor.close()
-        connection.commit()
-        connection.close()
-    except mysql.connector.Error as err:
-        return {"error": f"Error: {err}"}
+    contractAddress = get_smart_contract_address()
 
     transaction_storage = w3.eth.contract(address=contractAddress, abi=contract_abi)
     
@@ -1007,7 +912,7 @@ async def TransactionStorageAddMultipleTransactions(transactions: list[Transacti
 @app.get("/deployContract")
 async def funcTest1():
     # type your address here
-    w3 = Web3(Web3.HTTPProvider("HTTP://127.0.0.1:7545"))
+
     # Default is 1337 or with the PORT in your Gaanche
     chain_id = 1337
     # gets the account address from your blockchain_config file
@@ -1115,7 +1020,7 @@ async def funcTest1():
 
 @app.post("/simpleStorageStore")
 async def funcTest1(num: int):
-    w3 = Web3(Web3.HTTPProvider("HTTP://127.0.0.1:7545"))
+
     chain_id = 1337
     # gets the account address from your blockchain_config file
     my_address = str(blockchain_config.get("account_address"))
@@ -1176,7 +1081,7 @@ async def funcTest1(num: int):
 
 @app.get("/simpleStorageRetrieve")
 async def funcTest1():
-    w3 = Web3(Web3.HTTPProvider("HTTP://127.0.0.1:7545"))
+
 
     #get compiled ABI
     with open("compiled_code.json", "r") as file:
