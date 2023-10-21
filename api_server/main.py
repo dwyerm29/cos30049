@@ -624,114 +624,52 @@ async def TransactionStoragePopulateTransactions():
 
     transaction_storage = w3.eth.contract(address=contractAddress, abi=contract_abi)
     
-    nonce = w3.eth.get_transaction_count(my_address)
-
     initTransactions = [[123129, 5, 5, 1696943037000, '0', 'Ryutaro Tsukata', 'Ryutaro.Tsukata@example.com', 'Moon Jellyfish'],
                         [123130, 3, 3, 1696943037000, '0', 'Maria Eduarda Loura Magalhães', 'maria.magalhaes@example.com', 'Neon Woman'],
                         [123131, 6, 6, 1696943037000, '0', 'Twiggy Jia', 'Twiggy.Jia@example.com', 'Purple Jellyfish'],
                         [123132, 7, 7, 1696943037000, '0', 'Alexander Ant', 'Alexander.Ant@example.com', 'Paint Swirl'],
                         [123133, 8, 8, 1696943037000, '0', 'Anni Roenkae', 'AnniRoenkae@example.com', 'Pink & Black'],
                         [123134, 9, 9, 1696943037000, '0', 'Dids', 'Dids@example.com', 'Abstract Pink'],
-                        [123135, 10, 10, 1696943037000, '0', 'Damir Mijailovic', 'Damir.Mijailovic@example.com', 'Bright Abstract']]
-
-    nonce = w3.eth.get_transaction_count(my_address)    
-
-    store_transaction = transaction_storage.functions.addMultipleTransactions(initTransactions).build_transaction(
-        {
-            "chainId": chain_id,
-            "gasPrice": w3.eth.gas_price,
-            "from": my_address,
-            "nonce": nonce,
-        }
-    )
-
-    signed_store_txn = w3.eth.account.sign_transaction(store_transaction, private_key=private_key)
-    send_store_tx = w3.eth.send_raw_transaction(signed_store_txn.rawTransaction)
-    tx_receiptA = w3.eth.wait_for_transaction_receipt(send_store_tx)
-
-    print(w3.to_json(tx_receiptA))
-
-    nonce = w3.eth.get_transaction_count(my_address)
-
-    initTransactions = [[123136, 11, 11, 1696943037000, '0', 'Marlene Leppänen', 'Marlene.Leppänen@example.com', 'Faceless'],
+                        [123135, 10, 10, 1696943037000, '0', 'Damir Mijailovic', 'Damir.Mijailovic@example.com', 'Bright Abstract'],
+                        [123136, 11, 11, 1696943037000, '0', 'Marlene Leppänen', 'Marlene.Leppänen@example.com', 'Faceless'],
                         [124343, 4, 4, 1696943037000, '0', 'ThisIsEngineering', 'thisisengineering@example.com', 'Cyber Girl'],
                         [2373453, 12, 12, 1696943037000, '0', 'Ishara Kasthuriarachchi', 'Ishara.Kasthuriarachchi@example.com', 'Random Ape'],
                         [2623426, 13, 13, 1696943037000, '0', 'Anthony', 'Anthony@example.com', 'Yellow Rose'],
                         [3032346, 14, 14, 1696943037000, '0', 'Julia Sakelli', 'Julia.Sakelli@example.com', 'Succulent'],
                         [23734536, 15, 15, 1696943037000, '0', 'Pixabay', 'Pixabay@example.com', 'White Rose'],
-                        [123129, 5, 2, 1697634237000, '0.31', 'Jane Smith', 'jane.smith@example.com', 'Moon Jellyfish']]
-                        
-
-    nonce = w3.eth.get_transaction_count(my_address)    
-
-    store_transaction = transaction_storage.functions.addMultipleTransactions(initTransactions).build_transaction(
-        {
-            "chainId": chain_id,
-            "gasPrice": w3.eth.gas_price,
-            "from": my_address,
-            "nonce": nonce,
-        }
-    )
-
-    signed_store_txn = w3.eth.account.sign_transaction(store_transaction, private_key=private_key)
-    send_store_tx = w3.eth.send_raw_transaction(signed_store_txn.rawTransaction)
-    tx_receiptB = w3.eth.wait_for_transaction_receipt(send_store_tx)
-
-    print(w3.to_json(tx_receiptB)) 
-
-    nonce = w3.eth.get_transaction_count(my_address)
-
-    initTransactions = [[123130, 3, 1, 1697634237000, '0.4', 'John Smith', 'john.smith@example.com', 'Neon Woman'],
+                        [123129, 5, 2, 1697634237000, '0.31', 'Jane Smith', 'jane.smith@example.com', 'Moon Jellyfish'],
+                        [123130, 3, 1, 1697634237000, '0.4', 'John Smith', 'john.smith@example.com', 'Neon Woman'],
                         [123131, 6, 2, 1697634237000, '0.64', 'Jane Smith', 'jane.smith@example.com', 'Purple Jellyfish'],
                         [123132, 7, 2, 1697634237000, '0.22', 'Jane Smith', 'jane.smith@example.com', 'Paint Swirl'],
                         [123133, 8, 2, 1697634237000, '0.67', 'Jane Smith', 'jane.smith@example.com', 'Pink & Black'],
                         [123134, 9, 2, 1697634237000, '0.94', 'Jane Smith', 'jane.smith@example.com', 'Abstract Pink'],
                         [123135, 10, 2, 1697634237000, '0.15', 'Jane Smith', 'jane.smith@example.com', 'Bright Abstract'],
-                        [123136, 11, 2, 1697634237000, '0.55', 'Jane Smith', 'jane.smith@example.com', 'Faceless']]
-
-    nonce = w3.eth.get_transaction_count(my_address)    
-
-    store_transaction = transaction_storage.functions.addMultipleTransactions(initTransactions).build_transaction(
-        {
-            "chainId": chain_id,
-            "gasPrice": w3.eth.gas_price,
-            "from": my_address,
-            "nonce": nonce,
-        }
-    )
-
-    signed_store_txn = w3.eth.account.sign_transaction(store_transaction, private_key=private_key)
-    send_store_tx = w3.eth.send_raw_transaction(signed_store_txn.rawTransaction)
-    tx_receiptC = w3.eth.wait_for_transaction_receipt(send_store_tx)
-
-    print(w3.to_json(tx_receiptC)) 
-
-    nonce = w3.eth.get_transaction_count(my_address)
-
-    initTransactions = [[2373453, 12, 1, 1697634237000, '0.5', 'John Smith', 'john.smith@example.com', 'Random Ape'],
+                        [123136, 11, 2, 1697634237000, '0.55', 'Jane Smith', 'jane.smith@example.com', 'Faceless'],
+                        [2373453, 12, 1, 1697634237000, '0.5', 'John Smith', 'john.smith@example.com', 'Random Ape'],
                         [2623426, 13, 1, 1697634237000, '0.34', 'John Smith', 'john.smith@example.com', 'Yellow Rose'],
                         [3032346, 14, 1, 1697634237000, '0.25', 'John Smith', 'john.smith@example.com', 'Succulent'],
                         [23734536, 15, 4, 1697634237000, '0.64', 'ThisIsEngineering', 'thisisengineering@example.com', 'White Rose'],
                         [2373453, 1, 4, 1697720637000, '0.43', 'ThisIsEngineering', 'thisisengineering@example.com', 'Random Ape']]
 
-    nonce = w3.eth.get_transaction_count(my_address)    
+    receipts = ""
 
-    store_transaction = transaction_storage.functions.addMultipleTransactions(initTransactions).build_transaction(
-        {
-            "chainId": chain_id,
-            "gasPrice": w3.eth.gas_price,
-            "from": my_address,
-            "nonce": nonce,
-        }
-    )
-
-    signed_store_txn = w3.eth.account.sign_transaction(store_transaction, private_key=private_key)
-    send_store_tx = w3.eth.send_raw_transaction(signed_store_txn.rawTransaction)
-    tx_receiptD = w3.eth.wait_for_transaction_receipt(send_store_tx)
-
-    print(w3.to_json(tx_receiptD)) 
+    for transaction in initTransactions:
+        nonce = w3.eth.get_transaction_count(my_address)    
+        store_transaction = transaction_storage.functions.addTransaction(transaction[0], transaction[1], transaction[2], transaction[3], transaction[4], transaction[5], transaction[6], transaction[7]).build_transaction(
+            {
+                "chainId": chain_id,
+                "gasPrice": w3.eth.gas_price,
+                "from": my_address,
+                "nonce": nonce,
+            }
+        )
+        signed_store_txn = w3.eth.account.sign_transaction(store_transaction, private_key=private_key)
+        send_store_tx = w3.eth.send_raw_transaction(signed_store_txn.rawTransaction)
+        receipt= w3.to_json(w3.eth.wait_for_transaction_receipt(send_store_tx))
+        print(receipt)
+        receipts += receipt
     
-    return str(w3.to_json(tx_receiptA))+str(w3.to_json(tx_receiptB))+str(w3.to_json(tx_receiptC))+str(w3.to_json(tx_receiptD))
+    return receipts
 
 @app.get("/transaction_storage_get_all_transactions")
 async def TransactionStorageGetAllTransactions():
@@ -747,7 +685,6 @@ async def TransactionStorageGetAllTransactions():
 
     return get_transaction
 
-
 @app.get("/transaction_storage_get_all_transactions_for_user/{user_id}")
 async def TransactionStorageGetAllTransactionsForUser(user_id: int):
     #get compiled ABI
@@ -762,8 +699,6 @@ async def TransactionStorageGetAllTransactionsForUser(user_id: int):
 
     return get_transaction
 
-
-
 @app.get("/transaction_storage_get_all_owned_assets_for_user/{user_id}")
 async def TransactionStorageGetAllOwnedAssetsForUser(user_id: int):
     #get compiled ABI
@@ -777,7 +712,6 @@ async def TransactionStorageGetAllOwnedAssetsForUser(user_id: int):
     get_transaction = transaction_storage.functions.getAllOwnedAssetsForUser(user_id).call()
 
     return get_transaction
-
 class Transaction(BaseModel):
     token_id: int
     seller_id: int
