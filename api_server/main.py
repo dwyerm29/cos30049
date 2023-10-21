@@ -71,7 +71,7 @@ def get_smart_contract_address():
         connection = mysql.connector.connect(**db_config)
         cursor = connection.cursor()
         getContractAddressQuery = (
-            "SELECT contract_address FROM ContractAddress WHERE contract_name='TransactionStorage'"
+            "SELECT contract_address FROM SmartContractAddresses WHERE contract_name='TransactionStorage'"
         )
         cursor.execute(getContractAddressQuery)
         result = cursor.fetchone()
@@ -94,7 +94,7 @@ def get_assets(token_id: int):
     try:
         connection = mysql.connector.connect(**db_config)
         cursor = connection.cursor()
-        query = ("SELECT assets.token_id, item_description, image_url, image_thumbnail_url, image_resolution, selling_price, time_listed, filetype_name, license_name, orig_owner.first_name AS original_owner_first_name, orig_owner.last_name AS original_owner_last_name, orig_owner.user_id AS original_owner_user_id FROM assets LEFT JOIN assetslistedforsale ON assets.token_id=assetslistedforsale.token_id JOIN filetypes ON assets.image_filetype_id=filetypes.filetype_id JOIN licensetypes ON assets.license_type_id=licensetypes.license_type_id JOIN users orig_owner ON assets.original_owner=orig_owner.user_id WHERE assets.token_id="
+        query = ("SELECT assets.token_id, item_description, image_url, image_thumbnail_url, image_resolution, selling_price, time_listed, filetype_name, license_name, orig_owner.first_name AS original_owner_first_name, orig_owner.last_name AS original_owner_last_name, orig_owner.user_id AS original_owner_user_id FROM assets LEFT JOIN AssetListings ON assets.token_id=AssetListings.token_id JOIN filetypes ON assets.image_filetype_id=filetypes.filetype_id JOIN licensetypes ON assets.license_type_id=licensetypes.license_type_id JOIN users orig_owner ON assets.original_owner=orig_owner.user_id WHERE assets.token_id="
         + str(token_id))
         cursor.execute(query)
         result = cursor.fetchone()
@@ -131,7 +131,7 @@ def get_listed_assets():
     try:
         connection = mysql.connector.connect(**db_config)
         cursor = connection.cursor()
-        query = "SELECT assets.token_id, item_name, item_description, image_url, image_thumbnail_url, image_resolution, selling_price, time_listed, filetype_name, license_name FROM assets JOIN assetsListedForSale ON assets.token_id=assetsListedForSale.token_id JOIN FileTypes on assets.image_filetype_id=FileTypes.filetype_id JOIN LicenseTypes on assets.license_type_id=LicenseTypes.license_type_id"
+        query = "SELECT assets.token_id, item_name, item_description, image_url, image_thumbnail_url, image_resolution, selling_price, time_listed, filetype_name, license_name FROM assets JOIN AssetListings ON assets.token_id=AssetListings.token_id JOIN FileTypes on assets.image_filetype_id=FileTypes.filetype_id JOIN LicenseTypes on assets.license_type_id=LicenseTypes.license_type_id"
         cursor.execute(query)
         result = cursor.fetchall()
         Assets = [dict(zip(cursor.column_names, row)) for row in result]
@@ -148,7 +148,7 @@ def get_listed_assets():
     try:
         connection = mysql.connector.connect(**db_config)
         cursor = connection.cursor()
-        query = "SELECT assets.token_id, item_name, item_description, image_url, image_thumbnail_url, image_resolution, selling_price, time_listed, filetype_name, license_name FROM assets JOIN assetsListedForSale ON assets.token_id = assetsListedForSale.token_id JOIN FileTypes ON assets.image_filetype_id = FileTypes.filetype_id JOIN LicenseTypes ON assets.license_type_id = LicenseTypes.license_type_id JOIN AssetCategories ON assets.token_id = AssetCategories.token_id JOIN AssetCategoryDescriptions ON AssetCategories.category_id=AssetCategoryDescriptions.category_id WHERE AssetCategoryDescriptions.category_name = 'Featured'"
+        query = "SELECT assets.token_id, item_name, item_description, image_url, image_thumbnail_url, image_resolution, selling_price, time_listed, filetype_name, license_name FROM assets JOIN AssetListings ON assets.token_id = AssetListings.token_id JOIN FileTypes ON assets.image_filetype_id = FileTypes.filetype_id JOIN LicenseTypes ON assets.license_type_id = LicenseTypes.license_type_id JOIN AssetCategories ON assets.token_id = AssetCategories.token_id JOIN AssetCategoryDescriptions ON AssetCategories.category_id=AssetCategoryDescriptions.category_id WHERE AssetCategoryDescriptions.category_name = 'Featured'"
         cursor.execute(query)
         result = cursor.fetchall()
         Assets = [dict(zip(cursor.column_names, row)) for row in result]
@@ -167,7 +167,7 @@ async def read_items(
     try:
         connection = mysql.connector.connect(**db_config)
         cursor = connection.cursor()
-        dbQuery = "SELECT DISTINCT assets.token_id, item_name, item_description, image_url, image_thumbnail_url, image_resolution, selling_price, time_listed, filetype_name, license_name FROM assets JOIN assetsListedForSale ON assets.token_id=assetsListedForSale.token_id JOIN FileTypes ON assets.image_filetype_id=FileTypes.filetype_id JOIN LicenseTypes ON assets.license_type_id=LicenseTypes.license_type_id JOIN AssetCategories ON assets.token_id=AssetCategories.token_id JOIN AssetCategoryDescriptions ON AssetCategories.category_id=AssetCategoryDescriptions.category_id"
+        dbQuery = "SELECT DISTINCT assets.token_id, item_name, item_description, image_url, image_thumbnail_url, image_resolution, selling_price, time_listed, filetype_name, license_name FROM assets JOIN AssetListings ON assets.token_id=AssetListings.token_id JOIN FileTypes ON assets.image_filetype_id=FileTypes.filetype_id JOIN LicenseTypes ON assets.license_type_id=LicenseTypes.license_type_id JOIN AssetCategories ON assets.token_id=AssetCategories.token_id JOIN AssetCategoryDescriptions ON AssetCategories.category_id=AssetCategoryDescriptions.category_id"
         if category != None:
             if len(category) > 0:
                 dbQuery += (
@@ -212,7 +212,7 @@ def get_listed_assets(user_id: int):
         connection = mysql.connector.connect(**db_config)
         cursor = connection.cursor()
         query = (
-            "SELECT assets.token_id, item_name, item_description, image_url, image_thumbnail_url, image_resolution, selling_price, time_listed, filetype_name, license_name FROM assets JOIN assetsListedForSale ON assets.token_id = assetsListedForSale.token_id JOIN FileTypes ON assets.image_filetype_id = FileTypes.filetype_id JOIN LicenseTypes ON assets.license_type_id = LicenseTypes.license_type_id WHERE assets.current_owner='"
+            "SELECT assets.token_id, item_name, item_description, image_url, image_thumbnail_url, image_resolution, selling_price, time_listed, filetype_name, license_name FROM assets JOIN AssetListings ON assets.token_id = AssetListings.token_id JOIN FileTypes ON assets.image_filetype_id = FileTypes.filetype_id JOIN LicenseTypes ON assets.license_type_id = LicenseTypes.license_type_id WHERE AssetListings.seller_id='"
             + str(user_id)
             + "'"
         )
@@ -324,7 +324,7 @@ def postNewAsset(newAsset: CreateAssetRequest):
         connection = mysql.connector.connect(**db_config)
         cursor = connection.cursor()
         addAssetQuery = (
-            "INSERT INTO assets (item_name, item_description, image_url, image_thumbnail_url, image_resolution, image_filetype_id, license_type_id, original_owner, current_owner, sale_price, transaction_datetime) VALUES ('"
+            "INSERT INTO assets (item_name, item_description, image_url, image_thumbnail_url, image_resolution, image_filetype_id, license_type_id, original_owner) VALUES ('"
             + newAsset.name
             + "', '"
             + newAsset.description
@@ -340,9 +340,7 @@ def postNewAsset(newAsset: CreateAssetRequest):
             + str(newAsset.licenseTypeID)
             + "', '"
             + str(newAsset.ownerID)
-            + "', '"
-            + str(newAsset.ownerID)
-            + "', '0', NOW())"
+            + "')"
         )
         print(addAssetQuery)
         cursor.execute(addAssetQuery)
@@ -377,35 +375,13 @@ def postNewAsset(newAsset: CreateAssetRequest):
         contract_abi = get_abi()
 
         #get contract address from database
-        contractAddress = ""
-        try:
-            connection = mysql.connector.connect(**db_config)
-            cursor = connection.cursor()
-            getContractAddressQuery = (
-                "SELECT contract_address FROM ContractAddress WHERE contract_name='TransactionStorage'"
-            )
-            print(getContractAddressQuery)
-            cursor.execute(getContractAddressQuery)
-            result = cursor.fetchone()
-            contractAddress = result[0]
-
-            print(contractAddress)
-
-            cursor.close()
-            connection.commit()
-            connection.close()
-        except mysql.connector.Error as err:
-            return {"error": f"Error: {err}"}
+        contractAddress = get_smart_contract_address()
 
         transaction_storage = w3.eth.contract(address=contractAddress, abi=contract_abi)
         
         nonce = w3.eth.get_transaction_count(my_address)
 
-        newTransaction = [token_id, newAsset.ownerID, newAsset.ownerID, int(round(time.time() * 1000)), "0", newAsset.ownerName, newAsset.ownerEmail, newAsset.name]
-
-        print(newTransaction)
-
-        nonce = w3.eth.get_transaction_count(my_address)    
+        print(newAsset)
 
         store_transaction = transaction_storage.functions.addTransaction(token_id, newAsset.ownerID, newAsset.ownerID, int(round(time.time() * 1000)), "0", newAsset.ownerName, newAsset.ownerEmail, newAsset.name).build_transaction(
             {
@@ -443,7 +419,9 @@ def postAssetListing(newListing: AssetListingRequest):
         connection = mysql.connector.connect(**db_config)
         cursor = connection.cursor()
         addListingQuery = (
-            "INSERT INTO assetslistedforsale (token_id, selling_price, time_listed) VALUES ('"
+            "INSERT INTO AssetListings (token_id, seller_id, selling_price, time_listed) VALUES ('"
+            + newListing.seller_id
+            + "', '"
             + newListing.token_id
             + "', '"
             + newListing.selling_price
@@ -466,7 +444,7 @@ def putAssetListing(updateListing: AssetListingRequest):
         connection = mysql.connector.connect(**db_config)
         cursor = connection.cursor()
         updateListingQuery = (
-            "UPDATE assetslistedforsale SET selling_price ='"
+            "UPDATE AssetListings SET selling_price ='"
             + updateListing.selling_price
             + "' WHERE token_id = '"
             + updateListing.token_id
@@ -488,7 +466,7 @@ def deleteAssetListing(token_id: str):
         connection = mysql.connector.connect(**db_config)
         cursor = connection.cursor()
         deleteListingQuery = (
-            "DELETE FROM assetslistedforsale WHERE token_id = '"
+            "DELETE FROM AssetListings WHERE token_id = '"
             + token_id
             + "'"
         )
@@ -570,7 +548,7 @@ async def TransactionStorageDeployContract():
         connection = mysql.connector.connect(**db_config)
         cursor = connection.cursor()
         addContractAddressQuery = (
-            "REPLACE INTO ContractAddress (contract_name, contract_address) VALUES ('TransactionStorage', '"
+            "REPLACE INTO SmartContractAddresses (contract_name, contract_address) VALUES ('TransactionStorage', '"
             + tx_receipt.contractAddress
             + "')"
         )
@@ -588,7 +566,7 @@ async def TransactionStorageDeployContract():
     print(tx_hash)
     print(tx_receipt)
 
-    return tx_receipt.contractAddress
+    return "Contract Address: " + tx_receipt.contractAddress
 
 
 #Used to populate the transaction history once when initialising the smart contract
@@ -900,7 +878,7 @@ async def funcTest1():
         connection = mysql.connector.connect(**db_config)
         cursor = connection.cursor()
         addContractAddressQuery = (
-            "REPLACE INTO ContractAddress (contract_name, contract_address) VALUES ('SimpleStorage', '"
+            "REPLACE INTO SmartContractAddresses (contract_name, contract_address) VALUES ('SimpleStorage', '"
             + tx_receipt.contractAddress
             + "')"
         )
@@ -957,25 +935,7 @@ async def funcTest1(num: int):
         abi = compiled_sol["contracts"]["SimpleStorage.sol"]["SimpleStorage"]["abi"]
 
     #get contract address from database
-    contractAddress = ""
-    try:
-        connection = mysql.connector.connect(**db_config)
-        cursor = connection.cursor()
-        getContractAddressQuery = (
-            "SELECT contract_address FROM ContractAddress WHERE contract_name='SimpleStorage'"
-        )
-        print(getContractAddressQuery)
-        cursor.execute(getContractAddressQuery)
-        result = cursor.fetchone()
-        contractAddress = result[0]
-
-        print(contractAddress)
-
-        cursor.close()
-        connection.commit()
-        connection.close()
-    except mysql.connector.Error as err:
-        return {"error": f"Error: {err}"}
+    contractAddress = get_smart_contract_address()
 
     simple_storage = w3.eth.contract(address=contractAddress, abi=abi)
     
@@ -1011,25 +971,7 @@ async def funcTest1():
         abi = compiled_sol["contracts"]["SimpleStorage.sol"]["SimpleStorage"]["abi"]
 
     #get contract address from database
-    contractAddress = ""
-    try:
-        connection = mysql.connector.connect(**db_config)
-        cursor = connection.cursor()
-        getContractAddressQuery = (
-            "SELECT contract_address FROM ContractAddress WHERE contract_name='SimpleStorage'"
-        )
-        print(getContractAddressQuery)
-        cursor.execute(getContractAddressQuery)
-        result = cursor.fetchone()
-        contractAddress = result[0]
-
-        print(contractAddress)
-
-        cursor.close()
-        connection.commit()
-        connection.close()
-    except mysql.connector.Error as err:
-        return {"error": f"Error: {err}"}
+    contractAddress = get_smart_contract_address()
 
     simple_storage = w3.eth.contract(address=contractAddress, abi=abi)
     

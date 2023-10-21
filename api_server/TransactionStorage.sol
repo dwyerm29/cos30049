@@ -4,8 +4,6 @@ pragma solidity ^0.8.18;
 //pragma experimental ABIEncoderV2;
 
 contract TransactionStorage {
-
-
     struct Transaction {
         uint256 transaction_id;
         uint256 token_id;
@@ -24,7 +22,7 @@ contract TransactionStorage {
     //used to determine who the owner of a token is
     mapping(uint256 => Transaction) public tokenIdToLatestTransaction;
 
-    function addTransaction(uint _token_id, uint _seller_id, uint _buyer_id, uint _sale_time, string memory _sale_price, string memory _owner_email, string memory _owner_name, string memory _token_name) public {
+    function addTransaction(uint _token_id, uint _seller_id, uint _buyer_id, uint _sale_time, string memory _sale_price, string memory _owner_name, string memory _owner_email, string memory _token_name) public {
         uint256 newTransactionID = transactions.length + 1;
         Transaction memory newTransaction = Transaction({transaction_id: newTransactionID, token_id: _token_id, seller_id : _seller_id, buyer_id: _buyer_id, sale_time: _sale_time, sale_price: _sale_price, owner_name: _owner_name, owner_email: _owner_email, token_name: _token_name});
         transactions.push(newTransaction);
@@ -57,7 +55,7 @@ contract TransactionStorage {
     //used to to make more than transaction at once, for instance when purchasing more than one asset, or initialising a database
     function addMultipleTransactions(InputTransaction[] memory _transactions) public {
         for(uint256 i = 0; i < _transactions.length; i++) {
-            addTransaction(_transactions[i].token_id, _transactions[i].seller_id, _transactions[i].buyer_id, _transactions[i].sale_time, _transactions[i].sale_price, _transactions[i].owner_email, _transactions[i].owner_name, _transactions[i].token_name);
+            addTransaction(_transactions[i].token_id, _transactions[i].seller_id, _transactions[i].buyer_id, _transactions[i].sale_time, _transactions[i].sale_price, _transactions[i].owner_name, _transactions[i].owner_email, _transactions[i].token_name);
         }
     }
 
