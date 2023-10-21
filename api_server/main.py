@@ -4,8 +4,11 @@ from fastapi.middleware.cors import CORSMiddleware
 from typing import Annotated, Union
 from web3 import Web3
 from solcx import compile_standard, install_solc
-# CHECK README IF YOU GET AN ERROR HERE
+
+# db_config stores the database configuration in a separate file that is added to the gitignore so each developer has their own copy. See README.txt for example file.
 from db_config import db_config
+
+# blockchain_config is also in the gitignore and is used for storing a user's Ganache wallet keys. See README.txt for example file.
 from blockchain_config import blockchain_config
 
 # DB
@@ -161,7 +164,7 @@ def get_listed_assets():
 # ! attempt to combine search with category filtering
 # get a list of all Assets. Optionally you may provide a list of categories to the query to match the Assets using the following format: http://localhost:8000/Assets/?category=1&category=2
 @app.get("/assets/search/")
-async def read_items(
+async def search_assets(
     query: Union[str, None] = None, category: Annotated[Union[list[str], None], Query()] = None
 ):
     try:
@@ -353,7 +356,7 @@ class CreateAssetRequest(BaseModel):
 
 # Posts a new asset to the Assets table, along with a creation transaction (price: 0, both buyer and seller ID that of the uploader), and associated asset categories/
 @app.post("/post_new_asset/")
-def postNewAsset(newAsset: CreateAssetRequest):
+def post_new_asset(newAsset: CreateAssetRequest):
     try:
         print(newAsset)
         connection = mysql.connector.connect(**db_config)
@@ -394,6 +397,7 @@ def postNewAsset(newAsset: CreateAssetRequest):
             print(addAssetCategoryQuery)
 
         cursor.close()
+        #without these line, the inserts are never written to the database
         connection.commit()
         connection.close()
 
@@ -412,12 +416,9 @@ def postNewAsset(newAsset: CreateAssetRequest):
         #get contract address from database
         contractAddress = get_smart_contract_address()
 
+        #setup and execute add transaction function on the smart contract
         transaction_storage = w3.eth.contract(address=contractAddress, abi=contract_abi)
-        
         nonce = w3.eth.get_transaction_count(my_address)
-
-        print(newAsset)
-
         store_transaction = transaction_storage.functions.addTransaction(token_id, newAsset.ownerID, newAsset.ownerID, int(round(time.time() * 1000)), "0", newAsset.ownerName, newAsset.ownerEmail, newAsset.name).build_transaction(
             {
                 "chainId": chain_id,
@@ -426,7 +427,6 @@ def postNewAsset(newAsset: CreateAssetRequest):
                 "nonce": nonce,
             }
         )
-
         signed_store_txn = w3.eth.account.sign_transaction(store_transaction, private_key=private_key)
         send_store_tx = w3.eth.send_raw_transaction(signed_store_txn.rawTransaction)
         tx_receipt = w3.eth.wait_for_transaction_receipt(send_store_tx)
@@ -436,9 +436,6 @@ def postNewAsset(newAsset: CreateAssetRequest):
         return token_id
     except mysql.connector.Error as err:
         return {"error": f"Error: {err}"}
-
-    #return str(w3.to_json(tx_receipt))
-
     
 
 # Custom type for a new asset listing
@@ -449,7 +446,7 @@ class AssetListingRequest(BaseModel):
 
 # Posts a new asset listing, used by owners of an asset that wish to list their asset for sale.
 @app.post("/post_asset_listing/")
-def postAssetListing(newListing: AssetListingRequest):
+def post_asset_listing(newListing: AssetListingRequest):
     try:
         print(newListing)
         connection = mysql.connector.connect(**db_config)
@@ -474,7 +471,7 @@ def postAssetListing(newListing: AssetListingRequest):
 
 # Puts an asset listing, used by owners of an asset that wish to update the price of an existing asset listing.
 @app.put("/put_asset_listing/")
-def putAssetListing(updateListing: AssetListingRequest):
+def put_asset_listing(updateListing: AssetListingRequest):
     try:
         print(updateListing)
         connection = mysql.connector.connect(**db_config)
@@ -497,7 +494,7 @@ def putAssetListing(updateListing: AssetListingRequest):
 
 # Deletes an asset listing, used by owners of an asset that wish to remove an existing asset listing.
 @app.delete("/delete_asset_listing/{token_id}")
-def deleteAssetListing(token_id: str):
+def delete_asset_listing(token_id: str):
     try:
         connection = mysql.connector.connect(**db_config)
         cursor = connection.cursor()
@@ -515,10 +512,9 @@ def deleteAssetListing(token_id: str):
     except mysql.connector.Error as err:
         return {"error": f"Error: {err}"}
 
+# Deploys the TransactionStorage.sol smart contract, writes the ABI to a file, and saves the smart contract address to the database for future interaction with the smart contract.
 @app.get("/transaction_storage_deploy_contract")
-async def TransactionStorageDeployContract():
-    # type your address here
-
+async def transaction_storage_deploy_contract():
     # Default is 1337 or with the PORT in your Gaanche
     chain_id = 1337
     # gets the account address from your blockchain_config file
@@ -580,7 +576,6 @@ async def TransactionStorageDeployContract():
     print(tx_receipt.contractAddress)
 
     try:
-        #print(tx_receipt.contractAddress)
         connection = mysql.connector.connect(**db_config)
         cursor = connection.cursor()
         addContractAddressQuery = (
@@ -605,9 +600,9 @@ async def TransactionStorageDeployContract():
     return "Contract Address: " + tx_receipt.contractAddress
 
 
-#Used to populate the transaction history once when initialising the smart contract
+#Used to populate the transaction history after a new smart contract has been deployed to the blockchain
 @app.get("/transaction_storage_populate_transactions")
-async def TransactionStoragePopulateTransactions():
+async def transaction_storage_populate_transactions():
     chain_id = 1337
     # gets the account address from your blockchain_config file
     my_address = str(blockchain_config.get("account_address"))
@@ -671,8 +666,9 @@ async def TransactionStoragePopulateTransactions():
     
     return receipts
 
+# Gets a list of all transactions from the smart contract. This function is not used by the web app (it could be useful for further expansion), but has been used extensively for debugging purposes.
 @app.get("/transaction_storage_get_all_transactions")
-async def TransactionStorageGetAllTransactions():
+async def transaction_storage_get_all_transactions():
     #get compiled ABI
     contract_abi = get_abi()
 
@@ -685,8 +681,9 @@ async def TransactionStorageGetAllTransactions():
 
     return get_transaction
 
+# Gets a list of all transactions that a particular user has ever been involved in.
 @app.get("/transaction_storage_get_all_transactions_for_user/{user_id}")
-async def TransactionStorageGetAllTransactionsForUser(user_id: int):
+async def transaction_storage_get_all_transactions_for_user(user_id: int):
     #get compiled ABI
     contract_abi = get_abi()
 
@@ -694,13 +691,13 @@ async def TransactionStorageGetAllTransactionsForUser(user_id: int):
     contractAddress = get_smart_contract_address()
 
     transaction_storage = w3.eth.contract(address=contractAddress, abi=contract_abi)
-    
     get_transaction = transaction_storage.functions.getAllTransactionsForUser(user_id).call()
 
     return get_transaction
 
+# Gets a list of all assets that a given user currently owns.
 @app.get("/transaction_storage_get_all_owned_assets_for_user/{user_id}")
-async def TransactionStorageGetAllOwnedAssetsForUser(user_id: int):
+async def transaction_storage_get_all_owned_assets_for_user(user_id: int):
     #get compiled ABI
     contract_abi = get_abi()
 
@@ -708,7 +705,6 @@ async def TransactionStorageGetAllOwnedAssetsForUser(user_id: int):
     contractAddress = get_smart_contract_address()
 
     transaction_storage = w3.eth.contract(address=contractAddress, abi=contract_abi)
-    
     get_transaction = transaction_storage.functions.getAllOwnedAssetsForUser(user_id).call()
 
     return get_transaction
@@ -721,9 +717,9 @@ class Transaction(BaseModel):
     owner_email: str
     token_name: str
 
-#Used to add multiple transactions when checking out
+#Used to add multiple transactions to the smart contract when checking out
 @app.post("/transaction_storage_add_multiple_transactions")
-async def TransactionStorageAddMultipleTransactions(transactions: list[Transaction]):
+async def transaction_storage_add_multiple_transactions(transactions: list[Transaction]):
 
     chain_id = 1337
     # gets the account address from your blockchain_config file
@@ -777,262 +773,9 @@ async def TransactionStorageAddMultipleTransactions(transactions: list[Transacti
 
     #remove item listings after making transactions
     for transaction in transactions:
-        deleteAssetListing(str(transaction.token_id))
+        delete_asset_listing(str(transaction.token_id))
 
     return {
         "Receipt": str(w3.to_json(tx_receiptA)),
         "AddedTransactions": event['args']['completedTransactions']
     }
-
-# ! Everything below here is examples from the tutorials that I have left in case we need them. To be deleted later.
-
-
-# Week 8 sample code:
-@app.get("/deployContract")
-async def funcTest1():
-    # type your address here
-
-    # Default is 1337 or with the PORT in your Gaanche
-    chain_id = 1337
-    # gets the account address from your blockchain_config file
-    my_address = str(blockchain_config.get("account_address"))
-    print("my_address = " + my_address)
-    # # gets your account private key from your blockchain_config file
-    private_key = str(blockchain_config.get("account_private_key"))
-    print("private_key= " + private_key)
-
-
-    with open("./SimpleStorage.sol", "r") as file:
-        simple_storage_file = file.read()
-        
-    install_solc("0.8.18")
-    compiled_sol = compile_standard(
-        {
-            "language": "Solidity",
-            "sources": {"SimpleStorage.sol": {"content": simple_storage_file}},
-            "settings": {
-                "outputSelection": {
-                    "*": {"*": ["abi", "metadata", "evm.bytecode", "evm.sourceMap"]}
-                }
-            },
-        },
-        solc_version="0.8.18",
-    )
-
-    with open("compiled_code.json", "w") as file:
-        json.dump(compiled_sol, file)
-
-    # get bytecode
-    bytecode = compiled_sol["contracts"]["SimpleStorage.sol"]["SimpleStorage"]["evm"][
-        "bytecode"
-    ]["object"]
-
-    # get abi
-    abi = compiled_sol["contracts"]["SimpleStorage.sol"]["SimpleStorage"]["abi"]
-
-    SimpleStorage = w3.eth.contract(abi=abi, bytecode=bytecode)
-
-    nonce = w3.eth.get_transaction_count(my_address)
-
-    transaction = SimpleStorage.constructor().build_transaction(
-        {
-            "chainId": chain_id,
-            "gasPrice": w3.eth.gas_price,
-            "from": my_address,
-            "nonce": nonce,
-        }
-    )
-    transaction.pop('to')
-
-
-    signed_txn = w3.eth.account.sign_transaction(transaction, private_key=private_key)
-    tx_hash = w3.eth.send_raw_transaction(signed_txn.rawTransaction)
-    tx_receipt = w3.eth.wait_for_transaction_receipt(tx_hash)
-
-    print("Contract address:")
-    print(tx_receipt.contractAddress)
-
-    try:
-        #print(tx_receipt.contractAddress)
-        connection = mysql.connector.connect(**db_config)
-        cursor = connection.cursor()
-        addContractAddressQuery = (
-            "REPLACE INTO SmartContractAddresses (contract_name, contract_address) VALUES ('SimpleStorage', '"
-            + tx_receipt.contractAddress
-            + "')"
-        )
-        print(addContractAddressQuery)
-        cursor.execute(addContractAddressQuery)
-
-        cursor.close()
-        connection.commit()
-        connection.close()
-    except mysql.connector.Error as err:
-        return {"error": f"Error: {err}"}
-
-
-    print(signed_txn)
-    print(tx_hash)
-    print(tx_receipt)
-
-
-    """     simple_storage = w3.eth.contract(address=tx_receipt.contractAddress, abi=abi)
-
-    store_transaction = simple_storage.functions.store(67).build_transaction(
-        {
-            "chainId": chain_id,
-            "gasPrice": w3.eth.gas_price,
-            "from": my_address,
-            "nonce": nonce + 1,
-        }
-    )
-
-    signed_store_txn = w3.eth.account.sign_transaction(store_transaction, private_key=private_key)
-    send_store_tx = w3.eth.send_raw_transaction(signed_store_txn.rawTransaction)
-    tx_receipt = w3.eth.wait_for_transaction_receipt(send_store_tx)
-
-    print(signed_store_txn)
-    print(send_store_tx)
-    print(tx_receipt) """
-
-    return tx_receipt.contractAddress
-
-@app.post("/simpleStorageStore")
-async def funcTest1(num: int):
-
-    chain_id = 1337
-    # gets the account address from your blockchain_config file
-    my_address = str(blockchain_config.get("account_address"))
-    print("my_address = " + my_address)
-    # # gets your account private key from your blockchain_config file
-    private_key = str(blockchain_config.get("account_private_key"))
-    print("private_key= " + private_key)
-
-    #get compiled ABI
-    with open("compiled_code.json", "r") as file:
-        compiled_sol = json.load(file)
-        abi = compiled_sol["contracts"]["SimpleStorage.sol"]["SimpleStorage"]["abi"]
-
-    #get contract address from database
-    contractAddress = get_smart_contract_address()
-
-    simple_storage = w3.eth.contract(address=contractAddress, abi=abi)
-    
-    nonce = w3.eth.get_transaction_count(my_address)
-
-    store_transaction = simple_storage.functions.store(num).build_transaction(
-        {
-            "chainId": chain_id,
-            "gasPrice": w3.eth.gas_price,
-            "from": my_address,
-            "nonce": nonce,
-        }
-    )
-
-    signed_store_txn = w3.eth.account.sign_transaction(store_transaction, private_key=private_key)
-    send_store_tx = w3.eth.send_raw_transaction(signed_store_txn.rawTransaction)
-    tx_receipt = w3.eth.wait_for_transaction_receipt(send_store_tx)
-
-    print(signed_store_txn)
-    print(send_store_tx)
-    print(tx_receipt)
-
-    
-    return "Hello, this is contract deploy preocess" 
-
-@app.get("/simpleStorageRetrieve")
-async def funcTest1():
-
-
-    #get compiled ABI
-    with open("compiled_code.json", "r") as file:
-        compiled_sol = json.load(file)
-        abi = compiled_sol["contracts"]["SimpleStorage.sol"]["SimpleStorage"]["abi"]
-
-    #get contract address from database
-    contractAddress = get_smart_contract_address()
-
-    simple_storage = w3.eth.contract(address=contractAddress, abi=abi)
-    
-    get_transaction = simple_storage.functions.retrieveFavouriteNumber().call()
-
-    return get_transaction
-
-@app.get("/eventsample")
-async def eventSample():
-    assert w3.isConnected()
-
-    # Contract address and ABI
-    contract_address = '0xYourContractAddress'
-    contract_abi = [...]  # Your contract ABI
-
-    # Create a contract object
-    contract = w3.eth.contract(address=contract_address, abi=contract_abi)
-
-    # Define an event filter
-    event_filter = contract.events.MyEvent.createFilter(fromBlock='latest')
-
-    # Send a transaction to call a function (if needed)
-    tx_hash = contract.functions.myFunction().transact({'from': w3.eth.accounts[0]})
-    w3.eth.waitForTransactionReceipt(tx_hash)
-
-    # Retrieve event logs
-    event_logs = event_filter.get_new_entries()
-    if event_logs:
-        event = event_logs[0]
-        print("Return Value:", event['args']['returnValue'])
-
-
-@app.get("/checktxreciept")
-async def checkreciept():
-    # Send the transaction
-    transaction_hash = w3.eth.sendTransaction({'to': '0xB97A1ec41C99caF7656958642e0412D433cd7FB3', 'value': w3.toWei(1, 'ether')})
-
-    # Wait for some time
-    time.sleep(15)  # Adjust the waiting time as needed
-
-    # Query the transaction receipt
-    receipt = w3.eth.getTransactionReceipt(transaction_hash)
-
-    if receipt is not None:
-        if receipt['status'] == 1:
-            print("Transaction successful")
-        else:
-            print("Transaction failed")
-    else:
-        print("Transaction has not been confirmed yet")
-
-    event_logs = event_filter.get_new_entries()
-
-    for event in event_logs:
-        print("New event:", event['args'])
-
-
-
-
-@app.get("/jsonData")
-async def funcTest():
-    jsonResult = {
-        "name": "Your name",
-        "Uni-year": 2,
-        "isStudent": True,
-        "hobbies": ["reading", "swimming"],
-    }
-    return jsonResult
-
-
-@app.get("/student/{student_id}")
-async def getStudentId(student_id: int):
-    return {"student_id": student_id}
-
-
-class Item(BaseModel):
-    name: str
-    description: str = None
-    price: float
-    tax: float = None
-
-
-@app.post("/items/", response_model=Item)
-def create_item(item: Item):
-    return item
