@@ -154,6 +154,7 @@ export const Menu = () => {
             badgeContent={cartItems.length}
             showZero
             className="px-1 right-1"
+            color="primary"
           >
             <AiOutlineShoppingCart size={20} />
           </Badge>
@@ -225,6 +226,7 @@ export const Menu = () => {
               badgeContent={cartItems.length}
               className="px-1 right-1"
               showZero
+              color="primary"
             >
               <AiOutlineShoppingCart size={20} />
             </Badge>
