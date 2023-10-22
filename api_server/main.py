@@ -19,14 +19,11 @@ from web3 import Web3
 w3 = Web3(Web3.HTTPProvider("HTTP://127.0.0.1:7545"))
 from solcx import compile_standard, install_solc
 import json
-
 import time
-
 
 app = FastAPI()
 
 origins = ["*"]
-
 
 app.add_middleware(
     CORSMiddleware,
@@ -35,30 +32,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-
-# return a list of Users without their passwords
-@app.get("/users/")
-def get_users():
-    try:
-        # Establish a database connection
-        connection = mysql.connector.connect(**db_config)
-        # Create a cursor to execute SQL queries
-        cursor = connection.cursor()
-        # Define the SQL query to retrieve data (e.g., all Users)
-        query = "SELECT user_id, first_name, last_name, email FROM Users;"
-        # Execute the SQL query
-        cursor.execute(query)
-        # Fetch all the rows
-        result = cursor.fetchall()
-        # Convert the result to a list of dictionaries
-        users = [dict(zip(cursor.column_names, row)) for row in result]
-        # Close the cursor and the database connection
-        cursor.close()
-        connection.close()
-        return users
-    except mysql.connector.Error as err:
-        return {"error": f"Error: {err}"}
 
 #used by all functions that make use of a smart contract to retrieve the contract's ABI    
 def get_abi():
@@ -125,43 +98,9 @@ def get_assets(token_id: int):
     asset["owner_email"] = get_transaction[7]
     asset["sale_price"] = get_transaction[5]
     asset["sale_time"] = get_transaction[4]
-
     return asset
 
-# get a list of all Assets listed for sale along with other info
-@app.get("/listed_assets/")
-def get_listed_assets():
-    try:
-        connection = mysql.connector.connect(**db_config)
-        cursor = connection.cursor()
-        query = "SELECT assets.token_id, item_name, item_description, image_url, image_thumbnail_url, image_resolution, selling_price, time_listed, filetype_name, license_name FROM assets JOIN AssetListings ON assets.token_id=AssetListings.token_id JOIN FileTypes on assets.image_filetype_id=FileTypes.filetype_id JOIN LicenseTypes on assets.license_type_id=LicenseTypes.license_type_id"
-        cursor.execute(query)
-        result = cursor.fetchall()
-        Assets = [dict(zip(cursor.column_names, row)) for row in result]
-        cursor.close()
-        connection.close()
-        return Assets
-    except mysql.connector.Error as err:
-        return {"error": f"Error: {err}"}
-
-
-# get a list of all featured Assets listed for sale along with other info
-@app.get("/featured_assets/")
-def get_listed_assets():
-    try:
-        connection = mysql.connector.connect(**db_config)
-        cursor = connection.cursor()
-        query = "SELECT assets.token_id, item_name, item_description, image_url, image_thumbnail_url, image_resolution, selling_price, time_listed, filetype_name, license_name FROM assets JOIN AssetListings ON assets.token_id = AssetListings.token_id JOIN FileTypes ON assets.image_filetype_id = FileTypes.filetype_id JOIN LicenseTypes ON assets.license_type_id = LicenseTypes.license_type_id JOIN AssetCategories ON assets.token_id = AssetCategories.token_id JOIN AssetCategoryDescriptions ON AssetCategories.category_id=AssetCategoryDescriptions.category_id WHERE AssetCategoryDescriptions.category_name = 'Featured'"
-        cursor.execute(query)
-        result = cursor.fetchall()
-        Assets = [dict(zip(cursor.column_names, row)) for row in result]
-        cursor.close()
-        connection.close()
-        return Assets
-    except mysql.connector.Error as err:
-        return {"error": f"Error: {err}"}
-
-# ! attempt to combine search with category filtering
+# ! combined search with category filtering
 # get a list of all Assets. Optionally you may provide a list of categories to the query to match the Assets using the following format: http://localhost:8000/Assets/?category=1&category=2
 @app.get("/assets/search/")
 async def search_assets(
