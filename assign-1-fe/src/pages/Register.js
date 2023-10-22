@@ -153,7 +153,7 @@ export const Register = () => {
               </Link>
             </Alert>
           ) : (
-            <Alert serverity="error">Registration not Successful</Alert>
+            <Alert severity="error">Registration not Successful</Alert>
           )}
         </form>
       </div>
