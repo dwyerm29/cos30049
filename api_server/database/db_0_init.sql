@@ -1,3 +1,4 @@
+CREATE SCHEMA IF NOT EXISTS `nft_data`;
 USE `nft_data`;
 
 DROP TABLE IF EXISTS `AssetListings`;
