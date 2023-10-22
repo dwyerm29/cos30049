@@ -30,6 +30,10 @@ export const Login = () => {
       </h2>
 
       <div className="mt-2 sm:mx-auto sm:w-full sm:max-w-sm">
+        <div>
+          <p>Username: john.smith@example.com </p>
+          <p>Password: password</p>
+        </div>
         <form className="space-y-6 bg-gray-700 p-6 rounded-2xl">
           <div>
             <label className="py-2 leading-6 text-xl">Username/Email</label>

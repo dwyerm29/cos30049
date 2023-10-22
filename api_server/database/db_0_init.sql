@@ -1,4 +1,4 @@
-USE `s100595852_db`;
+USE `nft_data`;
 
 DROP TABLE IF EXISTS `AssetListings`;
 DROP TABLE IF EXISTS `AssetCategories`;

@@ -3,6 +3,7 @@ import { React, useState } from "react";
 import { Link } from "react-router-dom";
 
 import axios from "axios";
+import { Alert } from "@mui/material";
 
 //Registration page where new users can sign up to the website.
 export const Register = () => {
@@ -144,7 +145,16 @@ export const Register = () => {
               value="Register"
             />
           </div>
-          {isSuccessful && <p>Registration Successful</p>}
+          {isSuccessful ? (
+            <Alert severity="success">
+              Registration Successful!{" "}
+              <Link to="/login" className="underline">
+                Login Here
+              </Link>
+            </Alert>
+          ) : (
+            <Alert serverity="error">Registration not Successful</Alert>
+          )}
         </form>
       </div>
     </div>
