@@ -50,7 +50,7 @@ export function AuthWrapper() {
           }
         })
         .catch((error) => {
-          console.error("error here: ", error);
+          alert("error here: " + error);
         });
     });
   };
