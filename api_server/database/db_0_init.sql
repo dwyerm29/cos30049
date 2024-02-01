@@ -1,7 +1,7 @@
 CREATE SCHEMA IF NOT EXISTS `nft_data`;
 USE `nft_data`;
 
-DROP TABLE IF EXISTS `AssetListings`;
+DROP TABLE IF EXISTS `assetlistings`;
 DROP TABLE IF EXISTS `AssetCategories`;
 DROP TABLE IF EXISTS `AssetCategoryDescriptions`;
 DROP TABLE IF EXISTS `SmartContractAddresses`;
@@ -58,7 +58,7 @@ CREATE TABLE `AssetCategories` (
   FOREIGN KEY (`token_id`) REFERENCES `Assets` (`token_id`)
 );
 
-CREATE TABLE `AssetListings` (
+CREATE TABLE `assetlistings` (
   `token_id` INT NOT NULL,
   `seller_id` INT NOT NULL,
   `selling_price` DOUBLE NOT NULL,
@@ -208,15 +208,15 @@ INSERT INTO AssetCategories ( token_id, category_id) VALUES ('3032346', '3');
 
 
 
-INSERT INTO AssetListings ( token_id, seller_id, selling_price, time_listed) VALUES ('123129', '2', '0.3', '2023-08-23 17:36:27.39');
-INSERT INTO AssetListings ( token_id, seller_id, selling_price, time_listed) VALUES ('123130', '1', '0.55', '2023-08-25 04:22:34.60');
-INSERT INTO AssetListings ( token_id, seller_id, selling_price, time_listed) VALUES ('123131', '2', '0.2', '2023-08-12 17:36:27.39');
-INSERT INTO AssetListings ( token_id, seller_id, selling_price, time_listed) VALUES ('123132', '2', '0.7', '2023-08-17 04:22:34.60');
-INSERT INTO AssetListings ( token_id, seller_id, selling_price, time_listed) VALUES ('123133', '2', '0.6', '2023-06-20 17:36:27.39');
-INSERT INTO AssetListings ( token_id, seller_id, selling_price, time_listed) VALUES ('123134', '2', '0.3', '2023-08-10 04:22:34.60');
-INSERT INTO AssetListings ( token_id, seller_id, selling_price, time_listed) VALUES ('123135', '2', '0.9', '2023-08-06 17:36:27.39');
-INSERT INTO AssetListings ( token_id, seller_id, selling_price, time_listed) VALUES ('123136', '2', '0.5', '2023-08-28 04:22:34.60');
-INSERT INTO AssetListings ( token_id, seller_id, selling_price, time_listed) VALUES ('124343', '4', '0.6', '2023-08-29 08:22:34.60');
-INSERT INTO AssetListings ( token_id, seller_id, selling_price, time_listed) VALUES ('3032346', '1', '0.5', '2023-08-28 04:22:34.60');
+INSERT INTO assetlistings ( token_id, seller_id, selling_price, time_listed) VALUES ('123129', '2', '0.3', '2023-08-23 17:36:27.39');
+INSERT INTO assetlistings ( token_id, seller_id, selling_price, time_listed) VALUES ('123130', '1', '0.55', '2023-08-25 04:22:34.60');
+INSERT INTO assetlistings ( token_id, seller_id, selling_price, time_listed) VALUES ('123131', '2', '0.2', '2023-08-12 17:36:27.39');
+INSERT INTO assetlistings ( token_id, seller_id, selling_price, time_listed) VALUES ('123132', '2', '0.7', '2023-08-17 04:22:34.60');
+INSERT INTO assetlistings ( token_id, seller_id, selling_price, time_listed) VALUES ('123133', '2', '0.6', '2023-06-20 17:36:27.39');
+INSERT INTO assetlistings ( token_id, seller_id, selling_price, time_listed) VALUES ('123134', '2', '0.3', '2023-08-10 04:22:34.60');
+INSERT INTO assetlistings ( token_id, seller_id, selling_price, time_listed) VALUES ('123135', '2', '0.9', '2023-08-06 17:36:27.39');
+INSERT INTO assetlistings ( token_id, seller_id, selling_price, time_listed) VALUES ('123136', '2', '0.5', '2023-08-28 04:22:34.60');
+INSERT INTO assetlistings ( token_id, seller_id, selling_price, time_listed) VALUES ('124343', '4', '0.6', '2023-08-29 08:22:34.60');
+INSERT INTO assetlistings ( token_id, seller_id, selling_price, time_listed) VALUES ('3032346', '1', '0.5', '2023-08-28 04:22:34.60');
 
 

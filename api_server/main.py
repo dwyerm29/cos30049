@@ -70,7 +70,7 @@ def get_assets(token_id: int):
     try:
         connection = mysql.connector.connect(**db_config)
         cursor = connection.cursor()
-        query = ("SELECT assets.token_id, item_description, image_url, image_thumbnail_url, image_resolution, selling_price, time_listed, filetype_name, license_name, orig_owner.first_name AS original_owner_first_name, orig_owner.last_name AS original_owner_last_name, orig_owner.user_id AS original_owner_user_id FROM assets LEFT JOIN AssetListings ON assets.token_id=AssetListings.token_id JOIN filetypes ON assets.image_filetype_id=filetypes.filetype_id JOIN licensetypes ON assets.license_type_id=licensetypes.license_type_id JOIN users orig_owner ON assets.original_owner=orig_owner.user_id WHERE assets.token_id="
+        query = ("SELECT Assets.token_id, item_description, image_url, image_thumbnail_url, image_resolution, selling_price, time_listed, filetype_name, license_name, orig_owner.first_name AS original_owner_first_name, orig_owner.last_name AS original_owner_last_name, orig_owner.user_id AS original_owner_user_id FROM Assets LEFT JOIN AssetListings ON Assets.token_id=AssetListings.token_id JOIN FileTypes ON Assets.image_filetype_id=FileTypes.filetype_id JOIN LicenseTypes ON Assets.license_type_id=LicenseTypes.license_type_id JOIN Users orig_owner ON Assets.original_owner=orig_owner.user_id WHERE Assets.token_id="
         + str(token_id))
         cursor.execute(query)
         result = cursor.fetchone()
@@ -109,7 +109,7 @@ async def search_assets(
     try:
         connection = mysql.connector.connect(**db_config)
         cursor = connection.cursor()
-        dbQuery = "SELECT DISTINCT assets.token_id, item_name, item_description, image_url, image_thumbnail_url, image_resolution, selling_price, time_listed, filetype_name, license_name FROM assets JOIN AssetListings ON assets.token_id=AssetListings.token_id JOIN FileTypes ON assets.image_filetype_id=FileTypes.filetype_id JOIN LicenseTypes ON assets.license_type_id=LicenseTypes.license_type_id JOIN AssetCategories ON assets.token_id=AssetCategories.token_id JOIN AssetCategoryDescriptions ON AssetCategories.category_id=AssetCategoryDescriptions.category_id"
+        dbQuery = "SELECT DISTINCT Assets.token_id, item_name, item_description, image_url, image_thumbnail_url, image_resolution, selling_price, time_listed, filetype_name, license_name FROM Assets JOIN AssetListings ON Assets.token_id=AssetListings.token_id JOIN FileTypes ON Assets.image_filetype_id=FileTypes.filetype_id JOIN LicenseTypes ON Assets.license_type_id=LicenseTypes.license_type_id JOIN AssetCategories ON Assets.token_id=AssetCategories.token_id JOIN AssetCategoryDescriptions ON AssetCategories.category_id=AssetCategoryDescriptions.category_id"
         if category != None:
             if len(category) > 0:
                 dbQuery += (
@@ -154,7 +154,7 @@ def get_listed_assets(user_id: int):
         connection = mysql.connector.connect(**db_config)
         cursor = connection.cursor()
         query = (
-            "SELECT assets.token_id, item_name, item_description, image_url, image_thumbnail_url, image_resolution, selling_price, time_listed, filetype_name, license_name FROM assets JOIN AssetListings ON assets.token_id = AssetListings.token_id JOIN FileTypes ON assets.image_filetype_id = FileTypes.filetype_id JOIN LicenseTypes ON assets.license_type_id = LicenseTypes.license_type_id WHERE AssetListings.seller_id='"
+            "SELECT Assets.token_id, item_name, item_description, image_url, image_thumbnail_url, image_resolution, selling_price, time_listed, filetype_name, license_name FROM Assets JOIN AssetListings ON Assets.token_id = AssetListings.token_id JOIN FileTypes ON Assets.image_filetype_id = FileTypes.filetype_id JOIN LicenseTypes ON Assets.license_type_id = LicenseTypes.license_type_id WHERE AssetListings.seller_id='"
             + str(user_id)
             + "'"
         )
@@ -190,7 +190,7 @@ def get_asset_filetypes():
     try:
         connection = mysql.connector.connect(**db_config)
         cursor = connection.cursor()
-        query = "SELECT * FROM filetypes"
+        query = "SELECT * FROM FileTypes"
         cursor.execute(query)
         result = cursor.fetchall()
         FileTypes = [dict(zip(cursor.column_names, row)) for row in result]
@@ -206,7 +206,7 @@ def get_asset_licensetypes():
     try:
         connection = mysql.connector.connect(**db_config)
         cursor = connection.cursor()
-        query = "SELECT * FROM licensetypes"
+        query = "SELECT * FROM LicenseTypes"
         cursor.execute(query)
         result = cursor.fetchall()
         LicenseTypes = [dict(zip(cursor.column_names, row)) for row in result]
@@ -301,7 +301,7 @@ def post_new_asset(newAsset: CreateAssetRequest):
         connection = mysql.connector.connect(**db_config)
         cursor = connection.cursor()
         addAssetQuery = (
-            "INSERT INTO assets (item_name, item_description, image_url, image_thumbnail_url, image_resolution, image_filetype_id, license_type_id, original_owner) VALUES ('"
+            "INSERT INTO Assets (item_name, item_description, image_url, image_thumbnail_url, image_resolution, image_filetype_id, license_type_id, original_owner) VALUES ('"
             + newAsset.name
             + "', '"
             + newAsset.description
